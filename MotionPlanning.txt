@@ -15,7 +15,10 @@ without getting stuck at local minima.
 
 Check-in (Required):
 Consider the following scenario:
-A 0.5m radius game character is in a large 20m x 20m room. The character starts at the bottom left (-9,-9) and wishes to go to the top right (9,9). There is a single obstacle in the room, represented by a circle of radius 2 meters at coordinates (0,0). Use a probabilistic roadmap (PRM) to plan a path for the agent from the start to the goal.
+A 0.5m radius game character is in a large 20m x 20m room.
+The character starts at the bottom left (-9,-9) and wishes to go to the top right (9,9).
+There is a single obstacle in the room, represented by a circle of radius 2 meters at coordinates (0,0).
+Use a probabilistic roadmap (PRM) to plan a path for the agent from the start to the goal.
 
 Implement the above scenario, in a graphical environment, with a smooth,
 continuously animated agent (e.g., represented as a cylinder). You should also
