@@ -51,7 +51,7 @@ public class Vec3 {
     }
 
     public Vec3 normalize() {
-        float abs = abs();
+        float abs = norm();
         if (abs < 1e-6f) {
             return new Vec3(this);
         } else {
@@ -60,7 +60,7 @@ public class Vec3 {
     }
 
     public void normalizeInPlace() {
-        float abs = abs();
+        float abs = norm();
         if (abs > 1e-6f) {
             scaleInPlace(1 / abs);
         }
@@ -74,7 +74,7 @@ public class Vec3 {
         return new Vec3(this.y * b.z - this.z * b.y, this.z * b.x - this.x * b.z, this.x * b.y - this.y * b.x);
     }
 
-    public float abs() {
+    public float norm() {
         return (float) Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
     }
 
