@@ -1,6 +1,6 @@
 import camera.QueasyCam;
-import javafx.util.Pair;
 import math.Vec3;
+import physical.Link;
 import physical.Milestone;
 import physical.SphericalAgent;
 import physical.SphericalObstacle;
@@ -8,17 +8,21 @@ import processing.core.PApplet;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Main extends PApplet {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 800;
     public static final int SIDE = 100;
 
-    QueasyCam cam;
-    SphericalObstacle sphericalObstacle;
+    final Vec3 start = Vec3.of(0, SIDE * (9f / 10), SIDE * (-9f / 10));
+    final Vec3 finish = Vec3.of(0, SIDE * (-9f / 10), SIDE * (9f / 10));
     SphericalAgent sphericalAgent;
-    List<Milestone> milestones = new ArrayList<>();
-    List<Pair<Vec3, Vec3>> links = new ArrayList<>();
+    SphericalObstacle sphericalObstacle;
+    final List<Milestone> milestones = new ArrayList<>();
+    final List<Link> links = new ArrayList<>();
+
+    QueasyCam cam;
     boolean drawLinks = true;
 
     public void settings() {
@@ -40,20 +44,20 @@ public class Main extends PApplet {
         );
         sphericalAgent = new SphericalAgent(
                 this,
-                Vec3.of(0, SIDE * (9f / 10), SIDE * (-9f / 10)),
+                start,
                 SIDE * (0.5f / 20),
                 Vec3.of(1)
         );
 
-        // milestone sampling
+        // milestone sampling: plain
         milestones.add(new Milestone(
                 this,
-                Vec3.of(0, SIDE * (-9f / 10), SIDE * (9f / 10)),
+                start,
                 Vec3.of(0, 1, 0)
         ));
         milestones.add(new Milestone(
                 this,
-                Vec3.of(0, SIDE * (9f / 10), SIDE * (-9f / 10)),
+                finish,
                 Vec3.of(0, 0, 1)
         ));
         for (int i = 0; i < 1000; ++i) {
@@ -75,7 +79,7 @@ public class Main extends PApplet {
         }
         for (int i = badMilestones.size() - 1; i >= 0; --i) {
             int indexToRemove = badMilestones.get(i);
-            milestones.remove(indexToRemove);
+//            milestones.remove(indexToRemove);
         }
 
         // linking milestones
@@ -84,7 +88,25 @@ public class Main extends PApplet {
                 Vec3 p1 = milestones.get(i).position;
                 Vec3 p2 = milestones.get(j).position;
                 if (p1.minus(p2).norm() < 20) {
-                    links.add(new Pair<>(p1, p2));
+                    links.add(new Link(this, p1, p2, Vec3.of(1, 1, 0)));
+                }
+            }
+        }
+
+        // link culling
+        for (Link link : links) {
+            Vec3 pb_pa = link.p2.minus(link.p1);
+            Vec3 pa_pc = link.p1.minus(sphericalObstacle.center);
+            float r = sphericalObstacle.radius;
+            float a = pb_pa.dot(pb_pa);
+            float c = pa_pc.dot(pa_pc) - r * r;
+            float b = 2 * pb_pa.dot(pa_pc);
+            float discriminant = b * b - 4 * a * c;
+            if (discriminant >= 0) {
+                float t1 = (float) ((-b + Math.sqrt(discriminant)) / (2 * a));
+                float t2 = (float) ((-b - Math.sqrt(discriminant)) / (2 * a));
+                if ((0 <= t1 && t1 <= 1) || (0 <= t2 && t2 <= 1)) {
+                    link.color = Vec3.of(1, 0, 1);
                 }
             }
         }
@@ -106,11 +128,8 @@ public class Main extends PApplet {
         }
         // links
         if (drawLinks) {
-            for (Pair<Vec3, Vec3> link : links) {
-                Vec3 p1 = link.getKey();
-                Vec3 p2 = link.getValue();
-                stroke(1, 1, 0);
-                line(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);
+            for (Link link : links) {
+                link.draw();
             }
         }
         long draw = millis();
