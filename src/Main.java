@@ -73,17 +73,17 @@ public class Main extends PApplet {
                 badVertexIndices.add(i);
             }
         }
-//        for (int i = badVertexIndices.size() - 1; i >= 0; --i) {
-//            int indexToRemove = badVertexIndices.get(i);
-//            vertices.remove(indexToRemove);
-//        }
+        for (int i = badVertexIndices.size() - 1; i >= 0; --i) {
+            int indexToRemove = badVertexIndices.get(i);
+            vertices.remove(indexToRemove);
+        }
 
         // edge creation
         for (int i = 0; i < vertices.size(); ++i) {
             for (int j = 0; j < vertices.size(); j++) {
                 Vertex v1 = vertices.get(i);
                 Vertex v2 = vertices.get(j);
-                if (v1.position.minus(v2.position).norm() < 20) {
+                if (v1.position.minus(v2.position).norm() < 30) {
                     v1.addNeighbour(v2, Vec3.of(1));
                     v2.addNeighbour(v1, Vec3.of(1));
                 }
@@ -133,8 +133,11 @@ public class Main extends PApplet {
     }
 
     public void keyPressed() {
-        if (key == 'o') {
+        if (key == 'h') {
             sphericalObstacle.isDrawn = !sphericalObstacle.isDrawn;
+        }
+        if (key == 'j') {
+            Vertex.DRAW_EDGES = !Vertex.DRAW_EDGES;
         }
     }
 

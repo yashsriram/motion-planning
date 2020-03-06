@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Vertex {
+    public static boolean DRAW_EDGES = false;
+
     private static final int START_ID = -1;
     private static final int FINISH_ID = 0;
     private static int nextId = 1;
@@ -49,12 +51,14 @@ public class Vertex {
         parent.translate(position.x, position.y, position.z);
         parent.box(0.5f);
         parent.popMatrix();
-        for (int i = 0;i < neighbours.size(); ++i) {
-            Vertex neighbour = neighbours.get(i);
-            Vec3 color = edgeColors.get(i);
-            parent.stroke(color.x, color.y, color.z);
-            parent.line(this.position.x, this.position.y, this.position.z,
-                    neighbour.position.x, neighbour.position.y, neighbour.position.z);
+        if (DRAW_EDGES) {
+            for (int i = 0;i < neighbours.size(); ++i) {
+                Vertex neighbour = neighbours.get(i);
+                Vec3 color = edgeColors.get(i);
+                parent.stroke(color.x, color.y, color.z);
+                parent.line(this.position.x, this.position.y, this.position.z,
+                        neighbour.position.x, neighbour.position.y, neighbour.position.z);
+            }
         }
     }
 
