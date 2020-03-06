@@ -1,14 +1,12 @@
 import camera.QueasyCam;
 import math.Vec3;
-import physical.Link;
-import physical.Milestone;
 import physical.SphericalAgent;
 import physical.SphericalObstacle;
+import physical.Vertex;
 import processing.core.PApplet;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class Main extends PApplet {
     public static final int WIDTH = 800;
@@ -19,11 +17,9 @@ public class Main extends PApplet {
     final Vec3 finish = Vec3.of(0, SIDE * (-9f / 10), SIDE * (9f / 10));
     SphericalAgent sphericalAgent;
     SphericalObstacle sphericalObstacle;
-    final List<Milestone> milestones = new ArrayList<>();
-    final List<Link> links = new ArrayList<>();
+    final List<Vertex> vertices = new ArrayList<>();
 
     QueasyCam cam;
-    boolean drawLinks = true;
 
     public void settings() {
         size(WIDTH, HEIGHT, P3D);
@@ -49,64 +45,69 @@ public class Main extends PApplet {
                 Vec3.of(1)
         );
 
-        // milestone sampling: plain
-        milestones.add(new Milestone(
+        // vertex sampling
+        vertices.add(Vertex.start(
                 this,
                 start,
                 Vec3.of(0, 1, 0)
         ));
-        milestones.add(new Milestone(
+        vertices.add(Vertex.finish(
                 this,
                 finish,
                 Vec3.of(0, 0, 1)
         ));
         for (int i = 0; i < 1000; ++i) {
-            milestones.add(new Milestone(
+            vertices.add(Vertex.of(
                     this,
                     Vec3.of(0, random(-SIDE, SIDE), random(-SIDE, SIDE)),
                     Vec3.of(1, 1, 0)
             ));
         }
 
-        // milestone culling
-        List<Integer> badMilestones = new ArrayList<>();
-        for (int i = 0; i < milestones.size(); ++i) {
-            Milestone milestone = milestones.get(i);
-            if (milestone.position.minus(sphericalObstacle.center).norm() <= sphericalObstacle.radius + sphericalAgent.radius) {
-                milestone.color = Vec3.of(1, 0, 1);
-                badMilestones.add(i);
+        // vertex culling
+        List<Integer> badVertexIndices = new ArrayList<>();
+        for (int i = 0; i < vertices.size(); ++i) {
+            Vertex vertex = vertices.get(i);
+            if (vertex.position.minus(sphericalObstacle.center).norm() <= sphericalObstacle.radius + sphericalAgent.radius) {
+                vertex.color = Vec3.of(1, 0, 1);
+                badVertexIndices.add(i);
             }
         }
-        for (int i = badMilestones.size() - 1; i >= 0; --i) {
-            int indexToRemove = badMilestones.get(i);
-//            milestones.remove(indexToRemove);
-        }
+//        for (int i = badVertexIndices.size() - 1; i >= 0; --i) {
+//            int indexToRemove = badVertexIndices.get(i);
+//            vertices.remove(indexToRemove);
+//        }
 
-        // linking milestones
-        for (int i = 0; i < milestones.size(); ++i) {
-            for (int j = 0; j < milestones.size(); j++) {
-                Vec3 p1 = milestones.get(i).position;
-                Vec3 p2 = milestones.get(j).position;
-                if (p1.minus(p2).norm() < 20) {
-                    links.add(new Link(this, p1, p2, Vec3.of(1, 1, 0)));
+        // edge creation
+        for (int i = 0; i < vertices.size(); ++i) {
+            for (int j = 0; j < vertices.size(); j++) {
+                Vertex v1 = vertices.get(i);
+                Vertex v2 = vertices.get(j);
+                if (v1.position.minus(v2.position).norm() < 20) {
+                    v1.addNeighbour(v2, Vec3.of(1));
+                    v2.addNeighbour(v1, Vec3.of(1));
                 }
             }
         }
 
-        // link culling
-        for (Link link : links) {
-            Vec3 pb_pa = link.p2.minus(link.p1);
-            Vec3 pa_pc = link.p1.minus(sphericalObstacle.center);
-            float r = sphericalObstacle.radius;
-            float a = pb_pa.dot(pb_pa);
-            float c = pa_pc.dot(pa_pc) - r * r;
-            float b = 2 * pb_pa.dot(pa_pc);
-            float discriminant = b * b - 4 * a * c;
-            if (discriminant >= 0) {
-                float t1 = (float) ((-b + Math.sqrt(discriminant)) / (2 * a));
-                float t2 = (float) ((-b - Math.sqrt(discriminant)) / (2 * a));
-                if ((0 <= t1 && t1 <= 1) || (0 <= t2 && t2 <= 1)) {
-                    link.color = Vec3.of(1, 0, 1);
+        // edge culling
+        for (int i = 0; i < vertices.size(); ++i) {
+            Vertex v = vertices.get(i);
+            for (int j = 0; j < v.neighbours.size(); j++) {
+                Vertex n = v.neighbours.get(j);
+                Vec3 pb_pa = n.position.minus(v.position);
+                Vec3 pa_pc = v.position.minus(sphericalObstacle.center);
+                float r = sphericalObstacle.radius;
+                float a = pb_pa.dot(pb_pa);
+                float c = pa_pc.dot(pa_pc) - r * r;
+                float b = 2 * pb_pa.dot(pa_pc);
+                float discriminant = b * b - 4 * a * c;
+                if (discriminant >= 0) {
+                    float t1 = (float) ((-b + Math.sqrt(discriminant)) / (2 * a));
+                    float t2 = (float) ((-b - Math.sqrt(discriminant)) / (2 * a));
+                    if ((0 <= t1 && t1 <= 1) || (0 <= t2 && t2 <= 1)) {
+                        v.edgeColors.set(j, Vec3.of(1, 0, 1));
+                    }
                 }
             }
         }
@@ -122,15 +123,9 @@ public class Main extends PApplet {
         sphericalAgent.draw();
         // obstacle
         sphericalObstacle.draw();
-        // milestones
-        for (Milestone milestone : milestones) {
-            milestone.draw();
-        }
-        // links
-        if (drawLinks) {
-            for (Link link : links) {
-                link.draw();
-            }
+        // vertices
+        for (Vertex vertex : vertices) {
+            vertex.draw();
         }
         long draw = millis();
 
@@ -140,9 +135,6 @@ public class Main extends PApplet {
     public void keyPressed() {
         if (key == 'o') {
             sphericalObstacle.isDrawn = !sphericalObstacle.isDrawn;
-        }
-        if (key == 'p') {
-            drawLinks = !drawLinks;
         }
     }
 

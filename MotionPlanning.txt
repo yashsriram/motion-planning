@@ -13,6 +13,17 @@ such as flocking, herding or lane formation. You should incorporate a global
 navigation structure to allow your agents to navigate through complex environment
 without getting stuck at local minima.
 
+Planning pipeline
+1. Input = start pose, finish pose, agent, obstacles
+2. Using minkowski sum, find configuration space
+3. Vertex sampling (PRM/Surface PRM/...)
+4. In obstacle vertex culling (Parallelizable/Spatial data structure)
+5. Obstacle intersecting edge culling (Parallelizable/Spatial data structure)
+6. Graph representation (List of edges/adjacency matrix/adjacency list/...)
+7. optimal path search (DFS/BFS/UCS/A*/eA*/...)
+8. Action/animation (lerp/...)
+9. Online furthest node lookout (forward/backward/...)
+
 Check-in (Required):
 Consider the following scenario:
 A 0.5m radius game character is in a large 20m x 20m room.
