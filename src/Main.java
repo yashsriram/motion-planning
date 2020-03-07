@@ -83,7 +83,13 @@ public class Main extends PApplet {
         if (key == 'j') {
             Vertex.DRAW_EDGES = !Vertex.DRAW_EDGES;
         }
-        if (key == 'b') {
+        if (key == 'r') {
+            graph.reset();
+        }
+        if (key == '1') {
+            graph.dfs();
+        }
+        if (key == '2') {
             graph.bfs();
         }
     }

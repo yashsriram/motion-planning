@@ -3,10 +3,7 @@ package physical;
 import math.Vec3;
 import processing.core.PApplet;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 public class Graph {
     final PApplet parent;
@@ -85,6 +82,50 @@ public class Graph {
         }
     }
 
+    public void reset() {
+        PApplet.println("Reset");
+        for (Vertex v : vertices) {
+            v.isOnFringe = false;
+            v.color = Vec3.of(1);
+        }
+    }
+
+    private void addToFringe(final Stack<Vertex> fringe, final Vertex v) {
+        fringe.add(v);
+        v.isOnFringe = true;
+        v.color = Vec3.of(0, 1, 0);
+    }
+
+    public void dfs() {
+        PApplet.println("-- DFS --");
+
+        final Stack<Vertex> fringe = new Stack<>();
+        int numVerticesExplored = 0;
+
+        // Add start to fringe
+        addToFringe(fringe, start);
+        while (fringe.size() > 0) {
+            // Pop one vertex
+            Vertex current = fringe.pop();
+            current.color = Vec3.of(1, 0, 0);
+            // PApplet.println(current.id);
+            numVerticesExplored++;
+            // Check if finish
+            if (current.id == Vertex.FINISH_ID) {
+                PApplet.println("Reached finish, # vertices explored: " + numVerticesExplored);
+                return;
+            }
+            // Update fringe
+            for (Vertex neighbour : current.neighbours) {
+                if (!neighbour.isDead && !neighbour.isOnFringe) {
+                    addToFringe(fringe, neighbour);
+                }
+            }
+        }
+
+        PApplet.println("Could not reach finish, # vertices explored: " + numVerticesExplored);
+    }
+
     private void addToFringe(final Queue<Vertex> fringe, final Vertex v) {
         fringe.add(v);
         v.isOnFringe = true;
@@ -92,6 +133,8 @@ public class Graph {
     }
 
     public void bfs() {
+        PApplet.println("-- BFS --");
+
         final Queue<Vertex> fringe = new LinkedList<>();
         int numVerticesExplored = 0;
 
