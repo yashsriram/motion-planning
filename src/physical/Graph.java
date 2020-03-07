@@ -68,8 +68,6 @@ public class Graph {
                 if (v1.position.minus(v2.position).norm() <= maxEdgeLen) {
                     // Check for intersection with spherical obstacle
                     if (!v1.canBeReached || !v2.canBeReached || doesIntersect(v1, v2, sphericalAgent, sphericalObstacle)) {
-                        v1.addNeighbour(v2, Vec3.of(1, 0, 1));
-                        v2.addNeighbour(v1, Vec3.of(1, 0, 1));
                         numEdgesCulled++;
                     } else {
                         v1.addNeighbour(v2, Vec3.of(1));
@@ -89,31 +87,35 @@ public class Graph {
         }
     }
 
-    public void reset() {
+    private void reset() {
         PApplet.println("Reset");
         for (Vertex v : vertices) {
             if (v.canBeReached) {
-                v.distanceFromStart = 0;
-                v.isExplored = false;
                 v.color = Vec3.of(1);
+                v.isExplored = false;
+                v.distanceFromStart = 0;
+                v.path = new ArrayList<>();
             }
         }
     }
 
-    private void addToFringe(final Stack<Vertex> fringe, final Vertex v) {
-        fringe.add(v);
-        v.isExplored = true;
-        v.color = Vec3.of(0, 1, 0);
+    private void addToFringe(final Stack<Vertex> fringe, final Vertex current, final Vertex next) {
+        fringe.add(next);
+        next.isExplored = true;
+        next.color = Vec3.of(0, 1, 0);
+        next.path.addAll(current.path);
+        next.path.add(next);
     }
 
-    public void dfs() {
+    public List<Vertex> dfs() {
         PApplet.println("-- DFS --");
 
+        reset();
         final Stack<Vertex> fringe = new Stack<>();
         int numVerticesExplored = 0;
 
         // Add start to fringe
-        addToFringe(fringe, start);
+        addToFringe(fringe, start, start);
         while (fringe.size() > 0) {
             // Pop one vertex
             Vertex current = fringe.pop();
@@ -123,53 +125,18 @@ public class Graph {
             // Check if finish
             if (current.id == Vertex.FINISH_ID) {
                 PApplet.println("Reached finish, # vertices explored: " + numVerticesExplored);
-                return;
+                return finish.path;
             }
             // Update fringe
             for (Vertex neighbour : current.neighbours) {
                 if (neighbour.canBeReached && !neighbour.isExplored) {
-                    addToFringe(fringe, neighbour);
+                    addToFringe(fringe, current, neighbour);
                 }
             }
         }
 
         PApplet.println("Could not reach finish, # vertices explored: " + numVerticesExplored);
-    }
-
-    private void addToFringe(final Queue<Vertex> fringe, final Vertex v) {
-        fringe.add(v);
-        v.isExplored = true;
-        v.color = Vec3.of(0, 1, 0);
-    }
-
-    public void bfs() {
-        PApplet.println("-- BFS --");
-
-        final Queue<Vertex> fringe = new LinkedList<>();
-        int numVerticesExplored = 0;
-
-        // Add start to fringe
-        addToFringe(fringe, start);
-        while (fringe.size() > 0) {
-            // Pop one vertex
-            Vertex current = fringe.remove();
-            current.color = Vec3.of(1, 0, 0);
-            // PApplet.println(current.id);
-            numVerticesExplored++;
-            // Check if finish
-            if (current.id == Vertex.FINISH_ID) {
-                PApplet.println("Reached finish, # vertices explored: " + numVerticesExplored);
-                return;
-            }
-            // Update fringe
-            for (Vertex neighbour : current.neighbours) {
-                if (neighbour.canBeReached && !neighbour.isExplored) {
-                    addToFringe(fringe, neighbour);
-                }
-            }
-        }
-
-        PApplet.println("Could not reach finish, # vertices explored: " + numVerticesExplored);
+        return null;
     }
 
     private void addToFringe(final Queue<Vertex> fringe, final Vertex current, final Vertex next) {
@@ -177,9 +144,11 @@ public class Graph {
         fringe.add(next);
         next.isExplored = true;
         next.color = Vec3.of(0, 1, 0);
+        next.path.addAll(current.path);
+        next.path.add(next);
     }
 
-    private void search(final Queue<Vertex> fringe) {
+    private List<Vertex> search(final Queue<Vertex> fringe) {
         int numVerticesExplored = 0;
 
         // Add start to fringe
@@ -193,7 +162,7 @@ public class Graph {
             // Check if finish
             if (current.id == Vertex.FINISH_ID) {
                 PApplet.println("Reached finish, # vertices explored: " + numVerticesExplored);
-                return;
+                return finish.path;
             }
             // Update fringe
             for (Vertex neighbour : current.neighbours) {
@@ -204,24 +173,34 @@ public class Graph {
         }
 
         PApplet.println("Could not reach finish, # vertices explored: " + numVerticesExplored);
+        return null;
     }
 
-    public void ucs() {
+    public List<Vertex> bfs() {
+        PApplet.println("-- BFS --");
+        reset();
+        return search(new LinkedList<>());
+    }
+
+    public List<Vertex> ucs() {
         PApplet.println("-- UCS --");
-        search(new PriorityQueue<>((v1, v2) -> (int) (v1.distanceFromStart - v2.distanceFromStart)));
+        reset();
+        return search(new PriorityQueue<>((v1, v2) -> (int) (v1.distanceFromStart - v2.distanceFromStart)));
     }
 
-    public void aStar() {
+    public List<Vertex> aStar() {
         PApplet.println("-- A* --");
-        search(new PriorityQueue<>((v1, v2) -> (int) (
+        reset();
+        return search(new PriorityQueue<>((v1, v2) -> (int) (
                 (v1.distanceFromStart + v1.heuristicDistanceToFinish)
                         - (v2.distanceFromStart + v2.heuristicDistanceToFinish)
         )));
     }
 
-    public void weightedAStar(final float epislon) {
+    public List<Vertex> weightedAStar(final float epislon) {
         PApplet.println("-- Weighted A* with epsilon = " + epislon + " --");
-        search(new PriorityQueue<>((v1, v2) -> (int) (
+        reset();
+        return search(new PriorityQueue<>((v1, v2) -> (int) (
                 (v1.distanceFromStart + epislon * v1.heuristicDistanceToFinish)
                         - (v2.distanceFromStart + epislon * v2.heuristicDistanceToFinish)
         )));

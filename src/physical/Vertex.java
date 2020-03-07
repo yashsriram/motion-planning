@@ -36,6 +36,7 @@ public class Vertex {
     public Vec3 color;
     public boolean isExplored = false;
     public float distanceFromStart = 0;
+    public List<Vertex> path = new ArrayList<>();
 
     public static Vertex start(PApplet parent, Vec3 position, float distanceToFinish, Vec3 color) {
         return new Vertex(parent, START_ID, position, distanceToFinish, color);

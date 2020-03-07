@@ -47,15 +47,23 @@ public class Main extends PApplet {
         );
         // vertex sampling
         List<Vec3> vertexPositions = new ArrayList<>();
-        for (int i = 0; i < 1000; ++i) {
+        for (int i = 0; i < 200; ++i) {
             vertexPositions.add(Vec3.of(0, random(-SIDE, SIDE), random(-SIDE, SIDE)));
         }
         graph = new Graph(this, startPosition, finishPosition);
         graph.generateVertices(vertexPositions, sphericalAgent, sphericalObstacle);
-        graph.generateAdjacencies(10, sphericalAgent, sphericalObstacle);
+        graph.generateAdjacencies(80, sphericalAgent, sphericalObstacle);
     }
 
     public void draw() {
+        if (keyPressed) {
+            if (key == 'x') {
+                sphericalAgent.stepForward();
+            }
+            if (key == 'z') {
+                sphericalAgent.stepBackward();
+            }
+        }
         long start = millis();
         // update
         long update = millis();
@@ -79,23 +87,20 @@ public class Main extends PApplet {
         if (key == 'j') {
             Vertex.DRAW_EDGES = !Vertex.DRAW_EDGES;
         }
-        if (key == 'r') {
-            graph.reset();
-        }
         if (key == '1') {
-            graph.dfs();
+            sphericalAgent.setPath(graph.dfs());
         }
         if (key == '2') {
-            graph.bfs();
+            sphericalAgent.setPath(graph.bfs());
         }
         if (key == '3') {
-            graph.ucs();
+            sphericalAgent.setPath(graph.ucs());
         }
         if (key == '4') {
-            graph.aStar();
+            sphericalAgent.setPath(graph.aStar());
         }
         if (key == '5') {
-            graph.weightedAStar(0);
+            sphericalAgent.setPath(graph.weightedAStar(1.5f));
         }
     }
 
