@@ -22,12 +22,20 @@ public class Vertex {
     public final PApplet parent;
     public final int id;
     public final Vec3 position;
-    public final float distanceToFinish;
     public Vec3 color;
+
+    // Depends on allowed configuration-space
+    public boolean cannotBeReached = false;
+
+    // Depends on max edge length
     public List<Vertex> neighbours = new ArrayList<>();
+    // Depends on allowed configuration-space and cannotBeReached
     public List<Vec3> edgeColors = new ArrayList<>();
-    public boolean isOnFringe = false;
-    public boolean isDead = false;
+
+    // Can change with search calls
+    public final float heuristicDistanceToFinish;
+    public boolean isExplored = false;
+    public float costToReach = 0;
 
     public static Vertex start(PApplet parent, Vec3 position, float distanceToFinish, Vec3 color) {
         return new Vertex(parent, START_ID, position, distanceToFinish, color);
@@ -41,11 +49,11 @@ public class Vertex {
         return new Vertex(parent, getNextId(), position, distanceToFinish, color);
     }
 
-    private Vertex(PApplet parent, int id, Vec3 position, float distanceToFinish, Vec3 color) {
+    private Vertex(PApplet parent, int id, Vec3 position, float heuristicDistanceToFinish, Vec3 color) {
         this.parent = parent;
         this.id = id;
         this.position = position;
-        this.distanceToFinish = distanceToFinish;
+        this.heuristicDistanceToFinish = heuristicDistanceToFinish;
         this.color = color;
     }
 

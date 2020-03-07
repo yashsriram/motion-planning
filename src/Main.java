@@ -91,6 +91,12 @@ public class Main extends PApplet {
         if (key == '3') {
             graph.ucs();
         }
+        if (key == '4') {
+            graph.aStar();
+        }
+        if (key == '5') {
+            graph.preHeuristic();
+        }
     }
 
     static public void main(String[] passedArgs) {

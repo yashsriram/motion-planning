@@ -37,6 +37,7 @@ visualize the roadmap the agent is following, including the start and goal posit
 milestones, and edges.
 
 ### Crowd/Flocking Simulation (Required) (80 Points)
+    - [x] continuous edge obstacle collision detection
 
 Simulate multiple agents sharing the environment as follows:
  - [ ] Implement a local interaction technique (Boids, Helbing, RVO/ORCA, TTC, etc.).

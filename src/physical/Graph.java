@@ -33,7 +33,7 @@ public class Graph {
         for (Vertex vertex : vertices) {
             if (vertex.position.minus(sphericalObstacle.center).norm() <= sphericalObstacle.radius + sphericalAgent.radius) {
                 vertex.color = Vec3.of(1, 0, 1);
-                vertex.isDead = true;
+                vertex.cannotBeReached = true;
                 numVerticesCulled++;
             }
         }
@@ -67,7 +67,7 @@ public class Graph {
                 Vertex v2 = vertices.get(j);
                 if (v1.position.minus(v2.position).norm() <= maxEdgeLen) {
                     // Check for intersection with spherical obstacle
-                    if (v1.isDead || v2.isDead || doesIntersect(v1, v2, sphericalAgent, sphericalObstacle)) {
+                    if (v1.cannotBeReached || v2.cannotBeReached || doesIntersect(v1, v2, sphericalAgent, sphericalObstacle)) {
                         v1.addNeighbour(v2, Vec3.of(1, 0, 1));
                         v2.addNeighbour(v1, Vec3.of(1, 0, 1));
                         numEdgesCulled++;
@@ -92,14 +92,14 @@ public class Graph {
     public void reset() {
         PApplet.println("Reset");
         for (Vertex v : vertices) {
-            v.isOnFringe = false;
+            v.isExplored = false;
             v.color = Vec3.of(1);
         }
     }
 
     private void addToFringe(final Stack<Vertex> fringe, final Vertex v) {
         fringe.add(v);
-        v.isOnFringe = true;
+        v.isExplored = true;
         v.color = Vec3.of(0, 1, 0);
     }
 
@@ -124,7 +124,7 @@ public class Graph {
             }
             // Update fringe
             for (Vertex neighbour : current.neighbours) {
-                if (!neighbour.isDead && !neighbour.isOnFringe) {
+                if (!neighbour.cannotBeReached && !neighbour.isExplored) {
                     addToFringe(fringe, neighbour);
                 }
             }
@@ -135,7 +135,7 @@ public class Graph {
 
     private void addToFringe(final Queue<Vertex> fringe, final Vertex v) {
         fringe.add(v);
-        v.isOnFringe = true;
+        v.isExplored = true;
         v.color = Vec3.of(0, 1, 0);
     }
 
@@ -160,7 +160,7 @@ public class Graph {
             }
             // Update fringe
             for (Vertex neighbour : current.neighbours) {
-                if (!neighbour.isDead && !neighbour.isOnFringe) {
+                if (!neighbour.cannotBeReached && !neighbour.isExplored) {
                     addToFringe(fringe, neighbour);
                 }
             }
@@ -169,10 +169,79 @@ public class Graph {
         PApplet.println("Could not reach finish, # vertices explored: " + numVerticesExplored);
     }
 
+    private void addToFringe(final Queue<Vertex> fringe, final Vertex current, final Vertex next) {
+        next.costToReach = current.costToReach + next.position.minus(current.position).norm();
+        fringe.add(next);
+        next.isExplored = true;
+        next.color = Vec3.of(0, 1, 0);
+    }
+
     public void ucs() {
         PApplet.println("-- UCS --");
 
-        final Queue<Vertex> fringe = new PriorityQueue<>((v1, v2) -> (int) (v1.distanceToFinish - v2.distanceToFinish));
+        final Queue<Vertex> fringe = new PriorityQueue<>((v1, v2) -> (int) (v1.costToReach - v2.costToReach));
+        int numVerticesExplored = 0;
+
+        // Add start to fringe
+        addToFringe(fringe, start, start);
+        while (fringe.size() > 0) {
+            // Pop one vertex
+            Vertex current = fringe.remove();
+            current.color = Vec3.of(1, 0, 0);
+            // PApplet.println(current.id);
+            numVerticesExplored++;
+            // Check if finish
+            if (current.id == Vertex.FINISH_ID) {
+                PApplet.println("Reached finish, # vertices explored: " + numVerticesExplored);
+                return;
+            }
+            // Update fringe
+            for (Vertex neighbour : current.neighbours) {
+                if (!neighbour.cannotBeReached && !neighbour.isExplored) {
+                    addToFringe(fringe, current, neighbour);
+                }
+            }
+        }
+
+        PApplet.println("Could not reach finish, # vertices explored: " + numVerticesExplored);
+    }
+
+    public void aStar() {
+        PApplet.println("-- A* --");
+
+        final Queue<Vertex> fringe = new PriorityQueue<>((v1, v2) -> (int) (
+                (v1.costToReach + v1.heuristicDistanceToFinish) - (v2.costToReach + v2.heuristicDistanceToFinish)
+        ));
+        int numVerticesExplored = 0;
+
+        // Add start to fringe
+        addToFringe(fringe, start, start);
+        while (fringe.size() > 0) {
+            // Pop one vertex
+            Vertex current = fringe.remove();
+            current.color = Vec3.of(1, 0, 0);
+            // PApplet.println(current.id);
+            numVerticesExplored++;
+            // Check if finish
+            if (current.id == Vertex.FINISH_ID) {
+                PApplet.println("Reached finish, # vertices explored: " + numVerticesExplored);
+                return;
+            }
+            // Update fringe
+            for (Vertex neighbour : current.neighbours) {
+                if (!neighbour.cannotBeReached && !neighbour.isExplored) {
+                    addToFringe(fringe, current, neighbour);
+                }
+            }
+        }
+
+        PApplet.println("Could not reach finish, # vertices explored: " + numVerticesExplored);
+    }
+
+    public void preHeuristic() {
+        PApplet.println("-- Pure heuristic --");
+
+        final Queue<Vertex> fringe = new PriorityQueue<>((v1, v2) -> (int) (v1.heuristicDistanceToFinish - v2.heuristicDistanceToFinish));
         int numVerticesExplored = 0;
 
         // Add start to fringe
@@ -190,7 +259,7 @@ public class Graph {
             }
             // Update fringe
             for (Vertex neighbour : current.neighbours) {
-                if (!neighbour.isDead && !neighbour.isOnFringe) {
+                if (!neighbour.cannotBeReached && !neighbour.isExplored) {
                     addToFringe(fringe, neighbour);
                 }
             }
