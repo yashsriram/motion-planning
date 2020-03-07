@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Vertex {
-    public static boolean DRAW_EDGES = false;
+    public static final int START_ID = -1;
+    public static final int FINISH_ID = 0;
+    public static boolean DRAW_EDGES = true;
 
-    private static final int START_ID = -1;
-    private static final int FINISH_ID = 0;
     private static int nextId = 1;
 
     private static int getNextId() {
@@ -25,6 +25,8 @@ public class Vertex {
     public Vec3 color;
     public List<Vertex> neighbours = new ArrayList<>();
     public List<Vec3> edgeColors = new ArrayList<>();
+    public boolean isOnFringe = false;
+    public boolean isDead = false;
 
     public static Vertex start(PApplet parent, Vec3 position, Vec3 color) {
         return new Vertex(parent, START_ID, position, color);
@@ -48,11 +50,13 @@ public class Vertex {
     public void draw() {
         parent.pushMatrix();
         parent.fill(color.x, color.y, color.z);
+        parent.stroke(color.x, color.y, color.z);
+//        parent.text(id, position.x, position.y, position.z);
         parent.translate(position.x, position.y, position.z);
-        parent.box(0.5f);
+        parent.box(1f);
         parent.popMatrix();
         if (DRAW_EDGES) {
-            for (int i = 0;i < neighbours.size(); ++i) {
+            for (int i = 0; i < neighbours.size(); ++i) {
                 Vertex neighbour = neighbours.get(i);
                 Vec3 color = edgeColors.get(i);
                 parent.stroke(color.x, color.y, color.z);
@@ -65,5 +69,12 @@ public class Vertex {
     public void addNeighbour(Vertex other, Vec3 color) {
         neighbours.add(other);
         edgeColors.add(color);
+    }
+
+    @Override
+    public String toString() {
+        return "Vertex{" +
+                "id=" + id +
+                '}';
     }
 }

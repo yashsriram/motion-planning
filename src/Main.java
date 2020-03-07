@@ -42,29 +42,17 @@ public class Main extends PApplet {
                 SIDE * (0.5f / 20),
                 Vec3.of(1)
         );
-        graph = new Graph(this,
-                Vertex.start(
-                        this,
-                        start,
-                        Vec3.of(0, 1, 0)
-                ),
-                Vertex.finish(
-                        this,
-                        finish,
-                        Vec3.of(0, 0, 1)
-                )
-        );
+        graph = new Graph(this, start, finish);
         // vertex sampling
         for (int i = 0; i < 1000; ++i) {
             graph.addVertex(Vertex.of(
                     this,
                     Vec3.of(0, random(-SIDE, SIDE), random(-SIDE, SIDE)),
-                    Vec3.of(1, 1, 0)
+                    Vec3.of(1)
             ));
         }
-        graph.cullInObstacleVertices(sphericalObstacle, sphericalAgent);
-        graph.generateEdges();
-        graph.cullIntersectingEdges(sphericalObstacle, sphericalAgent);
+        graph.cullInObstacleVertices(sphericalAgent, sphericalObstacle);
+        graph.generateEdges(10, sphericalAgent, sphericalObstacle);
     }
 
     public void draw() {
@@ -90,6 +78,9 @@ public class Main extends PApplet {
         }
         if (key == 'j') {
             Vertex.DRAW_EDGES = !Vertex.DRAW_EDGES;
+        }
+        if (key == 'b') {
+            graph.bfs();
         }
     }
 
