@@ -50,8 +50,8 @@ public class Vertex {
     public void draw() {
         parent.pushMatrix();
         parent.fill(color.x, color.y, color.z);
-        parent.stroke(color.x, color.y, color.z);
-//        parent.text(id, position.x, position.y, position.z);
+        parent.noStroke();
+        // parent.text(id, position.x, position.y, position.z);
         parent.translate(position.x, position.y, position.z);
         parent.box(1f);
         parent.popMatrix();
