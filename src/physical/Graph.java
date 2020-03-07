@@ -136,7 +136,7 @@ public class Graph {
         }
 
         PApplet.println("Could not reach finish, # vertices explored: " + numVerticesExplored);
-        return null;
+        return Collections.singletonList(start);
     }
 
     private void addToFringe(final Queue<Vertex> fringe, final Vertex current, final Vertex next) {
@@ -173,7 +173,7 @@ public class Graph {
         }
 
         PApplet.println("Could not reach finish, # vertices explored: " + numVerticesExplored);
-        return null;
+        return Collections.singletonList(start);
     }
 
     public List<Vertex> bfs() {
