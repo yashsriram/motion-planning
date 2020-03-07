@@ -19,8 +19,15 @@ public class Graph {
         this.vertices.add(finish);
     }
 
-    public void generateVertices(List<Vertex> newVertices, SphericalAgent sphericalAgent, SphericalObstacle sphericalObstacle) {
-        vertices.addAll(newVertices);
+    public void generateVertices(List<Vec3> newVertexPositions, SphericalAgent sphericalAgent, SphericalObstacle sphericalObstacle) {
+        for (Vec3 position : newVertexPositions) {
+            float distanceToFinish = finish.position.minus(position).norm();
+            vertices.add(Vertex.of(
+                    parent,
+                    position,
+                    distanceToFinish,
+                    Vec3.of(1)));
+        }
         PApplet.println("# vertices before culling: " + vertices.size());
         int numVerticesCulled = 0;
         for (Vertex vertex : vertices) {

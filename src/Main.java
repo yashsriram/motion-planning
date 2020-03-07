@@ -46,19 +46,12 @@ public class Main extends PApplet {
                 Vec3.of(1)
         );
         // vertex sampling
-        List<Vertex> vertices = new ArrayList<>();
+        List<Vec3> vertexPositions = new ArrayList<>();
         for (int i = 0; i < 1000; ++i) {
-            Vec3 position = Vec3.of(0, random(-SIDE, SIDE), random(-SIDE, SIDE));
-            float distanceToFinish = finishPosition.minus(position).norm();
-            vertices.add(Vertex.of(
-                    this,
-                    position,
-                    distanceToFinish,
-                    Vec3.of(1)
-            ));
+            vertexPositions.add(Vec3.of(0, random(-SIDE, SIDE), random(-SIDE, SIDE)));
         }
         graph = new Graph(this, startPosition, finishPosition);
-        graph.generateVertices(vertices, sphericalAgent, sphericalObstacle);
+        graph.generateVertices(vertexPositions, sphericalAgent, sphericalObstacle);
         graph.generateAdjacencies(10, sphericalAgent, sphericalObstacle);
     }
 
