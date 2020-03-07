@@ -92,8 +92,11 @@ public class Graph {
     public void reset() {
         PApplet.println("Reset");
         for (Vertex v : vertices) {
-            v.isExplored = false;
-            v.color = Vec3.of(1);
+            if (v.canBeReached) {
+                v.distanceFromStart = 0;
+                v.isExplored = false;
+                v.color = Vec3.of(1);
+            }
         }
     }
 
@@ -210,7 +213,8 @@ public class Graph {
         PApplet.println("-- A* --");
 
         final Queue<Vertex> fringe = new PriorityQueue<>((v1, v2) -> (int) (
-                (v1.distanceFromStart + v1.heuristicDistanceToFinish) - (v2.distanceFromStart + v2.heuristicDistanceToFinish)
+                (v1.distanceFromStart + v1.heuristicDistanceToFinish)
+                        - (v2.distanceFromStart + v2.heuristicDistanceToFinish)
         ));
         int numVerticesExplored = 0;
 
@@ -248,7 +252,7 @@ public class Graph {
         int numVerticesExplored = 0;
 
         // Add start to fringe
-        addToFringe(fringe, start);
+        addToFringe(fringe, start, start);
         while (fringe.size() > 0) {
             // Pop one vertex
             Vertex current = fringe.remove();
@@ -263,7 +267,7 @@ public class Graph {
             // Update fringe
             for (Vertex neighbour : current.neighbours) {
                 if (neighbour.canBeReached && !neighbour.isExplored) {
-                    addToFringe(fringe, neighbour);
+                    addToFringe(fringe, current, neighbour);
                 }
             }
         }

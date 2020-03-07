@@ -22,10 +22,10 @@ public class Vertex {
     public final PApplet parent;
     public final int id;
     public final Vec3 position;
-    public Vec3 color;
 
     // Depends on allowed configuration-space
     public boolean canBeReached = true;
+    public final float heuristicDistanceToFinish;
 
     // Depends on max edge length
     public List<Vertex> neighbours = new ArrayList<>();
@@ -33,7 +33,7 @@ public class Vertex {
     public List<Vec3> edgeColors = new ArrayList<>();
 
     // Can change with search calls
-    public final float heuristicDistanceToFinish;
+    public Vec3 color;
     public boolean isExplored = false;
     public float distanceFromStart = 0;
 

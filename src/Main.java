@@ -95,7 +95,7 @@ public class Main extends PApplet {
             graph.aStar();
         }
         if (key == '5') {
-            graph.weightedAStar(1);
+            graph.weightedAStar(0);
         }
     }
 
