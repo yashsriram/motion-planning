@@ -13,6 +13,7 @@ public class Graph {
     final Vertex start;
     final Vertex finish;
     final List<Vertex> vertices = new ArrayList<>();
+    final Queue<Vertex> fringe = new LinkedList<>();
 
     public Graph(PApplet parent, Vec3 startPosition, Vec3 finishPosition) {
         this.parent = parent;
@@ -22,27 +23,18 @@ public class Graph {
         this.vertices.add(finish);
     }
 
-    public void addVertex(Vertex vertex) {
-        this.vertices.add(vertex);
-    }
-
-    public void cullInObstacleVertices(SphericalAgent sphericalAgent, SphericalObstacle sphericalObstacle) {
+    public void generateVertices(List<Vertex> vertices, SphericalAgent sphericalAgent, SphericalObstacle sphericalObstacle) {
+        this.vertices.addAll(vertices);
         PApplet.println("# vertices before culling: " + vertices.size());
-        List<Integer> badVertexIndices = new ArrayList<>();
-        for (int i = 0; i < vertices.size(); ++i) {
-            Vertex vertex = vertices.get(i);
+        int numVerticesCulled = 0;
+        for (Vertex vertex : vertices) {
             if (vertex.position.minus(sphericalObstacle.center).norm() <= sphericalObstacle.radius + sphericalAgent.radius) {
                 vertex.color = Vec3.of(1, 0, 1);
                 vertex.isDead = true;
-                badVertexIndices.add(i);
             }
         }
-//        for (int i = badVertexIndices.size() - 1; i >= 0; --i) {
-//            int indexToRemove = badVertexIndices.get(i);
-//            vertices.remove(indexToRemove);
-//        }
-        PApplet.println("# vertices culled: " + badVertexIndices.size());
-        PApplet.println("# vertices after culling: " + vertices.size());
+        PApplet.println("# vertices culled: " + numVerticesCulled);
+        PApplet.println("# vertices after culling: " + (vertices.size() - numVerticesCulled));
     }
 
     private boolean doesIntersect(Vertex v1, Vertex v2, SphericalAgent sphericalAgent, SphericalObstacle sphericalObstacle) {
@@ -57,15 +49,12 @@ public class Graph {
             float t1 = (float) ((-b + Math.sqrt(discriminant)) / (2 * a));
             float t2 = (float) ((-b - Math.sqrt(discriminant)) / (2 * a));
             // Intersection with line segment only possible iff at least one of the solutions lies in [0, 1]
-            if ((0 <= t1 && t1 <= 1)
-                    || (0 <= t2 && t2 <= 1)) {
-                return true;
-            }
+            return (0 <= t1 && t1 <= 1) || (0 <= t2 && t2 <= 1);
         }
         return false;
     }
 
-    public void generateEdges(float maxEdgeLen, SphericalAgent sphericalAgent, SphericalObstacle sphericalObstacle) {
+    public void generateAdjacencies(float maxEdgeLen, SphericalAgent sphericalAgent, SphericalObstacle sphericalObstacle) {
         int numEdges = 0;
         int numEdgesCulled = 0;
         for (int i = 0; i < vertices.size(); ++i) {
@@ -73,7 +62,6 @@ public class Graph {
                 Vertex v1 = vertices.get(i);
                 Vertex v2 = vertices.get(j);
                 if (v1.position.minus(v2.position).norm() < maxEdgeLen) {
-
                     // Check for intersection with spherical obstacle
                     if (v1.isDead || v2.isDead || doesIntersect(v1, v2, sphericalAgent, sphericalObstacle)) {
                         v1.addNeighbour(v2, Vec3.of(1, 0, 1));
@@ -97,15 +85,18 @@ public class Graph {
         }
     }
 
+    private void addToFringe(Vertex v) {
+        fringe.add(v);
+        v.isOnFringe = true;
+        v.color = Vec3.of(0, 1, 0);
+    }
+
     public void bfs() {
-        Queue<Vertex> fringe = new LinkedList<>();
+        fringe.clear();
         int numVerticesExplored = 0;
 
         // Add start to fringe
-        fringe.add(start);
-        start.isOnFringe = true;
-        start.color = Vec3.of(0, 1, 0);
-
+        addToFringe(start);
         while (fringe.size() > 0) {
             // Pop one vertex
             Vertex current = fringe.remove();
@@ -119,10 +110,8 @@ public class Graph {
             }
             // Update fringe
             for (Vertex neighbour : current.neighbours) {
-                if (!neighbour.isOnFringe && !neighbour.isDead) {
-                    fringe.add(neighbour);
-                    neighbour.color = Vec3.of(0, 1, 0);
-                    neighbour.isOnFringe = true;
+                if (!neighbour.isDead && !neighbour.isOnFringe) {
+                    addToFringe(neighbour);
                 }
             }
         }

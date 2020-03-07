@@ -6,6 +6,9 @@ import physical.SphericalObstacle;
 import physical.Vertex;
 import processing.core.PApplet;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Main extends PApplet {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 800;
@@ -42,17 +45,18 @@ public class Main extends PApplet {
                 SIDE * (0.5f / 20),
                 Vec3.of(1)
         );
-        graph = new Graph(this, start, finish);
         // vertex sampling
+        List<Vertex> vertices = new ArrayList<>();
         for (int i = 0; i < 1000; ++i) {
-            graph.addVertex(Vertex.of(
+            vertices.add(Vertex.of(
                     this,
                     Vec3.of(0, random(-SIDE, SIDE), random(-SIDE, SIDE)),
                     Vec3.of(1)
             ));
         }
-        graph.cullInObstacleVertices(sphericalAgent, sphericalObstacle);
-        graph.generateEdges(10, sphericalAgent, sphericalObstacle);
+        graph = new Graph(this, start, finish);
+        graph.generateVertices(vertices, sphericalAgent, sphericalObstacle);
+        graph.generateAdjacencies(10, sphericalAgent, sphericalObstacle);
     }
 
     public void draw() {
