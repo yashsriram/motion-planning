@@ -25,7 +25,7 @@ public class Vertex {
     public Vec3 color;
 
     // Depends on allowed configuration-space
-    public boolean cannotBeReached = false;
+    public boolean canBeReached = true;
 
     // Depends on max edge length
     public List<Vertex> neighbours = new ArrayList<>();
@@ -35,7 +35,7 @@ public class Vertex {
     // Can change with search calls
     public final float heuristicDistanceToFinish;
     public boolean isExplored = false;
-    public float costToReach = 0;
+    public float distanceFromStart = 0;
 
     public static Vertex start(PApplet parent, Vec3 position, float distanceToFinish, Vec3 color) {
         return new Vertex(parent, START_ID, position, distanceToFinish, color);

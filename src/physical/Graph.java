@@ -33,7 +33,7 @@ public class Graph {
         for (Vertex vertex : vertices) {
             if (vertex.position.minus(sphericalObstacle.center).norm() <= sphericalObstacle.radius + sphericalAgent.radius) {
                 vertex.color = Vec3.of(1, 0, 1);
-                vertex.cannotBeReached = true;
+                vertex.canBeReached = false;
                 numVerticesCulled++;
             }
         }
@@ -67,7 +67,7 @@ public class Graph {
                 Vertex v2 = vertices.get(j);
                 if (v1.position.minus(v2.position).norm() <= maxEdgeLen) {
                     // Check for intersection with spherical obstacle
-                    if (v1.cannotBeReached || v2.cannotBeReached || doesIntersect(v1, v2, sphericalAgent, sphericalObstacle)) {
+                    if (!v1.canBeReached || !v2.canBeReached || doesIntersect(v1, v2, sphericalAgent, sphericalObstacle)) {
                         v1.addNeighbour(v2, Vec3.of(1, 0, 1));
                         v2.addNeighbour(v1, Vec3.of(1, 0, 1));
                         numEdgesCulled++;
@@ -124,7 +124,7 @@ public class Graph {
             }
             // Update fringe
             for (Vertex neighbour : current.neighbours) {
-                if (!neighbour.cannotBeReached && !neighbour.isExplored) {
+                if (neighbour.canBeReached && !neighbour.isExplored) {
                     addToFringe(fringe, neighbour);
                 }
             }
@@ -160,7 +160,7 @@ public class Graph {
             }
             // Update fringe
             for (Vertex neighbour : current.neighbours) {
-                if (!neighbour.cannotBeReached && !neighbour.isExplored) {
+                if (neighbour.canBeReached && !neighbour.isExplored) {
                     addToFringe(fringe, neighbour);
                 }
             }
@@ -170,7 +170,7 @@ public class Graph {
     }
 
     private void addToFringe(final Queue<Vertex> fringe, final Vertex current, final Vertex next) {
-        next.costToReach = current.costToReach + next.position.minus(current.position).norm();
+        next.distanceFromStart = current.distanceFromStart + next.position.minus(current.position).norm();
         fringe.add(next);
         next.isExplored = true;
         next.color = Vec3.of(0, 1, 0);
@@ -179,7 +179,7 @@ public class Graph {
     public void ucs() {
         PApplet.println("-- UCS --");
 
-        final Queue<Vertex> fringe = new PriorityQueue<>((v1, v2) -> (int) (v1.costToReach - v2.costToReach));
+        final Queue<Vertex> fringe = new PriorityQueue<>((v1, v2) -> (int) (v1.distanceFromStart - v2.distanceFromStart));
         int numVerticesExplored = 0;
 
         // Add start to fringe
@@ -197,7 +197,7 @@ public class Graph {
             }
             // Update fringe
             for (Vertex neighbour : current.neighbours) {
-                if (!neighbour.cannotBeReached && !neighbour.isExplored) {
+                if (neighbour.canBeReached && !neighbour.isExplored) {
                     addToFringe(fringe, current, neighbour);
                 }
             }
@@ -210,7 +210,7 @@ public class Graph {
         PApplet.println("-- A* --");
 
         final Queue<Vertex> fringe = new PriorityQueue<>((v1, v2) -> (int) (
-                (v1.costToReach + v1.heuristicDistanceToFinish) - (v2.costToReach + v2.heuristicDistanceToFinish)
+                (v1.distanceFromStart + v1.heuristicDistanceToFinish) - (v2.distanceFromStart + v2.heuristicDistanceToFinish)
         ));
         int numVerticesExplored = 0;
 
@@ -229,7 +229,7 @@ public class Graph {
             }
             // Update fringe
             for (Vertex neighbour : current.neighbours) {
-                if (!neighbour.cannotBeReached && !neighbour.isExplored) {
+                if (neighbour.canBeReached && !neighbour.isExplored) {
                     addToFringe(fringe, current, neighbour);
                 }
             }
@@ -259,7 +259,7 @@ public class Graph {
             }
             // Update fringe
             for (Vertex neighbour : current.neighbours) {
-                if (!neighbour.cannotBeReached && !neighbour.isExplored) {
+                if (neighbour.canBeReached && !neighbour.isExplored) {
                     addToFringe(fringe, neighbour);
                 }
             }
