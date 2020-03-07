@@ -13,7 +13,6 @@ public class Graph {
     final Vertex start;
     final Vertex finish;
     final List<Vertex> vertices = new ArrayList<>();
-    final Queue<Vertex> fringe = new LinkedList<>();
 
     public Graph(PApplet parent, Vec3 startPosition, Vec3 finishPosition) {
         this.parent = parent;
@@ -23,14 +22,15 @@ public class Graph {
         this.vertices.add(finish);
     }
 
-    public void generateVertices(List<Vertex> vertices, SphericalAgent sphericalAgent, SphericalObstacle sphericalObstacle) {
-        this.vertices.addAll(vertices);
+    public void generateVertices(List<Vertex> newVertices, SphericalAgent sphericalAgent, SphericalObstacle sphericalObstacle) {
+        vertices.addAll(newVertices);
         PApplet.println("# vertices before culling: " + vertices.size());
         int numVerticesCulled = 0;
         for (Vertex vertex : vertices) {
             if (vertex.position.minus(sphericalObstacle.center).norm() <= sphericalObstacle.radius + sphericalAgent.radius) {
                 vertex.color = Vec3.of(1, 0, 1);
                 vertex.isDead = true;
+                numVerticesCulled++;
             }
         }
         PApplet.println("# vertices culled: " + numVerticesCulled);
@@ -61,7 +61,7 @@ public class Graph {
             for (int j = i + 1; j < vertices.size(); j++) {
                 Vertex v1 = vertices.get(i);
                 Vertex v2 = vertices.get(j);
-                if (v1.position.minus(v2.position).norm() < maxEdgeLen) {
+                if (v1.position.minus(v2.position).norm() <= maxEdgeLen) {
                     // Check for intersection with spherical obstacle
                     if (v1.isDead || v2.isDead || doesIntersect(v1, v2, sphericalAgent, sphericalObstacle)) {
                         v1.addNeighbour(v2, Vec3.of(1, 0, 1));
@@ -85,18 +85,18 @@ public class Graph {
         }
     }
 
-    private void addToFringe(Vertex v) {
+    private void addToFringe(final Queue<Vertex> fringe, final Vertex v) {
         fringe.add(v);
         v.isOnFringe = true;
         v.color = Vec3.of(0, 1, 0);
     }
 
     public void bfs() {
-        fringe.clear();
+        final Queue<Vertex> fringe = new LinkedList<>();
         int numVerticesExplored = 0;
 
         // Add start to fringe
-        addToFringe(start);
+        addToFringe(fringe, start);
         while (fringe.size() > 0) {
             // Pop one vertex
             Vertex current = fringe.remove();
@@ -111,7 +111,7 @@ public class Graph {
             // Update fringe
             for (Vertex neighbour : current.neighbours) {
                 if (!neighbour.isDead && !neighbour.isOnFringe) {
-                    addToFringe(neighbour);
+                    addToFringe(fringe, neighbour);
                 }
             }
         }
