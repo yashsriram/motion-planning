@@ -13,8 +13,8 @@ public class Graph {
 
     public Graph(PApplet parent, Vec3 startPosition, Vec3 finishPosition) {
         this.parent = parent;
-        this.start = Vertex.start(parent, startPosition, Vec3.of(0, 1, 0));
-        this.finish = Vertex.finish(parent, finishPosition, Vec3.of(0, 0, 1));
+        this.start = Vertex.start(parent, startPosition, finishPosition.minus(startPosition).norm(), Vec3.of(0, 1, 0));
+        this.finish = Vertex.finish(parent, finishPosition, 0, Vec3.of(0, 0, 1));
         this.vertices.add(start);
         this.vertices.add(finish);
     }
@@ -136,6 +136,36 @@ public class Graph {
         PApplet.println("-- BFS --");
 
         final Queue<Vertex> fringe = new LinkedList<>();
+        int numVerticesExplored = 0;
+
+        // Add start to fringe
+        addToFringe(fringe, start);
+        while (fringe.size() > 0) {
+            // Pop one vertex
+            Vertex current = fringe.remove();
+            current.color = Vec3.of(1, 0, 0);
+            // PApplet.println(current.id);
+            numVerticesExplored++;
+            // Check if finish
+            if (current.id == Vertex.FINISH_ID) {
+                PApplet.println("Reached finish, # vertices explored: " + numVerticesExplored);
+                return;
+            }
+            // Update fringe
+            for (Vertex neighbour : current.neighbours) {
+                if (!neighbour.isDead && !neighbour.isOnFringe) {
+                    addToFringe(fringe, neighbour);
+                }
+            }
+        }
+
+        PApplet.println("Could not reach finish, # vertices explored: " + numVerticesExplored);
+    }
+
+    public void ucs() {
+        PApplet.println("-- UCS --");
+
+        final Queue<Vertex> fringe = new PriorityQueue<>((v1, v2) -> (int) (v1.distanceToFinish - v2.distanceToFinish));
         int numVerticesExplored = 0;
 
         // Add start to fringe

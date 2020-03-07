@@ -14,8 +14,8 @@ public class Main extends PApplet {
     public static final int HEIGHT = 800;
     public static final int SIDE = 100;
 
-    final Vec3 start = Vec3.of(0, SIDE * (9f / 10), SIDE * (-9f / 10));
-    final Vec3 finish = Vec3.of(0, SIDE * (-9f / 10), SIDE * (9f / 10));
+    final Vec3 startPosition = Vec3.of(0, SIDE * (9f / 10), SIDE * (-9f / 10));
+    final Vec3 finishPosition = Vec3.of(0, SIDE * (-9f / 10), SIDE * (9f / 10));
     SphericalAgent sphericalAgent;
     SphericalObstacle sphericalObstacle;
     Graph graph;
@@ -41,20 +41,23 @@ public class Main extends PApplet {
         );
         sphericalAgent = new SphericalAgent(
                 this,
-                start,
+                startPosition,
                 SIDE * (0.5f / 20),
                 Vec3.of(1)
         );
         // vertex sampling
         List<Vertex> vertices = new ArrayList<>();
         for (int i = 0; i < 1000; ++i) {
+            Vec3 position = Vec3.of(0, random(-SIDE, SIDE), random(-SIDE, SIDE));
+            float distanceToFinish = finishPosition.minus(position).norm();
             vertices.add(Vertex.of(
                     this,
-                    Vec3.of(0, random(-SIDE, SIDE), random(-SIDE, SIDE)),
+                    position,
+                    distanceToFinish,
                     Vec3.of(1)
             ));
         }
-        graph = new Graph(this, start, finish);
+        graph = new Graph(this, startPosition, finishPosition);
         graph.generateVertices(vertices, sphericalAgent, sphericalObstacle);
         graph.generateAdjacencies(10, sphericalAgent, sphericalObstacle);
     }
@@ -91,6 +94,9 @@ public class Main extends PApplet {
         }
         if (key == '2') {
             graph.bfs();
+        }
+        if (key == '3') {
+            graph.ucs();
         }
     }
 

@@ -21,29 +21,31 @@ public class Vertex {
 
     public final PApplet parent;
     public final int id;
-    public Vec3 position;
+    public final Vec3 position;
+    public final float distanceToFinish;
     public Vec3 color;
     public List<Vertex> neighbours = new ArrayList<>();
     public List<Vec3> edgeColors = new ArrayList<>();
     public boolean isOnFringe = false;
     public boolean isDead = false;
 
-    public static Vertex start(PApplet parent, Vec3 position, Vec3 color) {
-        return new Vertex(parent, START_ID, position, color);
+    public static Vertex start(PApplet parent, Vec3 position, float distanceToFinish, Vec3 color) {
+        return new Vertex(parent, START_ID, position, distanceToFinish, color);
     }
 
-    public static Vertex finish(PApplet parent, Vec3 position, Vec3 color) {
-        return new Vertex(parent, FINISH_ID, position, color);
+    public static Vertex finish(PApplet parent, Vec3 position, float distanceToFinish, Vec3 color) {
+        return new Vertex(parent, FINISH_ID, position, distanceToFinish, color);
     }
 
-    public static Vertex of(PApplet parent, Vec3 position, Vec3 color) {
-        return new Vertex(parent, getNextId(), position, color);
+    public static Vertex of(PApplet parent, Vec3 position, float distanceToFinish, Vec3 color) {
+        return new Vertex(parent, getNextId(), position, distanceToFinish, color);
     }
 
-    private Vertex(PApplet parent, int id, Vec3 position, Vec3 color) {
+    private Vertex(PApplet parent, int id, Vec3 position, float distanceToFinish, Vec3 color) {
         this.parent = parent;
         this.id = id;
         this.position = position;
+        this.distanceToFinish = distanceToFinish;
         this.color = color;
     }
 
