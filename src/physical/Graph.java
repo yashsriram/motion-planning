@@ -179,10 +179,7 @@ public class Graph {
         next.color = Vec3.of(0, 1, 0);
     }
 
-    public void ucs() {
-        PApplet.println("-- UCS --");
-
-        final Queue<Vertex> fringe = new PriorityQueue<>((v1, v2) -> (int) (v1.distanceFromStart - v2.distanceFromStart));
+    private void search(final Queue<Vertex> fringe) {
         int numVerticesExplored = 0;
 
         // Add start to fringe
@@ -207,72 +204,27 @@ public class Graph {
         }
 
         PApplet.println("Could not reach finish, # vertices explored: " + numVerticesExplored);
+    }
+
+    public void ucs() {
+        PApplet.println("-- UCS --");
+        search(new PriorityQueue<>((v1, v2) -> (int) (v1.distanceFromStart - v2.distanceFromStart)));
     }
 
     public void aStar() {
         PApplet.println("-- A* --");
-
-        final Queue<Vertex> fringe = new PriorityQueue<>((v1, v2) -> (int) (
+        search(new PriorityQueue<>((v1, v2) -> (int) (
                 (v1.distanceFromStart + v1.heuristicDistanceToFinish)
                         - (v2.distanceFromStart + v2.heuristicDistanceToFinish)
-        ));
-        int numVerticesExplored = 0;
-
-        // Add start to fringe
-        addToFringe(fringe, start, start);
-        while (fringe.size() > 0) {
-            // Pop one vertex
-            Vertex current = fringe.remove();
-            current.color = Vec3.of(1, 0, 0);
-            // PApplet.println(current.id);
-            numVerticesExplored++;
-            // Check if finish
-            if (current.id == Vertex.FINISH_ID) {
-                PApplet.println("Reached finish, # vertices explored: " + numVerticesExplored);
-                return;
-            }
-            // Update fringe
-            for (Vertex neighbour : current.neighbours) {
-                if (neighbour.canBeReached && !neighbour.isExplored) {
-                    addToFringe(fringe, current, neighbour);
-                }
-            }
-        }
-
-        PApplet.println("Could not reach finish, # vertices explored: " + numVerticesExplored);
+        )));
     }
 
     public void weightedAStar(final float epislon) {
         PApplet.println("-- Weighted A* with epsilon = " + epislon + " --");
-
-        final Queue<Vertex> fringe = new PriorityQueue<>((v1, v2) -> (int) (
+        search(new PriorityQueue<>((v1, v2) -> (int) (
                 (v1.distanceFromStart + epislon * v1.heuristicDistanceToFinish)
                         - (v2.distanceFromStart + epislon * v2.heuristicDistanceToFinish)
-        ));
-        int numVerticesExplored = 0;
-
-        // Add start to fringe
-        addToFringe(fringe, start, start);
-        while (fringe.size() > 0) {
-            // Pop one vertex
-            Vertex current = fringe.remove();
-            current.color = Vec3.of(1, 0, 0);
-            // PApplet.println(current.id);
-            numVerticesExplored++;
-            // Check if finish
-            if (current.id == Vertex.FINISH_ID) {
-                PApplet.println("Reached finish, # vertices explored: " + numVerticesExplored);
-                return;
-            }
-            // Update fringe
-            for (Vertex neighbour : current.neighbours) {
-                if (neighbour.canBeReached && !neighbour.isExplored) {
-                    addToFringe(fringe, current, neighbour);
-                }
-            }
-        }
-
-        PApplet.println("Could not reach finish, # vertices explored: " + numVerticesExplored);
+        )));
     }
 
 }
