@@ -95,7 +95,7 @@ public class Main extends PApplet {
             graph.aStar();
         }
         if (key == '5') {
-            graph.preHeuristic();
+            graph.weightedAStar(1);
         }
     }
 

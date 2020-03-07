@@ -238,10 +238,13 @@ public class Graph {
         PApplet.println("Could not reach finish, # vertices explored: " + numVerticesExplored);
     }
 
-    public void preHeuristic() {
-        PApplet.println("-- Pure heuristic --");
+    public void weightedAStar(final float epislon) {
+        PApplet.println("-- Weighted A* with epsilon = " + epislon + " --");
 
-        final Queue<Vertex> fringe = new PriorityQueue<>((v1, v2) -> (int) (v1.heuristicDistanceToFinish - v2.heuristicDistanceToFinish));
+        final Queue<Vertex> fringe = new PriorityQueue<>((v1, v2) -> (int) (
+                (v1.distanceFromStart + epislon * v1.heuristicDistanceToFinish)
+                        - (v2.distanceFromStart + epislon * v2.heuristicDistanceToFinish)
+        ));
         int numVerticesExplored = 0;
 
         // Add start to fringe
