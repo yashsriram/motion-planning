@@ -92,6 +92,9 @@ public class Main extends PApplet {
         if (key == 'j') {
             Vertex.DRAW_EDGES = !Vertex.DRAW_EDGES;
         }
+        if (key == 'k') {
+            Graph.DRAW_VERTICES = !Graph.DRAW_VERTICES;
+        }
         if (key == 'p') {
             sphericalAgent.isPaused = !sphericalAgent.isPaused;
         }

@@ -10,6 +10,7 @@ public class Graph {
     final Vertex start;
     final Vertex finish;
     final List<Vertex> vertices = new ArrayList<>();
+    public static boolean DRAW_VERTICES = true;
 
     public Graph(PApplet parent, Vec3 startPosition, Vec3 finishPosition) {
         this.parent = parent;
@@ -64,9 +65,25 @@ public class Graph {
     }
 
     public void draw() {
-        for (Vertex vertex : vertices) {
-            vertex.draw();
+        if (DRAW_VERTICES) {
+            for (Vertex vertex : vertices) {
+                vertex.draw();
+            }
         }
+        // Start
+        parent.pushMatrix();
+        parent.fill(1, 1, 0);
+        parent.noStroke();
+        parent.translate(start.position.x, start.position.y, start.position.z);
+        parent.box(2f);
+        parent.popMatrix();
+        // Finish
+        parent.pushMatrix();
+        parent.fill(0, 1, 1);
+        parent.noStroke();
+        parent.translate(finish.position.x, finish.position.y, finish.position.z);
+        parent.box(2f);
+        parent.popMatrix();
     }
 
     private void reset() {
