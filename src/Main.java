@@ -37,6 +37,42 @@ public class Main extends PApplet {
                 SIDE * (2f / 20),
                 Vec3.of(1, 0, 0)
         ));
+        sphericalObstacles.add(new SphericalObstacle(
+                this,
+                Vec3.of(0, 0, 15),
+                SIDE * (2f / 20),
+                Vec3.of(1, 0, 0)
+        ));
+        sphericalObstacles.add(new SphericalObstacle(
+                this,
+                Vec3.of(0, -30, 0),
+                SIDE * (2f / 20),
+                Vec3.of(1, 0, 0)
+        ));
+        sphericalObstacles.add(new SphericalObstacle(
+                this,
+                Vec3.of(0, -30, 15),
+                SIDE * (2f / 20),
+                Vec3.of(1, 0, 0)
+        ));
+        sphericalObstacles.add(new SphericalObstacle(
+                this,
+                Vec3.of(0, 30, 0),
+                SIDE * (2f / 20),
+                Vec3.of(1, 0, 0)
+        ));
+        sphericalObstacles.add(new SphericalObstacle(
+                this,
+                Vec3.of(0, 50, 0),
+                SIDE * (2f / 20),
+                Vec3.of(1, 0, 0)
+        ));
+        sphericalObstacles.add(new SphericalObstacle(
+                this,
+                Vec3.of(0, 70, 0),
+                SIDE * (2f / 20),
+                Vec3.of(1, 0, 0)
+        ));
         sphericalAgent = new SphericalAgent(
                 this,
                 startPosition,
@@ -44,10 +80,10 @@ public class Main extends PApplet {
                 SIDE * (0.5f / 20),
                 Vec3.of(1)
         );
-        configurationSpace = new ConfigurationSpace(sphericalAgent, sphericalObstacles);
+        configurationSpace = new ConfigurationSpace(this, sphericalAgent, sphericalObstacles);
         // vertex sampling
         List<Vec3> vertexPositions = new ArrayList<>();
-        for (int i = 0; i < 20000; ++i) {
+        for (int i = 0; i < 2000; ++i) {
             vertexPositions.add(Vec3.of(0, random(-SIDE, SIDE), random(-SIDE, SIDE)));
         }
         graph = new Graph(this, startPosition, finishPosition);
@@ -76,6 +112,8 @@ public class Main extends PApplet {
         for (SphericalObstacle sphericalObstacle: sphericalObstacles) {
             sphericalObstacle.draw();
         }
+        // configuration space
+        configurationSpace.draw();
         // graph
         graph.draw();
         long draw = millis();
@@ -84,16 +122,19 @@ public class Main extends PApplet {
     }
 
     public void keyPressed() {
+        if (key == 'g') {
+            ConfigurationSpace.DRAW_BOUNDING_SPHERES = !ConfigurationSpace.DRAW_BOUNDING_SPHERES;
+        }
         if (key == 'h') {
             for (SphericalObstacle sphericalObstacle: sphericalObstacles) {
                 sphericalObstacle.isDrawn = !sphericalObstacle.isDrawn;
             }
         }
-        if (key == 'j') {
-            Vertex.DRAW_EDGES = !Vertex.DRAW_EDGES;
-        }
         if (key == 'k') {
             Graph.DRAW_VERTICES = !Graph.DRAW_VERTICES;
+        }
+        if (key == 'j') {
+            Vertex.DRAW_EDGES = !Vertex.DRAW_EDGES;
         }
         if (key == 'p') {
             sphericalAgent.isPaused = !sphericalAgent.isPaused;
