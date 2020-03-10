@@ -22,54 +22,52 @@ public class Vertex {
     public final PApplet parent;
     public final int id;
     public final Vec3 position;
-    public final float size;
-
-    // Depends on configuration-space
-    public boolean canBeReached = true;
     public final float heuristicDistanceToFinish;
 
-    // Depends on max edge length
-    public List<Vertex> neighbours = new ArrayList<>();
-    // Depends on neighbours and configuration-space
-    public List<Vec3> edgeColors = new ArrayList<>();
+    public boolean isOutsideObstacle = true;
+    public final List<Vertex> neighbours = new ArrayList<>();
+    public final List<Vec3> edgeColors = new ArrayList<>();
 
-    // Can change with search calls
-    public Vec3 color;
-    public boolean isExplored = false;
-    public float distanceFromStart = 0;
-    public List<Vertex> pathFromStart = new ArrayList<>();
+    public static class SearchState {
+        public boolean isExplored = false;
+        public float distanceFromStart = 0;
+        public List<Vertex> pathFromStart = new ArrayList<>();
+        public Vec3 color = Vec3.of(1);
 
-    public static Vertex start(PApplet parent, Vec3 position, float distanceToFinish, Vec3 color) {
-        return new Vertex(parent, START_ID, position, distanceToFinish, color);
+        public void reset() {
+            color = Vec3.of(1);
+            isExplored = false;
+            distanceFromStart = 0;
+            pathFromStart = new ArrayList<>();
+        }
     }
 
-    public static Vertex finish(PApplet parent, Vec3 position, float distanceToFinish, Vec3 color) {
-        return new Vertex(parent, FINISH_ID, position, distanceToFinish, color);
+    public final SearchState searchState;
+
+    public static Vertex start(PApplet parent, Vec3 position, float distanceToFinish) {
+        return new Vertex(parent, START_ID, position, distanceToFinish);
     }
 
-    public static Vertex of(PApplet parent, Vec3 position, float distanceToFinish, Vec3 color) {
-        return new Vertex(parent, getNextId(), position, distanceToFinish, color);
+    public static Vertex finish(PApplet parent, Vec3 position, float distanceToFinish) {
+        return new Vertex(parent, FINISH_ID, position, distanceToFinish);
     }
 
-    private Vertex(PApplet parent, int id, Vec3 position, float heuristicDistanceToFinish, Vec3 color) {
+    public static Vertex of(PApplet parent, Vec3 position, float distanceToFinish) {
+        return new Vertex(parent, getNextId(), position, distanceToFinish);
+    }
+
+    private Vertex(PApplet parent, int id, Vec3 position, float heuristicDistanceToFinish) {
         this.parent = parent;
         this.id = id;
-        if (id == START_ID) {
-            size = 2f;
-        } else if (id == FINISH_ID) {
-            size = 3f;
-        } else {
-            size = 1f;
-        }
         this.position = Vec3.of(position);
         this.heuristicDistanceToFinish = heuristicDistanceToFinish;
-        this.color = color;
+        this.searchState = new SearchState();
     }
 
     public void draw() {
         parent.pushMatrix();
-        parent.fill(color.x, color.y, color.z);
-        parent.stroke(color.x, color.y, color.z);
+        parent.fill(searchState.color.x, searchState.color.y, searchState.color.z);
+        parent.stroke(searchState.color.x, searchState.color.y, searchState.color.z);
         parent.point(position.x, position.y, position.z);
         parent.popMatrix();
         if (DRAW_EDGES) {
@@ -86,6 +84,13 @@ public class Vertex {
     public void addNeighbour(Vertex other, Vec3 color) {
         neighbours.add(other);
         edgeColors.add(color);
+    }
+
+    public void addToFringe(Vertex parent) {
+        searchState.color = Vec3.of(0, 1, 0);
+        searchState.isExplored = true;
+        searchState.pathFromStart.addAll(parent.searchState.pathFromStart);
+        searchState.pathFromStart.add(this);
     }
 
     @Override

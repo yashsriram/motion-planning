@@ -14,8 +14,8 @@ navigation structure to allow your agents to navigate through complex environmen
 without getting stuck at local minima.
 
 ## Planning pipeline
-1. Input = start pose, finish pose, agent, obstacles
-2. Using minkowski sum, find configuration space
+1. Input = obstacles, agent, start pose, finish pose,
+2. Find configuration space (minkowski sum/...)
 3. Vertex sampling (PRM/Surface PRM/...)
 4. In obstacle vertex culling (Parallelizable/Spatial data structure)
 5. Obstacle intersecting edge culling (Parallelizable/Spatial data structure)

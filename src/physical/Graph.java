@@ -13,8 +13,8 @@ public class Graph {
 
     public Graph(PApplet parent, Vec3 startPosition, Vec3 finishPosition) {
         this.parent = parent;
-        this.start = Vertex.start(parent, startPosition, finishPosition.minus(startPosition).norm(), Vec3.of(0, 1, 0));
-        this.finish = Vertex.finish(parent, finishPosition, 0, Vec3.of(0, 0, 1));
+        this.start = Vertex.start(parent, startPosition, finishPosition.minus(startPosition).norm());
+        this.finish = Vertex.finish(parent, finishPosition, 0);
         this.vertices.add(start);
         this.vertices.add(finish);
     }
@@ -25,14 +25,13 @@ public class Graph {
             vertices.add(Vertex.of(
                     parent,
                     position,
-                    distanceToFinish,
-                    Vec3.of(1)));
+                    distanceToFinish));
         }
         int numVerticesCulled = 0;
         for (Vertex vertex : vertices) {
             if (configurationSpace.doesIntersectWithObstacle(vertex.position)) {
-                vertex.color = Vec3.of(1, 0, 1);
-                vertex.canBeReached = false;
+                vertex.searchState.color = Vec3.of(1, 0, 1);
+                vertex.isOutsideObstacle = false;
                 numVerticesCulled++;
             }
         }
@@ -50,7 +49,7 @@ public class Graph {
                 Vertex v2 = vertices.get(j);
                 if (v1.position.minus(v2.position).norm() <= maxEdgeLen) {
                     // Check for intersection with spherical obstacle
-                    if (!v1.canBeReached || !v2.canBeReached || configurationSpace.doesIntersectWithObstacle(v1.position, v2.position)) {
+                    if (!v1.isOutsideObstacle || !v2.isOutsideObstacle || configurationSpace.doesIntersectWithObstacle(v1.position, v2.position)) {
                         numEdgesCulled++;
                     } else {
                         v1.addNeighbour(v2, Vec3.of(1));
@@ -71,27 +70,21 @@ public class Graph {
     }
 
     private void reset() {
-        PApplet.println("Reset");
+        PApplet.println("Resetting search states of vertices");
         for (Vertex v : vertices) {
-            if (v.canBeReached) {
-                v.color = Vec3.of(1);
-                v.isExplored = false;
-                v.distanceFromStart = 0;
-                v.pathFromStart = new ArrayList<>();
+            if (v.isOutsideObstacle) {
+                v.searchState.reset();
             }
         }
     }
 
     private void addToFringe(final Stack<Vertex> fringe, final Vertex current, final Vertex next) {
         fringe.add(next);
-        next.isExplored = true;
-        next.color = Vec3.of(0, 1, 0);
-        next.pathFromStart.addAll(current.pathFromStart);
-        next.pathFromStart.add(next);
+        next.addToFringe(current);
     }
 
     public List<Vertex> dfs() {
-        PApplet.println("DFS search");
+        PApplet.println("DFS");
 
         reset();
         final Stack<Vertex> fringe = new Stack<>();
@@ -102,17 +95,17 @@ public class Graph {
         while (fringe.size() > 0) {
             // Pop one vertex
             Vertex current = fringe.pop();
-            current.color = Vec3.of(1, 0, 0);
+            current.searchState.color = Vec3.of(1, 0, 0);
             // PApplet.println(current.id);
             numVerticesExplored++;
             // Check if finish
             if (current.id == Vertex.FINISH_ID) {
                 PApplet.println("Reached finish, # vertices explored: " + numVerticesExplored);
-                return finish.pathFromStart;
+                return finish.searchState.pathFromStart;
             }
             // Update fringe
             for (Vertex neighbour : current.neighbours) {
-                if (neighbour.canBeReached && !neighbour.isExplored) {
+                if (neighbour.isOutsideObstacle && !neighbour.searchState.isExplored) {
                     addToFringe(fringe, current, neighbour);
                 }
             }
@@ -123,12 +116,9 @@ public class Graph {
     }
 
     private void addToFringe(final Queue<Vertex> fringe, final Vertex current, final Vertex next) {
-        next.distanceFromStart = current.distanceFromStart + next.position.minus(current.position).norm();
+        next.searchState.distanceFromStart = current.searchState.distanceFromStart + next.position.minus(current.position).norm();
         fringe.add(next);
-        next.isExplored = true;
-        next.color = Vec3.of(0, 1, 0);
-        next.pathFromStart.addAll(current.pathFromStart);
-        next.pathFromStart.add(next);
+        next.addToFringe(current);
     }
 
     private List<Vertex> search(final Queue<Vertex> fringe) {
@@ -139,17 +129,17 @@ public class Graph {
         while (fringe.size() > 0) {
             // Pop one vertex
             Vertex current = fringe.remove();
-            current.color = Vec3.of(1, 0, 0);
+            current.searchState.color = Vec3.of(1, 0, 0);
             // PApplet.println(current.id);
             numVerticesExplored++;
             // Check if finish
             if (current.id == Vertex.FINISH_ID) {
                 PApplet.println("Reached finish, # vertices explored: " + numVerticesExplored);
-                return finish.pathFromStart;
+                return finish.searchState.pathFromStart;
             }
             // Update fringe
             for (Vertex neighbour : current.neighbours) {
-                if (neighbour.canBeReached && !neighbour.isExplored) {
+                if (neighbour.isOutsideObstacle && !neighbour.searchState.isExplored) {
                     addToFringe(fringe, current, neighbour);
                 }
             }
@@ -168,15 +158,16 @@ public class Graph {
     public List<Vertex> ucs() {
         PApplet.println("UCS");
         reset();
-        return search(new PriorityQueue<>((v1, v2) -> (int) (v1.distanceFromStart - v2.distanceFromStart)));
+        return search(new PriorityQueue<>((v1, v2) ->
+                (int) (v1.searchState.distanceFromStart - v2.searchState.distanceFromStart)));
     }
 
     public List<Vertex> aStar() {
         PApplet.println("A*");
         reset();
         return search(new PriorityQueue<>((v1, v2) -> (int) (
-                (v1.distanceFromStart + v1.heuristicDistanceToFinish)
-                        - (v2.distanceFromStart + v2.heuristicDistanceToFinish)
+                (v1.searchState.distanceFromStart + v1.heuristicDistanceToFinish)
+                        - (v2.searchState.distanceFromStart + v2.heuristicDistanceToFinish)
         )));
     }
 
@@ -184,8 +175,8 @@ public class Graph {
         PApplet.println("Weighted A* with epsilon = " + epislon);
         reset();
         return search(new PriorityQueue<>((v1, v2) -> (int) (
-                (v1.distanceFromStart + epislon * v1.heuristicDistanceToFinish)
-                        - (v2.distanceFromStart + epislon * v2.heuristicDistanceToFinish)
+                (v1.searchState.distanceFromStart + epislon * v1.heuristicDistanceToFinish)
+                        - (v2.searchState.distanceFromStart + epislon * v2.heuristicDistanceToFinish)
         )));
     }
 
