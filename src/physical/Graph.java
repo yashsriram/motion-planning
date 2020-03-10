@@ -101,7 +101,8 @@ public class Graph {
                 PApplet.println("Reached finish, # vertices explored: " + numVerticesExplored);
                 return finish.searchState.pathFromStart;
             }
-            current.searchState.pop();
+            // Mark this vertex as explored
+            current.searchState.setExplored();
             // Update fringe
             for (Vertex neighbour : current.neighbours) {
                 if (neighbour.isOutsideObstacle && !neighbour.searchState.isExplored) {
@@ -134,7 +135,8 @@ public class Graph {
                 PApplet.println("Reached finish, # vertices explored: " + numVerticesExplored);
                 return finish.searchState.pathFromStart;
             }
-            current.searchState.pop();
+            // Mark this vertex as explored
+            current.searchState.setExplored();
             // Update fringe
             for (Vertex neighbour : current.neighbours) {
                 if (neighbour.isOutsideObstacle && !neighbour.searchState.isExplored) {

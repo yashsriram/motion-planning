@@ -48,7 +48,7 @@ public class Vertex {
             pathFromStart.add(Vertex.this);
         }
 
-        public void pop() {
+        public void setExplored() {
             color.set(1, 0, 0);
         }
     }
