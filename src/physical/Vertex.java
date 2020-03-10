@@ -69,10 +69,8 @@ public class Vertex {
     public void draw() {
         parent.pushMatrix();
         parent.fill(color.x, color.y, color.z);
-        parent.noStroke();
-        // parent.text(id, position.x, position.y, position.z);
-        parent.translate(position.x, position.y, position.z);
-        parent.box(size);
+        parent.stroke(color.x, color.y, color.z);
+        parent.point(position.x, position.y, position.z);
         parent.popMatrix();
         if (DRAW_EDGES) {
             for (int i = 0; i < neighbours.size(); ++i) {

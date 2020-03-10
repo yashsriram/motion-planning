@@ -47,12 +47,12 @@ public class Main extends PApplet {
         configurationSpace = new ConfigurationSpace(sphericalAgent, sphericalObstacles);
         // vertex sampling
         List<Vec3> vertexPositions = new ArrayList<>();
-        for (int i = 0; i < 200; ++i) {
+        for (int i = 0; i < 20000; ++i) {
             vertexPositions.add(Vec3.of(0, random(-SIDE, SIDE), random(-SIDE, SIDE)));
         }
         graph = new Graph(this, startPosition, finishPosition);
         graph.generateVertices(vertexPositions, configurationSpace);
-        graph.generateAdjacencies(80, configurationSpace);
+        graph.generateAdjacencies(10, configurationSpace);
     }
 
     public void draw() {

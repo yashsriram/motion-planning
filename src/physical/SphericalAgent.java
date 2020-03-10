@@ -74,7 +74,7 @@ public class SphericalAgent {
         if (path.size() == 0) {
             return;
         }
-        center = path.get(currentMilestone).position;
+        center.set(path.get(currentMilestone).position);
         if (currentMilestone < path.size() - 1) {
             currentMilestone++;
         }
@@ -84,7 +84,7 @@ public class SphericalAgent {
         if (path.size() == 0) {
             return;
         }
-        center = path.get(currentMilestone).position;
+        center.set(path.get(currentMilestone).position);
         if (currentMilestone > 0) {
             currentMilestone--;
         }
