@@ -28,41 +28,17 @@ public class Graph {
                     distanceToFinish,
                     Vec3.of(1)));
         }
-        PApplet.println("# vertices before culling: " + vertices.size());
         int numVerticesCulled = 0;
         for (Vertex vertex : vertices) {
-            for (SphericalObstacle sphericalObstacle: configurationSpace.sphericalObstacles) {
-                if (vertex.position.minus(sphericalObstacle.center).norm() <= sphericalObstacle.radius + configurationSpace.sphericalAgent.radius) {
-                    vertex.color = Vec3.of(1, 0, 1);
-                    vertex.canBeReached = false;
-                    numVerticesCulled++;
-                    break;
-                }
+            if (configurationSpace.doesIntersectWithObstacle(vertex.position)) {
+                vertex.color = Vec3.of(1, 0, 1);
+                vertex.canBeReached = false;
+                numVerticesCulled++;
             }
         }
+        PApplet.println("# vertices before culling: " + vertices.size());
         PApplet.println("# vertices culled: " + numVerticesCulled);
         PApplet.println("# vertices after culling: " + (vertices.size() - numVerticesCulled));
-    }
-
-    private boolean doesIntersect(Vertex v1, Vertex v2, ConfigurationSpace configurationSpace) {
-        for (SphericalObstacle sphericalObstacle: configurationSpace.sphericalObstacles) {
-            Vec3 pb_pa = v2.position.minus(v1.position);
-            Vec3 pa_pc = v1.position.minus(sphericalObstacle.center);
-            float r = sphericalObstacle.radius + configurationSpace.sphericalAgent.radius;
-            float a = pb_pa.dot(pb_pa);
-            float c = pa_pc.dot(pa_pc) - r * r;
-            float b = 2 * pb_pa.dot(pa_pc);
-            float discriminant = b * b - 4 * a * c;
-            if (discriminant >= 0) {
-                float t1 = (float) ((-b + Math.sqrt(discriminant)) / (2 * a));
-                float t2 = (float) ((-b - Math.sqrt(discriminant)) / (2 * a));
-                // Intersection with line segment only possible iff at least one of the solutions lies in [0, 1]
-                if ((0 <= t1 && t1 <= 1) || (0 <= t2 && t2 <= 1)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     public void generateAdjacencies(float maxEdgeLen, ConfigurationSpace configurationSpace) {
@@ -74,7 +50,7 @@ public class Graph {
                 Vertex v2 = vertices.get(j);
                 if (v1.position.minus(v2.position).norm() <= maxEdgeLen) {
                     // Check for intersection with spherical obstacle
-                    if (!v1.canBeReached || !v2.canBeReached || doesIntersect(v1, v2, configurationSpace)) {
+                    if (!v1.canBeReached || !v2.canBeReached || configurationSpace.doesIntersectWithObstacle(v1.position, v2.position)) {
                         numEdgesCulled++;
                     } else {
                         v1.addNeighbour(v2, Vec3.of(1));
@@ -115,7 +91,7 @@ public class Graph {
     }
 
     public List<Vertex> dfs() {
-        PApplet.println("-- DFS --");
+        PApplet.println("DFS search");
 
         reset();
         final Stack<Vertex> fringe = new Stack<>();
@@ -184,19 +160,19 @@ public class Graph {
     }
 
     public List<Vertex> bfs() {
-        PApplet.println("-- BFS --");
+        PApplet.println("BFS");
         reset();
         return search(new LinkedList<>());
     }
 
     public List<Vertex> ucs() {
-        PApplet.println("-- UCS --");
+        PApplet.println("UCS");
         reset();
         return search(new PriorityQueue<>((v1, v2) -> (int) (v1.distanceFromStart - v2.distanceFromStart)));
     }
 
     public List<Vertex> aStar() {
-        PApplet.println("-- A* --");
+        PApplet.println("A*");
         reset();
         return search(new PriorityQueue<>((v1, v2) -> (int) (
                 (v1.distanceFromStart + v1.heuristicDistanceToFinish)
@@ -205,7 +181,7 @@ public class Graph {
     }
 
     public List<Vertex> weightedAStar(final float epislon) {
-        PApplet.println("-- Weighted A* with epsilon = " + epislon + " --");
+        PApplet.println("Weighted A* with epsilon = " + epislon);
         reset();
         return search(new PriorityQueue<>((v1, v2) -> (int) (
                 (v1.distanceFromStart + epislon * v1.heuristicDistanceToFinish)
