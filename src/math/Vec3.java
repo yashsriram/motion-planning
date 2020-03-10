@@ -17,6 +17,17 @@ public class Vec3 {
         return new Vec3(x, y, z);
     }
 
+    public static Vec3 of(final Vec3 source) {
+        return new Vec3(source.x, source.y, source.z);
+    }
+
+    public Vec3 set(Vec3 b) {
+        this.x = b.x;
+        this.y = b.y;
+        this.z = b.z;
+        return this;
+    }
+
     public Vec3 plus(Vec3 b) {
         return new Vec3(this.x + b.x, this.y + b.y, this.z + b.z);
     }
@@ -59,11 +70,12 @@ public class Vec3 {
         }
     }
 
-    public void normalizeInPlace() {
+    public Vec3 normalizeInPlace() {
         float abs = norm();
         if (abs > 1e-6f) {
             scaleInPlace(1 / abs);
         }
+        return this;
     }
 
     public float dot(Vec3 b) {

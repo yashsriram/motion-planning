@@ -9,7 +9,7 @@ import java.util.List;
 public class Vertex {
     public static final int START_ID = -1;
     public static final int FINISH_ID = 0;
-    public static boolean DRAW_EDGES = true;
+    public static boolean DRAW_EDGES = false;
 
     private static int nextId = 1;
 
@@ -22,8 +22,9 @@ public class Vertex {
     public final PApplet parent;
     public final int id;
     public final Vec3 position;
+    public final float size;
 
-    // Depends on allowed configuration-space
+    // Depends on configuration-space
     public boolean canBeReached = true;
     public final float heuristicDistanceToFinish;
 
@@ -36,7 +37,7 @@ public class Vertex {
     public Vec3 color;
     public boolean isExplored = false;
     public float distanceFromStart = 0;
-    public List<Vertex> path = new ArrayList<>();
+    public List<Vertex> pathFromStart = new ArrayList<>();
 
     public static Vertex start(PApplet parent, Vec3 position, float distanceToFinish, Vec3 color) {
         return new Vertex(parent, START_ID, position, distanceToFinish, color);
@@ -53,7 +54,14 @@ public class Vertex {
     private Vertex(PApplet parent, int id, Vec3 position, float heuristicDistanceToFinish, Vec3 color) {
         this.parent = parent;
         this.id = id;
-        this.position = position;
+        if (id == START_ID) {
+            size = 2f;
+        } else if (id == FINISH_ID) {
+            size = 3f;
+        } else {
+            size = 1f;
+        }
+        this.position = Vec3.of(position);
         this.heuristicDistanceToFinish = heuristicDistanceToFinish;
         this.color = color;
     }
@@ -64,7 +72,7 @@ public class Vertex {
         parent.noStroke();
         // parent.text(id, position.x, position.y, position.z);
         parent.translate(position.x, position.y, position.z);
-        parent.box(1f);
+        parent.box(size);
         parent.popMatrix();
         if (DRAW_EDGES) {
             for (int i = 0; i < neighbours.size(); ++i) {

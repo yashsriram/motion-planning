@@ -42,6 +42,7 @@ public class Main extends PApplet {
         sphericalAgent = new SphericalAgent(
                 this,
                 startPosition,
+                20f,
                 SIDE * (0.5f / 20),
                 Vec3.of(1)
         );
@@ -57,15 +58,16 @@ public class Main extends PApplet {
 
     public void draw() {
         if (keyPressed) {
-            if (key == 'x') {
+            if (keyCode == RIGHT) {
                 sphericalAgent.stepForward();
             }
-            if (key == 'z') {
+            if (keyCode == LEFT) {
                 sphericalAgent.stepBackward();
             }
         }
         long start = millis();
         // update
+        sphericalAgent.update(0.1f);
         long update = millis();
         // draw
         background(0);
@@ -86,6 +88,9 @@ public class Main extends PApplet {
         }
         if (key == 'j') {
             Vertex.DRAW_EDGES = !Vertex.DRAW_EDGES;
+        }
+        if (key == 'p') {
+            sphericalAgent.isPaused = !sphericalAgent.isPaused;
         }
         if (key == '1') {
             sphericalAgent.setPath(graph.dfs());

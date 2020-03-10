@@ -94,7 +94,7 @@ public class Graph {
                 v.color = Vec3.of(1);
                 v.isExplored = false;
                 v.distanceFromStart = 0;
-                v.path = new ArrayList<>();
+                v.pathFromStart = new ArrayList<>();
             }
         }
     }
@@ -103,8 +103,8 @@ public class Graph {
         fringe.add(next);
         next.isExplored = true;
         next.color = Vec3.of(0, 1, 0);
-        next.path.addAll(current.path);
-        next.path.add(next);
+        next.pathFromStart.addAll(current.pathFromStart);
+        next.pathFromStart.add(next);
     }
 
     public List<Vertex> dfs() {
@@ -125,7 +125,7 @@ public class Graph {
             // Check if finish
             if (current.id == Vertex.FINISH_ID) {
                 PApplet.println("Reached finish, # vertices explored: " + numVerticesExplored);
-                return finish.path;
+                return finish.pathFromStart;
             }
             // Update fringe
             for (Vertex neighbour : current.neighbours) {
@@ -144,8 +144,8 @@ public class Graph {
         fringe.add(next);
         next.isExplored = true;
         next.color = Vec3.of(0, 1, 0);
-        next.path.addAll(current.path);
-        next.path.add(next);
+        next.pathFromStart.addAll(current.pathFromStart);
+        next.pathFromStart.add(next);
     }
 
     private List<Vertex> search(final Queue<Vertex> fringe) {
@@ -162,7 +162,7 @@ public class Graph {
             // Check if finish
             if (current.id == Vertex.FINISH_ID) {
                 PApplet.println("Reached finish, # vertices explored: " + numVerticesExplored);
-                return finish.path;
+                return finish.pathFromStart;
             }
             // Update fringe
             for (Vertex neighbour : current.neighbours) {
