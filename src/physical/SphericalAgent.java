@@ -9,9 +9,9 @@ import java.util.List;
 public class SphericalAgent {
     public final PApplet parent;
     public final Vec3 startPosition;
+    public final float radius;
     public Vec3 center;
     public float speed;
-    public float radius;
     public Vec3 color;
 
     public List<Vertex> path = new ArrayList<>();

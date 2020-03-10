@@ -5,9 +5,9 @@ import processing.core.PApplet;
 
 public class SphericalObstacle {
     public final PApplet parent;
-    public Vec3 center;
-    public float radius;
-    public Vec3 color;
+    public final Vec3 center;
+    public final float radius;
+    public final Vec3 color;
     public boolean isDrawn;
 
     public SphericalObstacle(PApplet parent, Vec3 center, float radius, Vec3 color) {
