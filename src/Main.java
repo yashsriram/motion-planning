@@ -20,6 +20,8 @@ public class Main extends PApplet {
 
     QueasyCam cam;
 
+    static boolean DRAW_OBSTACLES = true;
+
     public void settings() {
         size(WIDTH, HEIGHT, P3D);
     }
@@ -109,8 +111,10 @@ public class Main extends PApplet {
         // agent
         sphericalAgent.draw();
         // obstacles
-        for (SphericalObstacle sphericalObstacle: sphericalObstacles) {
-            sphericalObstacle.draw();
+        if (DRAW_OBSTACLES) {
+            for (SphericalObstacle sphericalObstacle : sphericalObstacles) {
+                sphericalObstacle.draw();
+            }
         }
         // configuration space
         configurationSpace.draw();
@@ -126,9 +130,7 @@ public class Main extends PApplet {
             ConfigurationSpace.DRAW_BOUNDING_SPHERES = !ConfigurationSpace.DRAW_BOUNDING_SPHERES;
         }
         if (key == 'h') {
-            for (SphericalObstacle sphericalObstacle: sphericalObstacles) {
-                sphericalObstacle.isDrawn = !sphericalObstacle.isDrawn;
-            }
+            DRAW_OBSTACLES = !DRAW_OBSTACLES;
         }
         if (key == 'k') {
             Graph.DRAW_VERTICES = !Graph.DRAW_VERTICES;

@@ -40,15 +40,16 @@ public class ConfigurationSpace {
             for (int j = i + 1; j < boundingSpheres.size(); j++) {
                 BoundingSphere b1 = boundingSpheres.get(i);
                 BoundingSphere b2 = boundingSpheres.get(j);
-                float distanceBtwSpheres = b2.center.minus(b1.center).norm();
-                if (distanceBtwSpheres <= Math.abs(b1.radius - b2.radius)) {
+                if (doesOneBoundAnother(b1, b2)) {
                     throw new IllegalArgumentException("Bad obstacles, one of the obstacle is completely bounded in other");
                 }
             }
         }
 
-        // Create bounding spheres data structure
+        // Create bounding spheres tree data structure
         while (boundingSpheres.size() > 1) {
+            // Loop invariant: At this point no sphere bounds no other spheres in the list boundingSpheres
+
             // Find closest two spheres
             int x = 0;
             int y = 1;
@@ -86,11 +87,12 @@ public class ConfigurationSpace {
             boundingSpheres.remove(x);
 
             // Check for additional spheres that are bounded by parent
+            // Getting size now is important as we modify list in the for loop
             int numBoundingSpheres = boundingSpheres.size();
+            // Iterating from backwards is important as we remove elements in the list in for loop
             for (int i = numBoundingSpheres - 1; i >= 0; i--) {
                 BoundingSphere sphere = boundingSpheres.get(i);
-                float distBwSpheres = sphere.center.minus(parentSphere.center).norm();
-                if (distBwSpheres <= Math.abs(sphere.radius - parentSphere.radius)) {
+                if (doesOneBoundAnother(parentSphere, sphere)) {
                     parentSphere.children.add(sphere);
                     boundingSpheres.remove(i);
                 }
@@ -101,6 +103,11 @@ public class ConfigurationSpace {
         }
 
         this.root = boundingSpheres.get(0);
+    }
+
+    private boolean doesOneBoundAnother(BoundingSphere b1, BoundingSphere b2) {
+        float distanceBtwSpheres = b2.center.minus(b1.center).norm();
+        return distanceBtwSpheres <= Math.abs(b1.radius - b2.radius);
     }
 
     private void drawRecursive(BoundingSphere sphere) {
