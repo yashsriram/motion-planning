@@ -19,7 +19,7 @@ public class Graph {
         this.vertices.add(finish);
     }
 
-    public void generateVertices(List<Vec3> newVertexPositions, SphericalAgent sphericalAgent, SphericalObstacle sphericalObstacle) {
+    public void generateVertices(List<Vec3> newVertexPositions, ConfigurationSpace configurationSpace) {
         for (Vec3 position : newVertexPositions) {
             float distanceToFinish = finish.position.minus(position).norm();
             vertices.add(Vertex.of(
@@ -31,34 +31,41 @@ public class Graph {
         PApplet.println("# vertices before culling: " + vertices.size());
         int numVerticesCulled = 0;
         for (Vertex vertex : vertices) {
-            if (vertex.position.minus(sphericalObstacle.center).norm() <= sphericalObstacle.radius + sphericalAgent.radius) {
-                vertex.color = Vec3.of(1, 0, 1);
-                vertex.canBeReached = false;
-                numVerticesCulled++;
+            for (SphericalObstacle sphericalObstacle: configurationSpace.sphericalObstacles) {
+                if (vertex.position.minus(sphericalObstacle.center).norm() <= sphericalObstacle.radius + configurationSpace.sphericalAgent.radius) {
+                    vertex.color = Vec3.of(1, 0, 1);
+                    vertex.canBeReached = false;
+                    numVerticesCulled++;
+                    break;
+                }
             }
         }
         PApplet.println("# vertices culled: " + numVerticesCulled);
         PApplet.println("# vertices after culling: " + (vertices.size() - numVerticesCulled));
     }
 
-    private boolean doesIntersect(Vertex v1, Vertex v2, SphericalAgent sphericalAgent, SphericalObstacle sphericalObstacle) {
-        Vec3 pb_pa = v2.position.minus(v1.position);
-        Vec3 pa_pc = v1.position.minus(sphericalObstacle.center);
-        float r = sphericalObstacle.radius + sphericalAgent.radius;
-        float a = pb_pa.dot(pb_pa);
-        float c = pa_pc.dot(pa_pc) - r * r;
-        float b = 2 * pb_pa.dot(pa_pc);
-        float discriminant = b * b - 4 * a * c;
-        if (discriminant >= 0) {
-            float t1 = (float) ((-b + Math.sqrt(discriminant)) / (2 * a));
-            float t2 = (float) ((-b - Math.sqrt(discriminant)) / (2 * a));
-            // Intersection with line segment only possible iff at least one of the solutions lies in [0, 1]
-            return (0 <= t1 && t1 <= 1) || (0 <= t2 && t2 <= 1);
+    private boolean doesIntersect(Vertex v1, Vertex v2, ConfigurationSpace configurationSpace) {
+        for (SphericalObstacle sphericalObstacle: configurationSpace.sphericalObstacles) {
+            Vec3 pb_pa = v2.position.minus(v1.position);
+            Vec3 pa_pc = v1.position.minus(sphericalObstacle.center);
+            float r = sphericalObstacle.radius + configurationSpace.sphericalAgent.radius;
+            float a = pb_pa.dot(pb_pa);
+            float c = pa_pc.dot(pa_pc) - r * r;
+            float b = 2 * pb_pa.dot(pa_pc);
+            float discriminant = b * b - 4 * a * c;
+            if (discriminant >= 0) {
+                float t1 = (float) ((-b + Math.sqrt(discriminant)) / (2 * a));
+                float t2 = (float) ((-b - Math.sqrt(discriminant)) / (2 * a));
+                // Intersection with line segment only possible iff at least one of the solutions lies in [0, 1]
+                if ((0 <= t1 && t1 <= 1) || (0 <= t2 && t2 <= 1)) {
+                    return true;
+                }
+            }
         }
         return false;
     }
 
-    public void generateAdjacencies(float maxEdgeLen, SphericalAgent sphericalAgent, SphericalObstacle sphericalObstacle) {
+    public void generateAdjacencies(float maxEdgeLen, ConfigurationSpace configurationSpace) {
         int numEdges = 0;
         int numEdgesCulled = 0;
         for (int i = 0; i < vertices.size(); ++i) {
@@ -67,7 +74,7 @@ public class Graph {
                 Vertex v2 = vertices.get(j);
                 if (v1.position.minus(v2.position).norm() <= maxEdgeLen) {
                     // Check for intersection with spherical obstacle
-                    if (!v1.canBeReached || !v2.canBeReached || doesIntersect(v1, v2, sphericalAgent, sphericalObstacle)) {
+                    if (!v1.canBeReached || !v2.canBeReached || doesIntersect(v1, v2, configurationSpace)) {
                         numEdgesCulled++;
                     } else {
                         v1.addNeighbour(v2, Vec3.of(1));
