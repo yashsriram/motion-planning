@@ -30,7 +30,7 @@ public class Vertex {
 
     // Depends on max edge length
     public List<Vertex> neighbours = new ArrayList<>();
-    // Depends on allowed configuration-space and cannotBeReached
+    // Depends on neighbours and configuration-space
     public List<Vec3> edgeColors = new ArrayList<>();
 
     // Can change with search calls

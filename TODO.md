@@ -36,9 +36,9 @@ continuously animated agent (e.g., represented as a cylinder). You should also
 visualize the roadmap the agent is following, including the start and goal positions,
 milestones, and edges.
 
-### Crowd/Flocking Simulation (Required) (80 Points)
-    - [x] continuous edge obstacle collision detection
+ - [x] continuous edge obstacle collision detection
 
+### Crowd/Flocking Simulation (Required) (80 Points)
 Simulate multiple agents sharing the environment as follows:
  - [ ] Implement a local interaction technique (Boids, Helbing, RVO/ORCA, TTC, etc.).
  - [ ] Find 2 or 3 scenarios showing interesting interactions between the agents
