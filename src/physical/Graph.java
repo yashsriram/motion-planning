@@ -44,7 +44,7 @@ public class Graph {
     public void generateAdjacencies(float maxEdgeLen, ConfigurationSpace configurationSpace) {
         int numEdges = 0;
         int numEdgesCulled = 0;
-        for (int i = 0; i < vertices.size(); ++i) {
+        for (int i = 0; i < vertices.size() - 1; ++i) {
             for (int j = i + 1; j < vertices.size(); j++) {
                 Vertex v1 = vertices.get(i);
                 Vertex v2 = vertices.get(j);
