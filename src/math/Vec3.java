@@ -21,6 +21,13 @@ public class Vec3 {
         return new Vec3(source.x, source.y, source.z);
     }
 
+    public Vec3 set(float x, float y, float z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        return this;
+    }
+
     public Vec3 set(Vec3 b) {
         this.x = b.x;
         this.y = b.y;

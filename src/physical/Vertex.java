@@ -28,17 +28,28 @@ public class Vertex {
     public final List<Vertex> neighbours = new ArrayList<>();
     public final List<Vec3> edgeColors = new ArrayList<>();
 
-    public static class SearchState {
+    public class SearchState {
         public boolean isExplored = false;
         public float distanceFromStart = 0;
         public List<Vertex> pathFromStart = new ArrayList<>();
         public Vec3 color = Vec3.of(1);
 
         public void reset() {
-            color = Vec3.of(1);
+            color.set(1, 1, 1);
             isExplored = false;
             distanceFromStart = 0;
-            pathFromStart = new ArrayList<>();
+            pathFromStart.clear();
+        }
+
+        public void addToFringeFrom(Vertex parent) {
+            color.set(0, 1, 0);
+            isExplored = true;
+            pathFromStart.addAll(parent.searchState.pathFromStart);
+            pathFromStart.add(Vertex.this);
+        }
+
+        public void pop() {
+            color.set(1, 0, 0);
         }
     }
 
@@ -84,13 +95,6 @@ public class Vertex {
     public void addNeighbour(Vertex other, Vec3 color) {
         neighbours.add(other);
         edgeColors.add(color);
-    }
-
-    public void addToFringe(Vertex parent) {
-        searchState.color = Vec3.of(0, 1, 0);
-        searchState.isExplored = true;
-        searchState.pathFromStart.addAll(parent.searchState.pathFromStart);
-        searchState.pathFromStart.add(this);
     }
 
     @Override

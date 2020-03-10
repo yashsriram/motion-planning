@@ -80,7 +80,7 @@ public class Graph {
 
     private void addToFringe(final Stack<Vertex> fringe, final Vertex current, final Vertex next) {
         fringe.add(next);
-        next.addToFringe(current);
+        next.searchState.addToFringeFrom(current);
     }
 
     public List<Vertex> dfs() {
@@ -95,14 +95,13 @@ public class Graph {
         while (fringe.size() > 0) {
             // Pop one vertex
             Vertex current = fringe.pop();
-            current.searchState.color = Vec3.of(1, 0, 0);
-            // PApplet.println(current.id);
             numVerticesExplored++;
             // Check if finish
             if (current.id == Vertex.FINISH_ID) {
                 PApplet.println("Reached finish, # vertices explored: " + numVerticesExplored);
                 return finish.searchState.pathFromStart;
             }
+            current.searchState.pop();
             // Update fringe
             for (Vertex neighbour : current.neighbours) {
                 if (neighbour.isOutsideObstacle && !neighbour.searchState.isExplored) {
@@ -118,7 +117,7 @@ public class Graph {
     private void addToFringe(final Queue<Vertex> fringe, final Vertex current, final Vertex next) {
         next.searchState.distanceFromStart = current.searchState.distanceFromStart + next.position.minus(current.position).norm();
         fringe.add(next);
-        next.addToFringe(current);
+        next.searchState.addToFringeFrom(current);
     }
 
     private List<Vertex> search(final Queue<Vertex> fringe) {
@@ -129,14 +128,13 @@ public class Graph {
         while (fringe.size() > 0) {
             // Pop one vertex
             Vertex current = fringe.remove();
-            current.searchState.color = Vec3.of(1, 0, 0);
-            // PApplet.println(current.id);
             numVerticesExplored++;
             // Check if finish
             if (current.id == Vertex.FINISH_ID) {
                 PApplet.println("Reached finish, # vertices explored: " + numVerticesExplored);
                 return finish.searchState.pathFromStart;
             }
+            current.searchState.pop();
             // Update fringe
             for (Vertex neighbour : current.neighbours) {
                 if (neighbour.isOutsideObstacle && !neighbour.searchState.isExplored) {
