@@ -3,30 +3,31 @@ package physical;
 import math.Vec3;
 import processing.core.PApplet;
 import tools.Vertex;
+import tools.configurationspace.ConfigurationSpace;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SphericalAgent {
-    public final PApplet parent;
-    public final Vec3 startPosition;
-    public final float radius;
-    public Vec3 center;
-    public float speed;
-    public Vec3 color;
+    final PApplet parent;
+    final SphericalAgentDescription description;
+    final ConfigurationSpace configurationSpace;
+    final float speed;
+    final Vec3 color;
 
-    public List<Vertex> path = new ArrayList<>();
-    public int currentMilestone = 0;
-
+    Vec3 center;
+    List<Vertex> path = new ArrayList<>();
+    int currentMilestone = 0;
     public boolean isPaused = false;
 
-    public SphericalAgent(PApplet parent, Vec3 startPosition, float speed, float radius, Vec3 color) {
+    public SphericalAgent(final PApplet parent, final SphericalAgentDescription description, final ConfigurationSpace configurationSpace, float speed, Vec3 color) {
         this.parent = parent;
-        this.center = Vec3.of(startPosition);
-        this.startPosition = Vec3.of(startPosition);
+        this.description = description;
+        this.configurationSpace = configurationSpace;
         this.speed = speed;
-        this.radius = radius;
         this.color = color;
+
+        this.center = Vec3.of(description.startPosition);
     }
 
     public void update(float dt) {
@@ -61,14 +62,14 @@ public class SphericalAgent {
         parent.pushMatrix();
         parent.fill(color.x, color.y, color.z);
         parent.translate(center.x, center.y, center.z);
-        parent.sphere(radius);
+        parent.sphere(description.radius);
         parent.popMatrix();
     }
 
     public void setPath(List<Vertex> path) {
         this.path = path;
         currentMilestone = 0;
-        center.set(startPosition);
+        center.set(description.startPosition);
     }
 
     public void stepForward() {

@@ -1,7 +1,7 @@
 package tools.configurationspace;
 
 import math.Vec3;
-import physical.SphericalAgent;
+import physical.SphericalAgentDescription;
 import physical.SphericalObstacle;
 import processing.core.PApplet;
 
@@ -9,18 +9,18 @@ import java.util.List;
 
 public class PlainConfigurationSpace extends ConfigurationSpace {
     final PApplet parent;
-    final SphericalAgent sphericalAgent;
+    final SphericalAgentDescription sphericalAgentDescription;
     final List<SphericalObstacle> sphericalObstacles;
 
-    public PlainConfigurationSpace(PApplet parent, SphericalAgent sphericalAgent, List<SphericalObstacle> sphericalObstacles) {
+    public PlainConfigurationSpace(PApplet parent, SphericalAgentDescription sphericalAgentDescription, List<SphericalObstacle> sphericalObstacles) {
         this.parent = parent;
-        this.sphericalAgent = sphericalAgent;
+        this.sphericalAgentDescription = sphericalAgentDescription;
         this.sphericalObstacles = sphericalObstacles;
     }
 
     public boolean doesVertexIntersectSomeObstacle(Vec3 p) {
         for (SphericalObstacle sphericalObstacle : sphericalObstacles) {
-            if (p.minus(sphericalObstacle.center).norm() <= sphericalObstacle.radius + sphericalAgent.radius) {
+            if (p.minus(sphericalObstacle.center).norm() <= sphericalObstacle.radius + sphericalAgentDescription.radius) {
                 return true;
             }
         }
@@ -31,7 +31,7 @@ public class PlainConfigurationSpace extends ConfigurationSpace {
         for (SphericalObstacle sphericalObstacle : sphericalObstacles) {
             Vec3 pb_pa = p2.minus(p1);
             Vec3 pa_pc = p1.minus(sphericalObstacle.center);
-            float r = sphericalObstacle.radius + sphericalAgent.radius;
+            float r = sphericalObstacle.radius + sphericalAgentDescription.radius;
             float a = pb_pa.dot(pb_pa);
             float c = pa_pc.dot(pa_pc) - r * r;
             float b = 2 * pb_pa.dot(pa_pc);

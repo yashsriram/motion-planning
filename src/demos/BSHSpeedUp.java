@@ -3,6 +3,7 @@ package demos;
 import camera.QueasyCam;
 import math.Vec3;
 import physical.SphericalAgent;
+import physical.SphericalAgentDescription;
 import physical.SphericalObstacle;
 import processing.core.PApplet;
 import tools.Graph;
@@ -21,6 +22,7 @@ public class BSHSpeedUp extends PApplet {
 
     final Vec3 startPosition = Vec3.of(0, SIDE * (9f / 10), SIDE * (-9f / 10));
     final Vec3 finishPosition = Vec3.of(0, SIDE * (-9f / 10), SIDE * (9f / 10));
+    SphericalAgentDescription sphericalAgentDescription;
     SphericalAgent sphericalAgent;
     List<SphericalObstacle> sphericalObstacles = new ArrayList<>();
     ConfigurationSpace configurationSpace;
@@ -55,12 +57,10 @@ public class BSHSpeedUp extends PApplet {
                     Vec3.of(1, 0, 0)
             ));
         }
-        sphericalAgent = new SphericalAgent(
-                this,
+
+        sphericalAgentDescription = new SphericalAgentDescription(
                 startPosition,
-                20f,
-                SIDE * (0.5f / 20),
-                Vec3.of(1)
+                SIDE * (0.5f / 20)
         );
         resetBSH();
     }
@@ -68,7 +68,8 @@ public class BSHSpeedUp extends PApplet {
     private void resetPlain() {
         DATA_STRUCTURE = "Plain";
         long startConfig = millis();
-        configurationSpace = new PlainConfigurationSpace(this, sphericalAgent, sphericalObstacles);
+        configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
+        sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, configurationSpace, 20f, Vec3.of(1));
         long configSpace = millis();
         // vertex sampling
         long start = millis();
@@ -91,7 +92,7 @@ public class BSHSpeedUp extends PApplet {
     private void resetBSH() {
         DATA_STRUCTURE = "BSH";
         long startConfig = millis();
-        configurationSpace = new BSHConfigurationSpace(this, sphericalAgent, sphericalObstacles);
+        configurationSpace = new BSHConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
         long configSpace = millis();
         // vertex sampling
         long start = millis();

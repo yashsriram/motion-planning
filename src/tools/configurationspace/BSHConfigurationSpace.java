@@ -1,7 +1,7 @@
 package tools.configurationspace;
 
 import math.Vec3;
-import physical.SphericalAgent;
+import physical.SphericalAgentDescription;
 import physical.SphericalObstacle;
 import processing.core.PApplet;
 
@@ -25,12 +25,12 @@ public class BSHConfigurationSpace extends ConfigurationSpace {
     public static boolean DRAW_BOUNDING_SPHERES = false;
     public static float BOUNDING_SPHERE_COMPRESSION_SLACK = 10f;
     final PApplet parent;
-    final SphericalAgent sphericalAgent;
+    final SphericalAgentDescription sphericalAgentDescription;
     final BoundingSphere root;
 
-    public BSHConfigurationSpace(final PApplet parent, final SphericalAgent sphericalAgent, final List<SphericalObstacle> sphericalObstacles) {
+    public BSHConfigurationSpace(final PApplet parent, final SphericalAgentDescription sphericalAgentDescription, final List<SphericalObstacle> sphericalObstacles) {
         this.parent = parent;
-        this.sphericalAgent = sphericalAgent;
+        this.sphericalAgentDescription = sphericalAgentDescription;
 
         if (sphericalObstacles.size() == 0) {
             throw new IllegalArgumentException("Need at least one obstacle");
@@ -154,13 +154,13 @@ public class BSHConfigurationSpace extends ConfigurationSpace {
     }
 
     private boolean doesVertexIntersectThisSphere(final Vec3 p, final BoundingSphere node) {
-        return p.minus(node.center).norm() <= node.radius + sphericalAgent.radius;
+        return p.minus(node.center).norm() <= node.radius + sphericalAgentDescription.radius;
     }
 
     private boolean doesEdgeIntersectThisSphere(final Vec3 p1, final Vec3 p2, final BoundingSphere node) {
         Vec3 pb_pa = p2.minus(p1);
         Vec3 pa_pc = p1.minus(node.center);
-        float r = node.radius + sphericalAgent.radius;
+        float r = node.radius + sphericalAgentDescription.radius;
         float a = pb_pa.dot(pb_pa);
         float c = pa_pc.dot(pa_pc) - r * r;
         float b = 2 * pb_pa.dot(pa_pc);

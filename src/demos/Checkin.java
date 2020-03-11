@@ -3,6 +3,7 @@ package demos;
 import camera.QueasyCam;
 import math.Vec3;
 import physical.SphericalAgent;
+import physical.SphericalAgentDescription;
 import physical.SphericalObstacle;
 import processing.core.PApplet;
 import tools.Graph;
@@ -20,6 +21,7 @@ public class Checkin extends PApplet {
 
     final Vec3 startPosition = Vec3.of(0, SIDE * (9f / 10), SIDE * (-9f / 10));
     final Vec3 finishPosition = Vec3.of(0, SIDE * (-9f / 10), SIDE * (9f / 10));
+    SphericalAgentDescription sphericalAgentDescription;
     SphericalAgent sphericalAgent;
     List<SphericalObstacle> sphericalObstacles = new ArrayList<>();
     PlainConfigurationSpace configurationSpace;
@@ -47,14 +49,13 @@ public class Checkin extends PApplet {
                 SIDE * (2f / 20),
                 Vec3.of(1, 0, 0)
         ));
-        sphericalAgent = new SphericalAgent(
-                this,
+        sphericalAgentDescription = new SphericalAgentDescription(
                 startPosition,
-                20f,
-                SIDE * (0.5f / 20),
-                Vec3.of(1)
+                SIDE * (0.5f / 20)
         );
-        configurationSpace = new PlainConfigurationSpace(this, sphericalAgent, sphericalObstacles);
+        configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
+        sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, configurationSpace, 20f, Vec3.of(1));
+
         // vertex sampling
         List<Vec3> vertexPositions = new ArrayList<>();
         for (int i = 0; i < 10000; ++i) {
