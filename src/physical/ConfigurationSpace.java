@@ -29,6 +29,10 @@ public class ConfigurationSpace {
         this.parent = parent;
         this.sphericalAgent = sphericalAgent;
 
+        if (sphericalObstacles.size() == 0) {
+            throw new IllegalArgumentException("Need at least one obstacle");
+        }
+
         List<BoundingSphere> boundingSpheres = new ArrayList<>();
         // Initialize bounding spheres as obstacles themselves
         for (SphericalObstacle o : sphericalObstacles) {
@@ -46,6 +50,7 @@ public class ConfigurationSpace {
             }
         }
 
+        int numParentBoundingSpheres = 0;
         // Create bounding spheres tree data structure
         while (boundingSpheres.size() > 1) {
             // Loop invariant: At this point no sphere bounds no other spheres in the list boundingSpheres
@@ -100,9 +105,11 @@ public class ConfigurationSpace {
 
             // Add parent to bounding spheres list
             boundingSpheres.add(parentSphere);
+            numParentBoundingSpheres++;
         }
 
         this.root = boundingSpheres.get(0);
+        PApplet.println("BSH created: #parent spheres = " + numParentBoundingSpheres);
     }
 
     private boolean doesOneBoundAnother(BoundingSphere b1, BoundingSphere b2) {
