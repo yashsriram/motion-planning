@@ -22,7 +22,7 @@ class BoundingSphere {
 }
 
 public class BSHConfigurationSpace implements IntersectionChecker {
-    public static boolean DRAW_BOUNDING_SPHERES = true;
+    public static boolean DRAW_BOUNDING_SPHERES = false;
     final PApplet parent;
     final SphericalAgent sphericalAgent;
     final BoundingSphere root;

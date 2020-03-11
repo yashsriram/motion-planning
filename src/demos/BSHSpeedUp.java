@@ -1,3 +1,5 @@
+package demos;
+
 import camera.QueasyCam;
 import math.Vec3;
 import physical.Graph;
@@ -10,7 +12,7 @@ import processing.core.PApplet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Main extends PApplet {
+public class BSHSpeedUp extends PApplet {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 800;
     public static final int SIDE = 100;
@@ -37,12 +39,15 @@ public class Main extends PApplet {
         noStroke();
 
         cam = new QueasyCam(this);
-        sphericalObstacles.add(new SphericalObstacle(
-                this,
-                Vec3.of(0, 0, 0),
-                SIDE * (2f / 20),
-                Vec3.of(1, 0, 0)
-        ));
+        int numObstacles = 3000;
+        for (int i = 0; i < numObstacles; i++) {
+            sphericalObstacles.add(new SphericalObstacle(
+                    this,
+                    Vec3.of(0, -SIDE + i * SIDE * 1.7f / numObstacles, -SIDE + i * SIDE * 1.5f / numObstacles),
+                    SIDE * (1f / 20),
+                    Vec3.of(1, 0, 0)
+            ));
+        }
         sphericalAgent = new SphericalAgent(
                 this,
                 startPosition,
@@ -50,15 +55,29 @@ public class Main extends PApplet {
                 SIDE * (0.5f / 20),
                 Vec3.of(1)
         );
+        long startConfig = millis();
         configurationSpace = new BSHConfigurationSpace(this, sphericalAgent, sphericalObstacles);
+        long configSpace = millis();
+        PApplet.println("Time for config space creation = " + (configSpace - startConfig) + "ms");
+        reset();
+    }
+
+    private void reset() {
         // vertex sampling
+        long start = millis();
         List<Vec3> vertexPositions = new ArrayList<>();
         for (int i = 0; i < 10000; ++i) {
             vertexPositions.add(Vec3.of(0, random(-SIDE, SIDE), random(-SIDE, SIDE)));
         }
         graph = new Graph(this, startPosition, finishPosition);
+        long sampling = millis();
         graph.generateVertices(vertexPositions, configurationSpace);
+        long vertex = millis();
         graph.generateAdjacencies(10, configurationSpace);
+        long edge = millis();
+        PApplet.println("Time for vertex sampling = " + (sampling - start) + "ms");
+        PApplet.println("Time for vertex culling = " + (vertex - sampling) + "ms");
+        PApplet.println("Time for edge culling = " + (edge - vertex) + "ms");
     }
 
     public void draw() {
@@ -94,6 +113,9 @@ public class Main extends PApplet {
     }
 
     public void keyPressed() {
+        if (key == 'r') {
+            reset();
+        }
         if (key == 'g') {
             BSHConfigurationSpace.DRAW_BOUNDING_SPHERES = !BSHConfigurationSpace.DRAW_BOUNDING_SPHERES;
         }
