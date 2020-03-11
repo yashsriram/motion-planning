@@ -49,6 +49,31 @@ public class SphericalAgent {
         }
     }
 
+    public void smoothUpdate(float dt) {
+        if (isPaused) {
+            return;
+        }
+        if (currentMilestone < path.size() - 1) {
+            // reached next milestone
+            if (path.get(currentMilestone + 1).position.minus(center).norm() < 2) {
+                currentMilestone++;
+                return;
+            }
+            if (currentMilestone < path.size() - 2) {
+                boolean blocked = configurationSpace.doesEdgeIntersectSomeObstacle(path.get(currentMilestone + 2).position, center);
+                if (!blocked) {
+                    currentMilestone++;
+                }
+            }
+            // move towards next milestone
+            Vec3 velocityDir =
+                    path.get(currentMilestone + 1).position
+                            .minus(center)
+                            .normalizeInPlace();
+            center.plusInPlace(velocityDir.scale(speed * dt));
+        }
+    }
+
     public void draw() {
         // path
         parent.stroke(color.x, color.y, color.z);
@@ -64,6 +89,15 @@ public class SphericalAgent {
         parent.translate(center.x, center.y, center.z);
         parent.sphere(description.radius);
         parent.popMatrix();
+        // next milestone
+        if (currentMilestone < path.size() - 1) {
+            Vec3 nextMilestonePosition = path.get(currentMilestone + 1).position;
+            parent.pushMatrix();
+            parent.fill(1, 0, 0);
+            parent.translate(nextMilestonePosition.x, nextMilestonePosition.y, nextMilestonePosition.z);
+            parent.sphere(description.radius);
+            parent.popMatrix();
+        }
     }
 
     public void setPath(List<Vertex> path) {
