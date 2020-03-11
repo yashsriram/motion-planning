@@ -18,7 +18,7 @@ public class PlainConfigurationSpace implements IntersectionChecker {
         this.sphericalObstacles = sphericalObstacles;
     }
 
-    public boolean doesIntersectWithObstacle(Vec3 p) {
+    public boolean doesVertexIntersectSomeObstacle(Vec3 p) {
         for (SphericalObstacle sphericalObstacle : sphericalObstacles) {
             if (p.minus(sphericalObstacle.center).norm() <= sphericalObstacle.radius + sphericalAgent.radius) {
                 return true;
@@ -27,7 +27,7 @@ public class PlainConfigurationSpace implements IntersectionChecker {
         return false;
     }
 
-    public boolean doesIntersectWithObstacle(Vec3 p1, Vec3 p2) {
+    public boolean doesEdgeIntersectSomeObstacle(Vec3 p1, Vec3 p2) {
         for (SphericalObstacle sphericalObstacle : sphericalObstacles) {
             Vec3 pb_pa = p2.minus(p1);
             Vec3 pa_pc = p1.minus(sphericalObstacle.center);

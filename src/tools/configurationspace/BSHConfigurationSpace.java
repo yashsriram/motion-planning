@@ -56,6 +56,7 @@ public class BSHConfigurationSpace implements IntersectionChecker {
         // Create bounding spheres tree data structure
         while (boundingSpheres.size() > 1) {
             // Loop invariant: At this point no sphere bounds no other spheres in the list boundingSpheres
+            PApplet.print("BSH creation, # left " + boundingSpheres.size() + "\r");
 
             // Find closest two spheres
             int x = 0;
@@ -102,6 +103,7 @@ public class BSHConfigurationSpace implements IntersectionChecker {
                 if (doesOneBoundAnother(parentSphere, sphere)) {
                     parentSphere.children.add(sphere);
                     boundingSpheres.remove(i);
+                    PApplet.println("additional bound");
                 }
             }
 
@@ -137,29 +139,11 @@ public class BSHConfigurationSpace implements IntersectionChecker {
         }
     }
 
-    private boolean doesIntersectWithObstacle(final Vec3 p, final BoundingSphere node) {
-        if (p.minus(node.center).norm() <= node.radius + sphericalAgent.radius) {
-            // Intersects with this bounding sphere
-            if (node.children.size() == 0) {
-                // Leaf bounding sphere node i.e. actual obstacle
-                return true;
-            }
-
-            // Not an actual obstacle => check for intersection with one of the children
-            for (BoundingSphere child : node.children) {
-                if (doesIntersectWithObstacle(p, child)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    private boolean doesVertexIntersectThisSphere(final Vec3 p, final BoundingSphere node) {
+        return p.minus(node.center).norm() <= node.radius + sphericalAgent.radius;
     }
 
-    public boolean doesIntersectWithObstacle(final Vec3 p) {
-        return doesIntersectWithObstacle(p, root);
-    }
-
-    public boolean doesIntersectWithObstacle(final Vec3 p1, final Vec3 p2, final BoundingSphere node) {
+    private boolean doesEdgeIntersectThisSphere(final Vec3 p1, final Vec3 p2, final BoundingSphere node) {
         Vec3 pb_pa = p2.minus(p1);
         Vec3 pa_pc = p1.minus(node.center);
         float r = node.radius + sphericalAgent.radius;
@@ -171,26 +155,55 @@ public class BSHConfigurationSpace implements IntersectionChecker {
             float t1 = (float) ((-b + Math.sqrt(discriminant)) / (2 * a));
             float t2 = (float) ((-b - Math.sqrt(discriminant)) / (2 * a));
             // Intersection with line segment only possible iff at least one of the solutions lies in [0, 1]
-            if ((0 <= t1 && t1 <= 1) || (0 <= t2 && t2 <= 1)) {
-                // Intersects with this bounding sphere
-                if (node.children.size() == 0) {
-                    // Leaf bounding sphere node i.e. actual obstacle
-                    return true;
-                }
+            return (0 <= t1 && t1 <= 1) || (0 <= t2 && t2 <= 1);
+        }
+        return false;
+    }
 
-                // Not an actual obstacle => check for intersection with one of the children
-                for (BoundingSphere child : node.children) {
-                    if (doesIntersectWithObstacle(p1, p2, child)) {
-                        return true;
-                    }
+    private boolean doesVertexIntersectSomeObstacleUnderThisBoundingSphere(final Vec3 p, final BoundingSphere node) {
+        if (doesVertexIntersectThisSphere(p, node)) {
+            // Intersects with this bounding sphere
+            if (node.children.size() == 0) {
+                // Leaf bounding sphere node i.e. actual obstacle
+                return true;
+            }
+
+            // Not an actual obstacle => check for intersection with one of the children
+            for (BoundingSphere child : node.children) {
+                if (doesVertexIntersectSomeObstacleUnderThisBoundingSphere(p, child)) {
+                    return true;
                 }
             }
         }
         return false;
     }
 
-    public boolean doesIntersectWithObstacle(final Vec3 p1, final Vec3 p2) {
-        return doesIntersectWithObstacle(p1, p2, root);
+    public boolean doesVertexIntersectSomeObstacle(final Vec3 p) {
+        return doesVertexIntersectSomeObstacleUnderThisBoundingSphere(p, root);
+    }
+
+    private boolean doesEdgeIntersectSomeObstacleUnderThisBoundingSphere(final Vec3 p1, final Vec3 p2, final BoundingSphere node) {
+        if (doesVertexIntersectThisSphere(p1, node)
+                || doesVertexIntersectThisSphere(p2, node)
+                || doesEdgeIntersectThisSphere(p1, p2, node)) {
+            // Intersects with this bounding sphere
+            if (node.children.size() == 0) {
+                // Leaf bounding sphere node i.e. actual obstacle
+                return true;
+            }
+
+            // Not an actual obstacle => check for intersection with one of the children
+            for (BoundingSphere child : node.children) {
+                if (doesEdgeIntersectSomeObstacleUnderThisBoundingSphere(p1, p2, child)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean doesEdgeIntersectSomeObstacle(final Vec3 p1, final Vec3 p2) {
+        return doesEdgeIntersectSomeObstacleUnderThisBoundingSphere(p1, p2, root);
     }
 
 }

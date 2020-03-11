@@ -35,7 +35,7 @@ public class SphericalAgent {
         }
         if (currentMilestone < path.size() - 1) {
             // reached next milestone
-            if (path.get(currentMilestone + 1).position.minus(center).norm() < radius / 2) {
+            if (path.get(currentMilestone + 1).position.minus(center).norm() < 2) {
                 currentMilestone++;
                 return;
             }

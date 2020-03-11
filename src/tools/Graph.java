@@ -31,7 +31,7 @@ public class Graph {
         }
         int numVerticesCulled = 0;
         for (Vertex vertex : vertices) {
-            if (intersectionChecker.doesIntersectWithObstacle(vertex.position)) {
+            if (intersectionChecker.doesVertexIntersectSomeObstacle(vertex.position)) {
                 vertex.searchState.color = Vec3.of(1, 0, 1);
                 vertex.isOutsideObstacle = false;
                 numVerticesCulled++;
@@ -51,7 +51,7 @@ public class Graph {
                 Vertex v2 = vertices.get(j);
                 if (v1.position.minus(v2.position).norm() <= maxEdgeLen) {
                     // Check for intersection with spherical obstacle
-                    if (!v1.isOutsideObstacle || !v2.isOutsideObstacle || intersectionChecker.doesIntersectWithObstacle(v1.position, v2.position)) {
+                    if (!v1.isOutsideObstacle || !v2.isOutsideObstacle || intersectionChecker.doesEdgeIntersectSomeObstacle(v1.position, v2.position)) {
                         numEdgesCulled++;
                     } else {
                         v1.addNeighbour(v2, Vec3.of(1));

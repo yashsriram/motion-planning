@@ -22,7 +22,7 @@ public class BSHSpeedUp extends PApplet {
     final Vec3 finishPosition = Vec3.of(0, SIDE * (-9f / 10), SIDE * (9f / 10));
     SphericalAgent sphericalAgent;
     List<SphericalObstacle> sphericalObstacles = new ArrayList<>();
-    PlainConfigurationSpace configurationSpace;
+    BSHConfigurationSpace configurationSpace;
     Graph graph;
 
     QueasyCam cam;
@@ -57,7 +57,7 @@ public class BSHSpeedUp extends PApplet {
                 Vec3.of(1)
         );
         long startConfig = millis();
-        configurationSpace = new PlainConfigurationSpace(this, sphericalAgent, sphericalObstacles);
+        configurationSpace = new BSHConfigurationSpace(this, sphericalAgent, sphericalObstacles);
         long configSpace = millis();
         PApplet.println("Time for config space creation = " + (configSpace - startConfig) + "ms");
         reset();
@@ -74,7 +74,7 @@ public class BSHSpeedUp extends PApplet {
         long sampling = millis();
         graph.generateVertices(vertexPositions, configurationSpace);
         long vertex = millis();
-        graph.generateAdjacencies(10, configurationSpace);
+        graph.generateAdjacencies(20, configurationSpace);
         long edge = millis();
         PApplet.println("Time for vertex sampling = " + (sampling - start) + "ms");
         PApplet.println("Time for vertex culling = " + (vertex - sampling) + "ms");
