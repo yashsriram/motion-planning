@@ -2,14 +2,14 @@ package demos;
 
 import camera.QueasyCam;
 import math.Vec3;
-import tools.Graph;
 import physical.SphericalAgent;
 import physical.SphericalObstacle;
+import processing.core.PApplet;
+import tools.Graph;
 import tools.Vertex;
 import tools.configurationspace.BSHConfigurationSpace;
 import tools.configurationspace.ConfigurationSpace;
 import tools.configurationspace.PlainConfigurationSpace;
-import processing.core.PApplet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +29,11 @@ public class BSHSpeedUp extends PApplet {
     QueasyCam cam;
 
     static boolean DRAW_OBSTACLES = true;
+    static String DATA_STRUCTURE = "";
+    static long DATA_STRUCTURE_CREATION_TIME = 0;
+    static long VERTEX_SAMPLING_TIME = 0;
+    static long VERTEX_CULLING_TIME = 0;
+    static long EDGE_CULLING_TIME = 0;
 
     public void settings() {
         size(WIDTH, HEIGHT, P3D);
@@ -57,14 +62,14 @@ public class BSHSpeedUp extends PApplet {
                 SIDE * (0.5f / 20),
                 Vec3.of(1)
         );
-        long startConfig = millis();
-        configurationSpace = new BSHConfigurationSpace(this, sphericalAgent, sphericalObstacles);
-        long configSpace = millis();
-        PApplet.println("Time for config space creation = " + (configSpace - startConfig) + "ms");
-        reset();
+        resetBSH();
     }
 
-    private void reset() {
+    private void resetPlain() {
+        DATA_STRUCTURE = "Plain";
+        long startConfig = millis();
+        configurationSpace = new PlainConfigurationSpace(this, sphericalAgent, sphericalObstacles);
+        long configSpace = millis();
         // vertex sampling
         long start = millis();
         List<Vec3> vertexPositions = new ArrayList<>();
@@ -77,9 +82,33 @@ public class BSHSpeedUp extends PApplet {
         long vertex = millis();
         graph.generateAdjacencies(20, configurationSpace);
         long edge = millis();
-        PApplet.println("Time for vertex sampling = " + (sampling - start) + "ms");
-        PApplet.println("Time for vertex culling = " + (vertex - sampling) + "ms");
-        PApplet.println("Time for edge culling = " + (edge - vertex) + "ms");
+        DATA_STRUCTURE_CREATION_TIME = configSpace - startConfig;
+        VERTEX_SAMPLING_TIME = sampling - start;
+        VERTEX_CULLING_TIME = vertex - sampling;
+        EDGE_CULLING_TIME = edge - vertex;
+    }
+
+    private void resetBSH() {
+        DATA_STRUCTURE = "BSH";
+        long startConfig = millis();
+        configurationSpace = new BSHConfigurationSpace(this, sphericalAgent, sphericalObstacles);
+        long configSpace = millis();
+        // vertex sampling
+        long start = millis();
+        List<Vec3> vertexPositions = new ArrayList<>();
+        for (int i = 0; i < 10000; ++i) {
+            vertexPositions.add(Vec3.of(0, random(-SIDE, SIDE), random(-SIDE, SIDE)));
+        }
+        graph = new Graph(this, startPosition, finishPosition);
+        long sampling = millis();
+        graph.generateVertices(vertexPositions, configurationSpace);
+        long vertex = millis();
+        graph.generateAdjacencies(20, configurationSpace);
+        long edge = millis();
+        DATA_STRUCTURE_CREATION_TIME = configSpace - startConfig;
+        VERTEX_SAMPLING_TIME = sampling - start;
+        VERTEX_CULLING_TIME = vertex - sampling;
+        EDGE_CULLING_TIME = edge - vertex;
     }
 
     public void draw() {
@@ -111,12 +140,19 @@ public class BSHSpeedUp extends PApplet {
         graph.draw();
         long draw = millis();
 
-        surface.setTitle("Processing - FPS: " + Math.round(frameRate) + " Update: " + (update - start) + "ms Draw " + (draw - update) + "ms");
+        surface.setTitle("DS: " + DATA_STRUCTURE
+                + " DS creation : " + DATA_STRUCTURE_CREATION_TIME + "ms "
+                + " V culling : " + VERTEX_CULLING_TIME + "ms "
+                + " E culling: " +  EDGE_CULLING_TIME + "ms"
+        );
     }
 
     public void keyPressed() {
-        if (key == 'r') {
-            reset();
+        if (key == 'b') {
+            resetBSH();
+        }
+        if (key == 'n') {
+            resetPlain();
         }
         if (key == 'g') {
             BSHConfigurationSpace.DRAW_BOUNDING_SPHERES = !BSHConfigurationSpace.DRAW_BOUNDING_SPHERES;
