@@ -1,10 +1,10 @@
 import camera.QueasyCam;
 import math.Vec3;
-import physical.Graph;
+import tools.Graph;
 import physical.SphericalAgent;
 import physical.SphericalObstacle;
-import physical.Vertex;
-import physical.configurationspace.BSHConfigurationSpace;
+import tools.Vertex;
+import tools.configurationspace.BSHConfigurationSpace;
 import processing.core.PApplet;
 
 import java.util.ArrayList;

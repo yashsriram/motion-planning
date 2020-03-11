@@ -1,4 +1,4 @@
-package physical.configurationspace;
+package tools.configurationspace;
 
 import math.Vec3;
 import physical.SphericalAgent;

@@ -2,6 +2,7 @@ package physical;
 
 import math.Vec3;
 import processing.core.PApplet;
+import tools.Vertex;
 
 import java.util.ArrayList;
 import java.util.List;

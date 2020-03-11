@@ -1,7 +1,7 @@
-package physical;
+package tools;
 
 import math.Vec3;
-import physical.configurationspace.IntersectionChecker;
+import tools.configurationspace.IntersectionChecker;
 import processing.core.PApplet;
 
 import java.util.*;
