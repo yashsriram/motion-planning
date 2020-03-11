@@ -40,7 +40,7 @@ public class BSHSpeedUp extends PApplet {
         noStroke();
 
         cam = new QueasyCam(this);
-        int numObstacles = 3000;
+        int numObstacles = 5000;
         for (int i = 0; i < numObstacles; i++) {
             sphericalObstacles.add(new SphericalObstacle(
                     this,

@@ -23,6 +23,7 @@ class BoundingSphere {
 
 public class BSHConfigurationSpace implements IntersectionChecker {
     public static boolean DRAW_BOUNDING_SPHERES = false;
+    public static float BOUNDING_SPHERE_COMPRESSION_SLACK = 10f;
     final PApplet parent;
     final SphericalAgent sphericalAgent;
     final BoundingSphere root;
@@ -53,15 +54,16 @@ public class BSHConfigurationSpace implements IntersectionChecker {
         }
 
         int numParentBoundingSpheres = 0;
+        int biggestGroupSize = 0;
         // Create bounding spheres tree data structure
         while (boundingSpheres.size() > 1) {
             // Loop invariant: At this point no sphere bounds no other spheres in the list boundingSpheres
-            PApplet.print("BSH creation, # left " + boundingSpheres.size() + "\r");
 
             // Find closest two spheres
             int x = 0;
             int y = 1;
             float leastDistance = boundingSpheres.get(y).center.minus(boundingSpheres.get(x).center).norm();
+            boolean breakOut = false;
             for (int i = 0; i < boundingSpheres.size() - 1; i++) {
                 for (int j = i + 1; j < boundingSpheres.size(); j++) {
                     BoundingSphere b1 = boundingSpheres.get(i);
@@ -72,6 +74,13 @@ public class BSHConfigurationSpace implements IntersectionChecker {
                         y = j;
                         leastDistance = distance;
                     }
+                    if (distance < BOUNDING_SPHERE_COMPRESSION_SLACK) {
+                        breakOut = true;
+                        break;
+                    }
+                }
+                if (breakOut) {
+                    break;
                 }
             }
 
@@ -103,17 +112,22 @@ public class BSHConfigurationSpace implements IntersectionChecker {
                 if (doesOneBoundAnother(parentSphere, sphere)) {
                     parentSphere.children.add(sphere);
                     boundingSpheres.remove(i);
-                    PApplet.println("additional bound");
                 }
             }
 
             // Add parent to bounding spheres list
             boundingSpheres.add(parentSphere);
+            if (parentSphere.children.size() > biggestGroupSize) {
+                biggestGroupSize = parentSphere.children.size();
+            }
             numParentBoundingSpheres++;
+
+            PApplet.print("BSH creation, " + "biggest group = " + biggestGroupSize + ", # left " + boundingSpheres.size() + "\r");
         }
 
         this.root = boundingSpheres.get(0);
-        PApplet.println("BSH created: #parent spheres = " + numParentBoundingSpheres);
+        PApplet.println();
+        PApplet.println("BSH created, #parent spheres = " + numParentBoundingSpheres);
     }
 
     private boolean doesOneBoundAnother(BoundingSphere b1, BoundingSphere b2) {
