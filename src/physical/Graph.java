@@ -1,6 +1,7 @@
 package physical;
 
 import math.Vec3;
+import physical.configurationspace.IntersectionChecker;
 import processing.core.PApplet;
 
 import java.util.*;
@@ -20,7 +21,7 @@ public class Graph {
         this.vertices.add(finish);
     }
 
-    public void generateVertices(List<Vec3> newVertexPositions, ConfigurationSpace configurationSpace) {
+    public void generateVertices(List<Vec3> newVertexPositions, IntersectionChecker intersectionChecker) {
         for (Vec3 position : newVertexPositions) {
             float distanceToFinish = finish.position.minus(position).norm();
             vertices.add(Vertex.of(
@@ -30,7 +31,7 @@ public class Graph {
         }
         int numVerticesCulled = 0;
         for (Vertex vertex : vertices) {
-            if (configurationSpace.doesIntersectWithObstacle(vertex.position)) {
+            if (intersectionChecker.doesIntersectWithObstacle(vertex.position)) {
                 vertex.searchState.color = Vec3.of(1, 0, 1);
                 vertex.isOutsideObstacle = false;
                 numVerticesCulled++;
@@ -41,7 +42,7 @@ public class Graph {
         PApplet.println("# vertices after culling: " + (vertices.size() - numVerticesCulled));
     }
 
-    public void generateAdjacencies(float maxEdgeLen, ConfigurationSpace configurationSpace) {
+    public void generateAdjacencies(float maxEdgeLen, IntersectionChecker intersectionChecker) {
         int numEdges = 0;
         int numEdgesCulled = 0;
         for (int i = 0; i < vertices.size() - 1; ++i) {
@@ -50,7 +51,7 @@ public class Graph {
                 Vertex v2 = vertices.get(j);
                 if (v1.position.minus(v2.position).norm() <= maxEdgeLen) {
                     // Check for intersection with spherical obstacle
-                    if (!v1.isOutsideObstacle || !v2.isOutsideObstacle || configurationSpace.doesIntersectWithObstacle(v1.position, v2.position)) {
+                    if (!v1.isOutsideObstacle || !v2.isOutsideObstacle || intersectionChecker.doesIntersectWithObstacle(v1.position, v2.position)) {
                         numEdgesCulled++;
                     } else {
                         v1.addNeighbour(v2, Vec3.of(1));

@@ -1,6 +1,8 @@
 import camera.QueasyCam;
 import math.Vec3;
 import physical.*;
+import physical.configurationspace.BSHConfigurationSpace;
+import physical.configurationspace.PlainConfigurationSpace;
 import processing.core.PApplet;
 
 import java.util.ArrayList;
@@ -15,7 +17,7 @@ public class Main extends PApplet {
     final Vec3 finishPosition = Vec3.of(0, SIDE * (-9f / 10), SIDE * (9f / 10));
     SphericalAgent sphericalAgent;
     List<SphericalObstacle> sphericalObstacles = new ArrayList<>();
-    ConfigurationSpace configurationSpace;
+    PlainConfigurationSpace configurationSpace;
     Graph graph;
 
     QueasyCam cam;
@@ -82,15 +84,20 @@ public class Main extends PApplet {
                 SIDE * (0.5f / 20),
                 Vec3.of(1)
         );
-        configurationSpace = new ConfigurationSpace(this, sphericalAgent, sphericalObstacles);
+        configurationSpace = new PlainConfigurationSpace(this, sphericalAgent, sphericalObstacles);
         // vertex sampling
         List<Vec3> vertexPositions = new ArrayList<>();
-        for (int i = 0; i < 2000; ++i) {
+        for (int i = 0; i < 20000; ++i) {
             vertexPositions.add(Vec3.of(0, random(-SIDE, SIDE), random(-SIDE, SIDE)));
         }
         graph = new Graph(this, startPosition, finishPosition);
+        long start = millis();
         graph.generateVertices(vertexPositions, configurationSpace);
+        long vertex = millis();
         graph.generateAdjacencies(10, configurationSpace);
+        long edge = millis();
+        PApplet.println("Time for vertex culling = " + (vertex - start) + "ms");
+        PApplet.println("Time for edge culling = " + (edge - vertex) + "ms");
     }
 
     public void draw() {
@@ -127,7 +134,7 @@ public class Main extends PApplet {
 
     public void keyPressed() {
         if (key == 'g') {
-            ConfigurationSpace.DRAW_BOUNDING_SPHERES = !ConfigurationSpace.DRAW_BOUNDING_SPHERES;
+            BSHConfigurationSpace.DRAW_BOUNDING_SPHERES = !BSHConfigurationSpace.DRAW_BOUNDING_SPHERES;
         }
         if (key == 'h') {
             DRAW_OBSTACLES = !DRAW_OBSTACLES;

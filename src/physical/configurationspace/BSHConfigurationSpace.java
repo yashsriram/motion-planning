@@ -1,6 +1,8 @@
-package physical;
+package physical.configurationspace;
 
 import math.Vec3;
+import physical.SphericalAgent;
+import physical.SphericalObstacle;
 import processing.core.PApplet;
 
 import java.util.ArrayList;
@@ -19,13 +21,13 @@ class BoundingSphere {
     }
 }
 
-public class ConfigurationSpace {
+public class BSHConfigurationSpace implements IntersectionChecker {
     public static boolean DRAW_BOUNDING_SPHERES = true;
     final PApplet parent;
     final SphericalAgent sphericalAgent;
     final BoundingSphere root;
 
-    public ConfigurationSpace(final PApplet parent, final SphericalAgent sphericalAgent, final List<SphericalObstacle> sphericalObstacles) {
+    public BSHConfigurationSpace(final PApplet parent, final SphericalAgent sphericalAgent, final List<SphericalObstacle> sphericalObstacles) {
         this.parent = parent;
         this.sphericalAgent = sphericalAgent;
 
