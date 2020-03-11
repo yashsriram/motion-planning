@@ -59,6 +59,7 @@ public class SphericalAgent {
                 currentMilestone++;
                 return;
             }
+            // next next milestone lookup
             if (currentMilestone < path.size() - 2) {
                 boolean blocked = configurationSpace.doesEdgeIntersectSomeObstacle(path.get(currentMilestone + 2).position, center);
                 if (!blocked) {
