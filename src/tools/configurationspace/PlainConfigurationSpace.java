@@ -7,7 +7,7 @@ import processing.core.PApplet;
 
 import java.util.List;
 
-public class PlainConfigurationSpace implements IntersectionChecker {
+public class PlainConfigurationSpace extends ConfigurationSpace {
     final PApplet parent;
     final SphericalAgent sphericalAgent;
     final List<SphericalObstacle> sphericalObstacles;

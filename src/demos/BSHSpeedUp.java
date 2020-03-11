@@ -7,6 +7,7 @@ import physical.SphericalAgent;
 import physical.SphericalObstacle;
 import tools.Vertex;
 import tools.configurationspace.BSHConfigurationSpace;
+import tools.configurationspace.ConfigurationSpace;
 import tools.configurationspace.PlainConfigurationSpace;
 import processing.core.PApplet;
 
@@ -22,7 +23,7 @@ public class BSHSpeedUp extends PApplet {
     final Vec3 finishPosition = Vec3.of(0, SIDE * (-9f / 10), SIDE * (9f / 10));
     SphericalAgent sphericalAgent;
     List<SphericalObstacle> sphericalObstacles = new ArrayList<>();
-    BSHConfigurationSpace configurationSpace;
+    ConfigurationSpace configurationSpace;
     Graph graph;
 
     QueasyCam cam;

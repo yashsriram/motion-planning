@@ -21,7 +21,7 @@ class BoundingSphere {
     }
 }
 
-public class BSHConfigurationSpace implements IntersectionChecker {
+public class BSHConfigurationSpace extends ConfigurationSpace {
     public static boolean DRAW_BOUNDING_SPHERES = false;
     public static float BOUNDING_SPHERE_COMPRESSION_SLACK = 10f;
     final PApplet parent;
