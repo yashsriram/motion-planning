@@ -37,6 +37,7 @@ visualize the roadmap the agent is following, including the start and goal posit
 milestones, and edges.
 
  - [x] continuous edge obstacle collision detection
+ - [x] Bug in BSH, cannot recognize collision with small sized obstacles [previously was not continuing intersection search if edge is encapsulated by a bounding sphere]
 
 ### Crowd/Flocking Simulation (Required) (80 Points)
 Simulate multiple agents sharing the environment as follows:
@@ -67,7 +68,6 @@ Simulate multiple agents sharing the environment as follows:
  - [ ] (5) Implement A* for graph search, must document performance improvement
  - [ ] (10) Implement a spatial data structure (such as KD-tree) or some other to accelerate the nearest neighbor search for the PRM construction or neighbors search in crowds, compare performance to the brute force method
  - [ ] (15) Implement a spatial data structure (such as a BSP-tree) to accelerate thechecking of potential collision with obstacles for building roadmap links or obstacleneighbor search in crowds, compare performance to the brute force method
- - [ ] Bug in BSH, cannot recognize collision with small sized obstacles
  
 ### Better motion planning [can illustrate on a single agent]
  - [ ] (5) Implement path smoothing (e.g., walk to furthest visible node on path)
