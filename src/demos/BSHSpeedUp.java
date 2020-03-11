@@ -93,6 +93,7 @@ public class BSHSpeedUp extends PApplet {
         DATA_STRUCTURE = "BSH";
         long startConfig = millis();
         configurationSpace = new BSHConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
+        sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, configurationSpace, 20f, Vec3.of(1));
         long configSpace = millis();
         // vertex sampling
         long start = millis();
@@ -152,7 +153,7 @@ public class BSHSpeedUp extends PApplet {
         if (key == 'b') {
             resetBSH();
         }
-        if (key == 'n') {
+        if (key == 'v') {
             resetPlain();
         }
         if (key == 'g') {
