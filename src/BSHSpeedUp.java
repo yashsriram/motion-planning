@@ -1,5 +1,3 @@
-package demos;
-
 import camera.QueasyCam;
 import math.Vec3;
 import physical.Graph;
@@ -44,7 +42,7 @@ public class BSHSpeedUp extends PApplet {
             sphericalObstacles.add(new SphericalObstacle(
                     this,
                     Vec3.of(0, -SIDE + i * SIDE * 1.7f / numObstacles, -SIDE + i * SIDE * 1.5f / numObstacles),
-                    SIDE * (1f / 20),
+                    SIDE * (0.1f / 20),
                     Vec3.of(1, 0, 0)
             ));
         }
@@ -149,7 +147,7 @@ public class BSHSpeedUp extends PApplet {
     }
 
     static public void main(String[] passedArgs) {
-        String[] appletArgs = new String[]{"Main"};
+        String[] appletArgs = new String[]{"BSHSpeedUp"};
         if (passedArgs != null) {
             PApplet.main(concat(appletArgs, passedArgs));
         } else {

@@ -67,7 +67,8 @@ Simulate multiple agents sharing the environment as follows:
  - [ ] (5) Implement A* for graph search, must document performance improvement
  - [ ] (10) Implement a spatial data structure (such as KD-tree) or some other to accelerate the nearest neighbor search for the PRM construction or neighbors search in crowds, compare performance to the brute force method
  - [ ] (15) Implement a spatial data structure (such as a BSP-tree) to accelerate thechecking of potential collision with obstacles for building roadmap links or obstacleneighbor search in crowds, compare performance to the brute force method
-
+ - [ ] Bug in BSH, cannot recognize collision with small sized obstacles
+ 
 ### Better motion planning [can illustrate on a single agent]
  - [ ] (5) Implement path smoothing (e.g., walk to furthest visible node on path)
  - [ ] (10) Implement an RRT. Briefly compare the RRT to the PRM method in terms of generated path, and ease of coding.
