@@ -51,12 +51,20 @@ public class With3DContext extends PApplet {
         noStroke();
 
         cam = new QueasyCam(this);
-        sphericalObstacles.add(new SphericalObstacle(
-                this,
-                Vec3.of(OFFSET),
-                SIDE * (2f / 20),
-                Vec3.of(1, 0, 0)
-        ));
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                sphericalObstacles.add(new SphericalObstacle(
+                        this,
+                        Vec3.of(
+                                SIDE * (-1 + (i + 0.5f) * 2f / 3) + random(-10, 10),
+                                0,
+                                SIDE * (-1 + (j + 0.5f) * 2f / 3) + random(-10, 10)
+                        ).plus(OFFSET),
+                        SIDE * (2f / 20),
+                        Vec3.of(1, 0, 0)
+                ));
+            }
+        }
         sphericalAgentDescription = new SphericalAgentDescription(
                 startPosition,
                 SIDE * (2f / 20)
