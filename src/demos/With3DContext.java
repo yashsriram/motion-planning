@@ -210,8 +210,9 @@ public class With3DContext extends PApplet {
             SEARCH_ALGORITHM = "A*";
         }
         if (key == '5') {
-            sphericalAgent.setPath(graph.weightedAStar(1.5f));
-            SEARCH_ALGORITHM = "weighted A*";
+            float weight = 1.5f;
+            sphericalAgent.setPath(graph.weightedAStar(weight));
+            SEARCH_ALGORITHM = weight + "A*";
         }
     }
 
