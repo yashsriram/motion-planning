@@ -17,11 +17,11 @@ import java.util.List;
 public class With3DContext extends PApplet {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 800;
-    public static final int SIDE = 100;
+    public static final int SIDE = 200;
 
     final Vec3 OFFSET = Vec3.of(100, 100, 0);
-    final Vec3 startPosition = Vec3.of(SIDE * (-9f / 10), 0, SIDE * (-9f / 10)).plusInPlace(OFFSET);
-    final Vec3 finishPosition = Vec3.of(SIDE * (9f / 10), 0, SIDE * (9f / 10)).plusInPlace(OFFSET);
+    final Vec3 startPosition = Vec3.of(SIDE * -0.9f, 0, SIDE * -0.9f).plusInPlace(OFFSET);
+    final Vec3 finishPosition = Vec3.of(SIDE * 0.9f, 0, SIDE * 0.9f).plusInPlace(OFFSET);
     SphericalAgentDescription sphericalAgentDescription;
     Ground ground;
     SphericalAgent sphericalAgent;
@@ -50,13 +50,40 @@ public class With3DContext extends PApplet {
         agentShape = loadShape("data/mario/mario.obj");
         agentShape.rotateX(PApplet.PI / 2);
         for (int i = 0; i < 7; i++) {
+            if (i == 0) {
+                continue;
+            }
             PShape shape = loadShape("data/rocks/Rock_" + (i + 1) + ".obj");
+            shape.rotateX(PConstants.PI);
+            obstacleShapes.add(shape);
+        }
+        for (int i = 0; i < 5; i++) {
+            if (i == 1 || i == 2) {
+                continue;
+            }
+            PShape shape = loadShape("data/plants/Plant_" + (i + 1) + ".obj");
+            shape.rotateX(PConstants.PI);
+            obstacleShapes.add(shape);
+        }
+        for (int i = 0; i < 2; i++) {
+            PShape shape = loadShape("data/bushes/Bush_" + (i + 1) + ".obj");
+            shape.rotateX(PConstants.PI);
+            obstacleShapes.add(shape);
+        }
+        for (int i = 0; i < 2; i++) {
+            PShape shape = loadShape("data/bushes/snow/Bush_Snow_" + (i + 1) + ".obj");
+            shape.rotateX(PConstants.PI);
+            obstacleShapes.add(shape);
+        }
+        for (int i = 0; i < 2; i++) {
+            PShape shape = loadShape("data/bushes/berries/BushBerries_" + (i + 1) + ".obj");
             shape.rotateX(PConstants.PI);
             obstacleShapes.add(shape);
         }
 
         cam = new QueasyCam(this);
         int gridSize = 5;
+        float randomnessSize = 20;
         for (int i = 0; i < gridSize; i++) {
             for (int j = 0; j < gridSize; j++) {
                 if ((i == 0 && j == 0) || (i == gridSize - 1 && j == gridSize - 1)) {
@@ -67,11 +94,11 @@ public class With3DContext extends PApplet {
                 sphericalObstacles.add(new SpriteSphericalObstacle(
                         this,
                         Vec3.of(
-                                SIDE * (-1 + (i + 0.5f) * 2f / gridSize) + random(-10, 10),
+                                SIDE * (-1 + (i + 0.5f) * 2f / gridSize) + random(-randomnessSize, randomnessSize),
                                 0,
-                                SIDE * (-1 + (j + 0.5f) * 2f / gridSize) + random(-10, 10)
+                                SIDE * (-1 + (j + 0.5f) * 2f / gridSize) + random(-randomnessSize, randomnessSize)
                         ).plus(OFFSET),
-                        SIDE * (2f / 30),
+                        SIDE * 0.10f * random(0.5f, 1),
                         Vec3.of(1, 0, 0),
                         shape,
                         normalizedSize
@@ -80,7 +107,7 @@ public class With3DContext extends PApplet {
         }
         sphericalAgentDescription = new SphericalAgentDescription(
                 startPosition,
-                SIDE * (2f / 20)
+                SIDE * 0.08f
         );
         configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
         sphericalAgent = new SphericalAgent(
@@ -94,7 +121,7 @@ public class With3DContext extends PApplet {
                 OFFSET.plus(Vec3.of(0, sphericalAgentDescription.radius, 0)),
                 Vec3.of(0, 0, 1), Vec3.of(1, 0, 0),
                 2 * SIDE, 2 * SIDE,
-                loadImage("ground4.jpg"));
+                loadImage("ground6.png"));
         // vertex sampling
         List<Vec3> vertexPositions = new ArrayList<>();
         for (int i = 0; i < 10000; ++i) {
@@ -125,8 +152,8 @@ public class With3DContext extends PApplet {
         long update = millis();
         // draw
         background(0);
-        directionalLight(1, 1, 1, 0, 1, -1);
-        directionalLight(1, 1, 1, 0, 1, 1);
+        directionalLight(0.6f, 0.6f, 0.6f, 0, 1, -1);
+        directionalLight(0.6f, 0.6f, 0.6f, 0, 1, 1);
         pointLight(1, 1, 1, 0, -10, 0);
         // obstacles
         if (DRAW_OBSTACLES) {
