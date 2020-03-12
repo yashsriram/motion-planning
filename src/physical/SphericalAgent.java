@@ -2,9 +2,7 @@ package physical;
 
 import math.Vec3;
 import processing.core.PApplet;
-import processing.core.PConstants;
 import processing.core.PShape;
-import tools.Vertex;
 import tools.configurationspace.ConfigurationSpace;
 
 import java.util.ArrayList;
@@ -20,7 +18,7 @@ public class SphericalAgent {
     final Vec3 color;
 
     Vec3 center;
-    List<Vertex> path = new ArrayList<>();
+    List<Vec3> path = new ArrayList<>();
     int currentMilestone = 0;
     public boolean isPaused = false;
 
@@ -40,13 +38,13 @@ public class SphericalAgent {
         }
         if (currentMilestone < path.size() - 1) {
             // reached next milestone
-            if (path.get(currentMilestone + 1).position.minus(center).norm() < 2) {
+            if (path.get(currentMilestone + 1).minus(center).norm() < 2) {
                 currentMilestone++;
                 return;
             }
             // move towards next milestone
             Vec3 velocityDir =
-                    path.get(currentMilestone + 1).position
+                    path.get(currentMilestone + 1)
                             .minus(center)
                             .normalizeInPlace();
             center.plusInPlace(velocityDir.scale(speed * dt));
@@ -59,20 +57,20 @@ public class SphericalAgent {
         }
         if (currentMilestone < path.size() - 1) {
             // reached next milestone
-            if (path.get(currentMilestone + 1).position.minus(center).norm() < 2) {
+            if (path.get(currentMilestone + 1).minus(center).norm() < 2) {
                 currentMilestone++;
                 return;
             }
             // next next milestone lookup
             if (currentMilestone < path.size() - 2) {
-                boolean blocked = configurationSpace.doesEdgeIntersectSomeObstacle(path.get(currentMilestone + 2).position, center);
+                boolean blocked = configurationSpace.doesEdgeIntersectSomeObstacle(path.get(currentMilestone + 2), center);
                 if (!blocked) {
                     currentMilestone++;
                 }
             }
             // move towards next milestone
             Vec3 velocityDir =
-                    path.get(currentMilestone + 1).position
+                    path.get(currentMilestone + 1)
                             .minus(center)
                             .normalizeInPlace();
             center.plusInPlace(velocityDir.scale(speed * dt));
@@ -83,8 +81,8 @@ public class SphericalAgent {
         // path
         parent.stroke(color.x, color.y, color.z);
         for (int i = 0; i < path.size() - 1; i++) {
-            Vec3 v1 = path.get(i).position;
-            Vec3 v2 = path.get(i + 1).position;
+            Vec3 v1 = path.get(i);
+            Vec3 v2 = path.get(i + 1);
             parent.line(v1.x, v1.y, v1.z, v2.x, v2.y, v2.z);
         }
         parent.noStroke();
@@ -96,7 +94,7 @@ public class SphericalAgent {
         parent.popMatrix();
         // next milestone
         if (currentMilestone < path.size() - 1) {
-            Vec3 nextMilestonePosition = path.get(currentMilestone + 1).position;
+            Vec3 nextMilestonePosition = path.get(currentMilestone + 1);
             parent.pushMatrix();
             parent.fill(1, 0, 0);
             parent.translate(nextMilestonePosition.x, nextMilestonePosition.y, nextMilestonePosition.z);
@@ -109,8 +107,8 @@ public class SphericalAgent {
         // path
         parent.stroke(color.x, color.y, color.z);
         for (int i = 0; i < path.size() - 1; i++) {
-            Vec3 v1 = path.get(i).position;
-            Vec3 v2 = path.get(i + 1).position;
+            Vec3 v1 = path.get(i);
+            Vec3 v2 = path.get(i + 1);
             parent.line(v1.x, v1.y, v1.z, v2.x, v2.y, v2.z);
         }
         parent.noStroke();
@@ -122,7 +120,7 @@ public class SphericalAgent {
 //        parent.noFill();
 //        parent.sphere(description.radius);
         if (currentMilestone < path.size() - 1) {
-            Vec3 direction = path.get(currentMilestone + 1).position.minus(center);
+            Vec3 direction = path.get(currentMilestone + 1).minus(center);
             parent.rotateY((float) Math.atan2(direction.x, direction.z));
         }
         parent.scale(2 * description.radius / normalizedSize);
@@ -131,7 +129,7 @@ public class SphericalAgent {
 
         // next milestone
         if (currentMilestone < path.size() - 1) {
-            Vec3 nextMilestonePosition = path.get(currentMilestone + 1).position;
+            Vec3 nextMilestonePosition = path.get(currentMilestone + 1);
             parent.pushMatrix();
             parent.fill(1, 0, 0);
             parent.noStroke();
@@ -141,7 +139,7 @@ public class SphericalAgent {
         }
     }
 
-    public void setPath(List<Vertex> path) {
+    public void setPath(List<Vec3> path) {
         this.path = path;
         currentMilestone = 0;
         center.set(description.startPosition);
@@ -151,7 +149,7 @@ public class SphericalAgent {
         if (path.size() == 0) {
             return;
         }
-        center.set(path.get(currentMilestone).position);
+        center.set(path.get(currentMilestone));
         if (currentMilestone < path.size() - 1) {
             currentMilestone++;
         }
@@ -161,7 +159,7 @@ public class SphericalAgent {
         if (path.size() == 0) {
             return;
         }
-        center.set(path.get(currentMilestone).position);
+        center.set(path.get(currentMilestone));
         if (currentMilestone > 0) {
             currentMilestone--;
         }

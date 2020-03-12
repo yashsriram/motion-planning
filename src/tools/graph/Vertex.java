@@ -1,4 +1,4 @@
-package tools;
+package tools.graph;
 
 import math.Vec3;
 import processing.core.PApplet;
@@ -6,10 +6,9 @@ import processing.core.PApplet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Vertex {
-    public static final int START_ID = -1;
-    public static final int FINISH_ID = 0;
-    public static boolean DRAW_EDGES = false;
+class Vertex {
+    private static final int START_ID = -1;
+    private static final int FINISH_ID = 0;
 
     private static int nextId = 1;
 
@@ -19,51 +18,51 @@ public class Vertex {
         return currId;
     }
 
-    public final PApplet parent;
-    public final int id;
-    public final Vec3 position;
-    public final float heuristicDistanceToFinish;
+    private final PApplet parent;
+    private final int id;
+    final Vec3 position;
+    final float heuristicDistanceToFinish;
 
-    public boolean isOutsideObstacle = true;
-    public final List<Vertex> neighbours = new ArrayList<>();
-    public final List<Vec3> edgeColors = new ArrayList<>();
+    boolean isOutsideObstacle = true;
+    final List<Vertex> neighbours = new ArrayList<>();
+    final List<Vec3> edgeColors = new ArrayList<>();
 
-    public class SearchState {
-        public boolean isExplored = false;
-        public float distanceFromStart = 0;
-        public List<Vertex> pathFromStart = new ArrayList<>();
-        public Vec3 color = Vec3.of(1);
+    class SearchState {
+        boolean isExplored = false;
+        float distanceFromStart = 0;
+        List<Vec3> pathFromStart = new ArrayList<>();
+        Vec3 color = Vec3.of(1);
 
-        public void reset() {
+        void reset() {
             color.set(1, 1, 1);
             isExplored = false;
             distanceFromStart = 0;
             pathFromStart.clear();
         }
 
-        public void addToFringeFrom(Vertex parent) {
+        void addToFringeFrom(Vertex parent) {
             color.set(0, 1, 0);
             isExplored = true;
             pathFromStart.addAll(parent.searchState.pathFromStart);
-            pathFromStart.add(Vertex.this);
+            pathFromStart.add(Vertex.this.position);
         }
 
-        public void setExplored() {
+        void setExplored() {
             color.set(1, 0, 0);
         }
     }
 
-    public final SearchState searchState;
+    final SearchState searchState;
 
-    public static Vertex start(PApplet parent, Vec3 position, float distanceToFinish) {
+    static Vertex start(PApplet parent, Vec3 position, float distanceToFinish) {
         return new Vertex(parent, START_ID, position, distanceToFinish);
     }
 
-    public static Vertex finish(PApplet parent, Vec3 position, float distanceToFinish) {
+    static Vertex finish(PApplet parent, Vec3 position, float distanceToFinish) {
         return new Vertex(parent, FINISH_ID, position, distanceToFinish);
     }
 
-    public static Vertex of(PApplet parent, Vec3 position, float distanceToFinish) {
+    static Vertex of(PApplet parent, Vec3 position, float distanceToFinish) {
         return new Vertex(parent, getNextId(), position, distanceToFinish);
     }
 
@@ -75,13 +74,13 @@ public class Vertex {
         this.searchState = new SearchState();
     }
 
-    public void draw() {
+    void draw() {
         parent.pushMatrix();
         parent.fill(searchState.color.x, searchState.color.y, searchState.color.z);
         parent.stroke(searchState.color.x, searchState.color.y, searchState.color.z);
         parent.point(position.x, position.y, position.z);
         parent.popMatrix();
-        if (DRAW_EDGES) {
+        if (Graph.DRAW_EDGES) {
             for (int i = 0; i < neighbours.size(); ++i) {
                 Vertex neighbour = neighbours.get(i);
                 Vec3 color = edgeColors.get(i);
@@ -92,9 +91,13 @@ public class Vertex {
         }
     }
 
-    public void addNeighbour(Vertex other, Vec3 color) {
+    void addNeighbour(Vertex other, Vec3 color) {
         neighbours.add(other);
         edgeColors.add(color);
+    }
+
+    boolean isFinishVertex() {
+        return id == FINISH_ID;
     }
 
     @Override

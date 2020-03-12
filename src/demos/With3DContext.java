@@ -6,8 +6,7 @@ import physical.*;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PShape;
-import tools.Graph;
-import tools.Vertex;
+import tools.graph.Graph;
 import tools.configurationspace.BSHConfigurationSpace;
 import tools.configurationspace.PlainConfigurationSpace;
 
@@ -188,7 +187,7 @@ public class With3DContext extends PApplet {
             Graph.DRAW_VERTICES = !Graph.DRAW_VERTICES;
         }
         if (key == 'j') {
-            Vertex.DRAW_EDGES = !Vertex.DRAW_EDGES;
+            Graph.DRAW_EDGES = !Graph.DRAW_EDGES;
         }
         if (key == 'p') {
             sphericalAgent.isPaused = !sphericalAgent.isPaused;

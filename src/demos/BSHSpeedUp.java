@@ -6,11 +6,10 @@ import physical.SphericalAgent;
 import physical.SphericalAgentDescription;
 import physical.SphericalObstacle;
 import processing.core.PApplet;
-import tools.Graph;
-import tools.Vertex;
 import tools.configurationspace.BSHConfigurationSpace;
 import tools.configurationspace.ConfigurationSpace;
 import tools.configurationspace.PlainConfigurationSpace;
+import tools.graph.Graph;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -145,7 +144,7 @@ public class BSHSpeedUp extends PApplet {
         surface.setTitle("DS: " + DATA_STRUCTURE
                 + " DS creation : " + DATA_STRUCTURE_CREATION_TIME + "ms "
                 + " V culling : " + VERTEX_CULLING_TIME + "ms "
-                + " E culling: " +  EDGE_CULLING_TIME + "ms"
+                + " E culling: " + EDGE_CULLING_TIME + "ms"
         );
     }
 
@@ -166,7 +165,7 @@ public class BSHSpeedUp extends PApplet {
             Graph.DRAW_VERTICES = !Graph.DRAW_VERTICES;
         }
         if (key == 'j') {
-            Vertex.DRAW_EDGES = !Vertex.DRAW_EDGES;
+            Graph.DRAW_EDGES = !Graph.DRAW_EDGES;
         }
         if (key == 'p') {
             sphericalAgent.isPaused = !sphericalAgent.isPaused;

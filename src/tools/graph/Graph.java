@@ -1,4 +1,4 @@
-package tools;
+package tools.graph;
 
 import math.Vec3;
 import tools.configurationspace.ConfigurationSpace;
@@ -8,6 +8,7 @@ import java.util.*;
 
 public class Graph {
     public static boolean DRAW_VERTICES = true;
+    public static boolean DRAW_EDGES = false;
     public static float END_POINT_SIZE = 2f;
 
     final PApplet parent;
@@ -103,7 +104,7 @@ public class Graph {
         next.searchState.addToFringeFrom(current);
     }
 
-    public List<Vertex> dfs() {
+    public List<Vec3> dfs() {
         PApplet.println("DFS");
 
         reset();
@@ -117,7 +118,7 @@ public class Graph {
             Vertex current = fringe.pop();
             numVerticesExplored++;
             // Check if finish
-            if (current.id == Vertex.FINISH_ID) {
+            if (current.isFinishVertex()) {
                 PApplet.println("Reached finish, # vertices explored: " + numVerticesExplored);
                 return finish.searchState.pathFromStart;
             }
@@ -132,7 +133,7 @@ public class Graph {
         }
 
         PApplet.println("Could not reach finish, # vertices explored: " + numVerticesExplored);
-        return Collections.singletonList(start);
+        return Collections.singletonList(start.position);
     }
 
     private void addToFringe(final Queue<Vertex> fringe, final Vertex current, final Vertex next) {
@@ -141,7 +142,7 @@ public class Graph {
         next.searchState.addToFringeFrom(current);
     }
 
-    private List<Vertex> search(final Queue<Vertex> fringe) {
+    private List<Vec3> search(final Queue<Vertex> fringe) {
         int numVerticesExplored = 0;
 
         // Add start to fringe
@@ -151,7 +152,7 @@ public class Graph {
             Vertex current = fringe.remove();
             numVerticesExplored++;
             // Check if finish
-            if (current.id == Vertex.FINISH_ID) {
+            if (current.isFinishVertex()) {
                 PApplet.println("Reached finish, # vertices explored: " + numVerticesExplored);
                 return finish.searchState.pathFromStart;
             }
@@ -166,23 +167,23 @@ public class Graph {
         }
 
         PApplet.println("Could not reach finish, # vertices explored: " + numVerticesExplored);
-        return Collections.singletonList(start);
+        return Collections.singletonList(start.position);
     }
 
-    public List<Vertex> bfs() {
+    public List<Vec3> bfs() {
         PApplet.println("BFS");
         reset();
         return search(new LinkedList<>());
     }
 
-    public List<Vertex> ucs() {
+    public List<Vec3> ucs() {
         PApplet.println("UCS");
         reset();
         return search(new PriorityQueue<>((v1, v2) ->
                 (int) (v1.searchState.distanceFromStart - v2.searchState.distanceFromStart)));
     }
 
-    public List<Vertex> aStar() {
+    public List<Vec3> aStar() {
         PApplet.println("A*");
         reset();
         return search(new PriorityQueue<>((v1, v2) -> (int) (
@@ -191,7 +192,7 @@ public class Graph {
         )));
     }
 
-    public List<Vertex> weightedAStar(final float epislon) {
+    public List<Vec3> weightedAStar(final float epislon) {
         PApplet.println("Weighted A* with epsilon = " + epislon);
         reset();
         return search(new PriorityQueue<>((v1, v2) -> (int) (

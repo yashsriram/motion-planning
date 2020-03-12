@@ -1,16 +1,5 @@
 import camera.QueasyCam;
-import math.Vec3;
-import physical.SphericalAgent;
-import physical.SphericalAgentDescription;
-import physical.SphericalObstacle;
 import processing.core.PApplet;
-import tools.Graph;
-import tools.Vertex;
-import tools.configurationspace.BSHConfigurationSpace;
-import tools.configurationspace.PlainConfigurationSpace;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Main extends PApplet {
     public static final int WIDTH = 800;

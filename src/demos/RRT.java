@@ -6,6 +6,7 @@ import physical.SphericalAgent;
 import physical.SphericalAgentDescription;
 import physical.SphericalObstacle;
 import processing.core.PApplet;
+import tools.RapidlyExploringRandomTree;
 import tools.configurationspace.BSHConfigurationSpace;
 import tools.configurationspace.PlainConfigurationSpace;
 import tools.graph.Graph;
@@ -13,7 +14,7 @@ import tools.graph.Graph;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Checkin extends PApplet {
+public class RRT extends PApplet {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 800;
     public static final int SIDE = 100;
@@ -24,12 +25,13 @@ public class Checkin extends PApplet {
     SphericalAgent sphericalAgent;
     List<SphericalObstacle> sphericalObstacles = new ArrayList<>();
     PlainConfigurationSpace configurationSpace;
-    Graph graph;
+    RapidlyExploringRandomTree rrt;
 
     QueasyCam cam;
 
     static boolean DRAW_OBSTACLES = true;
     static String SEARCH_ALGORITHM = "";
+    static boolean SMOOTH_PATH = false;
 
     public void settings() {
         size(WIDTH, HEIGHT, P3D);
@@ -55,14 +57,10 @@ public class Checkin extends PApplet {
         configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
         sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, configurationSpace, 20f, Vec3.of(1));
 
-        // vertex sampling
         List<Vec3> vertexPositions = new ArrayList<>();
         for (int i = 0; i < 10000; ++i) {
             vertexPositions.add(Vec3.of(0, random(-SIDE, SIDE), random(-SIDE, SIDE)));
         }
-        graph = new Graph(this, startPosition, finishPosition);
-        graph.generateVertices(vertexPositions, configurationSpace);
-        graph.generateAdjacencies(10, configurationSpace);
     }
 
     public void draw() {
@@ -76,7 +74,11 @@ public class Checkin extends PApplet {
         }
         long start = millis();
         // update
-        sphericalAgent.update(0.1f);
+        if (SMOOTH_PATH) {
+            sphericalAgent.smoothUpdate(0.1f);
+        } else {
+            sphericalAgent.update(0.1f);
+        }
         long update = millis();
         // draw
         background(0);
@@ -91,13 +93,16 @@ public class Checkin extends PApplet {
         // configuration space
         configurationSpace.draw();
         // graph
-        graph.draw();
+//        graph.draw();
         long draw = millis();
 
-        surface.setTitle("Processing - FPS: " + Math.round(frameRate) + " Update: " + (update - start) + "ms Draw " + (draw - update) + "ms" + " search: " + SEARCH_ALGORITHM);
+        surface.setTitle("Processing - FPS: " + Math.round(frameRate) + " Update: " + (update - start) + "ms Draw " + (draw - update) + "ms" + " search: " + SEARCH_ALGORITHM + " smooth-path: " + SMOOTH_PATH);
     }
 
     public void keyPressed() {
+        if (key == 'x') {
+            SMOOTH_PATH = !SMOOTH_PATH;
+        }
         if (key == 'g') {
             BSHConfigurationSpace.DRAW_BOUNDING_SPHERES = !BSHConfigurationSpace.DRAW_BOUNDING_SPHERES;
         }
@@ -113,30 +118,31 @@ public class Checkin extends PApplet {
         if (key == 'p') {
             sphericalAgent.isPaused = !sphericalAgent.isPaused;
         }
-        if (key == '1') {
-            sphericalAgent.setPath(graph.dfs());
-            SEARCH_ALGORITHM = "DFS";
-        }
-        if (key == '2') {
-            sphericalAgent.setPath(graph.bfs());
-            SEARCH_ALGORITHM = "BFS";
-        }
-        if (key == '3') {
-            sphericalAgent.setPath(graph.ucs());
-            SEARCH_ALGORITHM = "UCS";
-        }
-        if (key == '4') {
-            sphericalAgent.setPath(graph.aStar());
-            SEARCH_ALGORITHM = "A*";
-        }
-        if (key == '5') {
-            sphericalAgent.setPath(graph.weightedAStar(1.5f));
-            SEARCH_ALGORITHM = "weighted A*";
-        }
+//        if (key == '1') {
+//            sphericalAgent.setPath(graph.dfs());
+//            SEARCH_ALGORITHM = "DFS";
+//        }
+//        if (key == '2') {
+//            sphericalAgent.setPath(graph.bfs());
+//            SEARCH_ALGORITHM = "BFS";
+//        }
+//        if (key == '3') {
+//            sphericalAgent.setPath(graph.ucs());
+//            SEARCH_ALGORITHM = "UCS";
+//        }
+//        if (key == '4') {
+//            sphericalAgent.setPath(graph.aStar());
+//            SEARCH_ALGORITHM = "A*";
+//        }
+//        if (key == '5') {
+//            float weight = 1.5f;
+//            sphericalAgent.setPath(graph.weightedAStar(weight));
+//            SEARCH_ALGORITHM = weight + "A*";
+//        }
     }
 
     static public void main(String[] passedArgs) {
-        String[] appletArgs = new String[]{"demos.Checkin"};
+        String[] appletArgs = new String[]{"demos.RRT"};
         if (passedArgs != null) {
             PApplet.main(concat(appletArgs, passedArgs));
         } else {

@@ -6,10 +6,9 @@ import physical.SphericalAgent;
 import physical.SphericalAgentDescription;
 import physical.SphericalObstacle;
 import processing.core.PApplet;
-import tools.Graph;
-import tools.Vertex;
 import tools.configurationspace.BSHConfigurationSpace;
 import tools.configurationspace.PlainConfigurationSpace;
+import tools.graph.Graph;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -117,7 +116,7 @@ public class SmoothPath extends PApplet {
             Graph.DRAW_VERTICES = !Graph.DRAW_VERTICES;
         }
         if (key == 'j') {
-            Vertex.DRAW_EDGES = !Vertex.DRAW_EDGES;
+            Graph.DRAW_EDGES = !Graph.DRAW_EDGES;
         }
         if (key == 'p') {
             sphericalAgent.isPaused = !sphericalAgent.isPaused;
