@@ -2,10 +2,7 @@ package demos;
 
 import camera.QueasyCam;
 import math.Vec3;
-import physical.Ground;
-import physical.SphericalAgent;
-import physical.SphericalAgentDescription;
-import physical.SphericalObstacle;
+import physical.*;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PShape;
@@ -32,7 +29,7 @@ public class With3DContext extends PApplet {
     PlainConfigurationSpace configurationSpace;
     Graph graph;
     PShape agentShape;
-    PShape obstacleShape;
+    List<PShape> obstacleShapes = new ArrayList<>();
 
     QueasyCam cam;
 
@@ -50,18 +47,34 @@ public class With3DContext extends PApplet {
         rectMode(CENTER);
         noStroke();
 
+        agentShape = loadShape("data/mario/mario.obj");
+        agentShape.rotateX(PApplet.PI / 2);
+        for (int i = 0; i < 7; i++) {
+            PShape shape = loadShape("data/rocks/Rock_" + (i + 1) + ".obj");
+            shape.rotateX(PConstants.PI);
+            obstacleShapes.add(shape);
+        }
+
         cam = new QueasyCam(this);
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                sphericalObstacles.add(new SphericalObstacle(
+        int gridSize = 5;
+        for (int i = 0; i < gridSize; i++) {
+            for (int j = 0; j < gridSize; j++) {
+                if ((i == 0 && j == 0) || (i == gridSize - 1 && j == gridSize - 1)) {
+                    continue;
+                }
+                PShape shape = obstacleShapes.get((int) random(obstacleShapes.size()));
+                float normalizedSize = Math.max(Math.max(shape.getWidth(), shape.getHeight()), shape.getDepth()) + 0.3f;
+                sphericalObstacles.add(new SpriteSphericalObstacle(
                         this,
                         Vec3.of(
-                                SIDE * (-1 + (i + 0.5f) * 2f / 3) + random(-10, 10),
+                                SIDE * (-1 + (i + 0.5f) * 2f / gridSize) + random(-10, 10),
                                 0,
-                                SIDE * (-1 + (j + 0.5f) * 2f / 3) + random(-10, 10)
+                                SIDE * (-1 + (j + 0.5f) * 2f / gridSize) + random(-10, 10)
                         ).plus(OFFSET),
-                        SIDE * (2f / 20),
-                        Vec3.of(1, 0, 0)
+                        SIDE * (2f / 30),
+                        Vec3.of(1, 0, 0),
+                        shape,
+                        normalizedSize
                 ));
             }
         }
@@ -91,12 +104,6 @@ public class With3DContext extends PApplet {
         graph = new Graph(this, startPosition, finishPosition);
         graph.generateVertices(vertexPositions, configurationSpace);
         graph.generateAdjacencies(10, configurationSpace);
-
-        agentShape = loadShape("data/mario/mario.obj");
-        PApplet.println(agentShape.width);
-        agentShape.rotateX(PApplet.PI / 2);
-        obstacleShape = loadShape("data/rocks/Rock_4.obj");
-        obstacleShape.rotateX(PConstants.PI);
     }
 
     public void draw() {
@@ -124,7 +131,7 @@ public class With3DContext extends PApplet {
         // obstacles
         if (DRAW_OBSTACLES) {
             for (SphericalObstacle sphericalObstacle : sphericalObstacles) {
-                sphericalObstacle.draw(obstacleShape, 1.5f);
+                sphericalObstacle.draw();
             }
         }
         // agent
