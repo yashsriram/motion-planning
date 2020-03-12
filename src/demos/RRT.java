@@ -6,10 +6,9 @@ import physical.SphericalAgent;
 import physical.SphericalAgentDescription;
 import physical.SphericalObstacle;
 import processing.core.PApplet;
-import tools.RapidlyExploringRandomTree;
 import tools.configurationspace.BSHConfigurationSpace;
 import tools.configurationspace.PlainConfigurationSpace;
-import tools.graph.Graph;
+import tools.rrt.RapidlyExploringRandomTree;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,10 +56,8 @@ public class RRT extends PApplet {
         configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
         sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, configurationSpace, 20f, Vec3.of(1));
 
-        List<Vec3> vertexPositions = new ArrayList<>();
-        for (int i = 0; i < 10000; ++i) {
-            vertexPositions.add(Vec3.of(0, random(-SIDE, SIDE), random(-SIDE, SIDE)));
-        }
+        rrt = new RapidlyExploringRandomTree(this, startPosition);
+        rrt.generateTree(10000, configurationSpace);
     }
 
     public void draw() {
@@ -70,6 +67,9 @@ public class RRT extends PApplet {
             }
             if (keyCode == LEFT) {
                 sphericalAgent.stepBackward();
+            }
+            if (key == 'n') {
+                rrt.generateNextNode(configurationSpace);
             }
         }
         long start = millis();
@@ -92,53 +92,26 @@ public class RRT extends PApplet {
         sphericalAgent.draw();
         // configuration space
         configurationSpace.draw();
-        // graph
-//        graph.draw();
+        // rrt
+        rrt.draw();
         long draw = millis();
 
         surface.setTitle("Processing - FPS: " + Math.round(frameRate) + " Update: " + (update - start) + "ms Draw " + (draw - update) + "ms" + " search: " + SEARCH_ALGORITHM + " smooth-path: " + SMOOTH_PATH);
     }
 
     public void keyPressed() {
-        if (key == 'x') {
-            SMOOTH_PATH = !SMOOTH_PATH;
+        if (key == 'h') {
+            DRAW_OBSTACLES = !DRAW_OBSTACLES;
         }
         if (key == 'g') {
             BSHConfigurationSpace.DRAW_BOUNDING_SPHERES = !BSHConfigurationSpace.DRAW_BOUNDING_SPHERES;
         }
-        if (key == 'h') {
-            DRAW_OBSTACLES = !DRAW_OBSTACLES;
-        }
-        if (key == 'k') {
-            Graph.DRAW_VERTICES = !Graph.DRAW_VERTICES;
-        }
-        if (key == 'j') {
-            Graph.DRAW_EDGES = !Graph.DRAW_EDGES;
-        }
         if (key == 'p') {
             sphericalAgent.isPaused = !sphericalAgent.isPaused;
         }
-//        if (key == '1') {
-//            sphericalAgent.setPath(graph.dfs());
-//            SEARCH_ALGORITHM = "DFS";
-//        }
-//        if (key == '2') {
-//            sphericalAgent.setPath(graph.bfs());
-//            SEARCH_ALGORITHM = "BFS";
-//        }
-//        if (key == '3') {
-//            sphericalAgent.setPath(graph.ucs());
-//            SEARCH_ALGORITHM = "UCS";
-//        }
-//        if (key == '4') {
-//            sphericalAgent.setPath(graph.aStar());
-//            SEARCH_ALGORITHM = "A*";
-//        }
-//        if (key == '5') {
-//            float weight = 1.5f;
-//            sphericalAgent.setPath(graph.weightedAStar(weight));
-//            SEARCH_ALGORITHM = weight + "A*";
-//        }
+        if (key == 'x') {
+            SMOOTH_PATH = !SMOOTH_PATH;
+        }
     }
 
     static public void main(String[] passedArgs) {
