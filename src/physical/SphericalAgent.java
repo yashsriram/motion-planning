@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SphericalAgent {
+    public static float NEXT_MILESTONE_HINT_SIZE = 2f;
+
     final PApplet parent;
     final SphericalAgentDescription description;
     final ConfigurationSpace configurationSpace;
@@ -115,12 +117,12 @@ public class SphericalAgent {
         parent.noStroke();
         // agent
         parent.pushMatrix();
-        parent.fill(color.x, color.y, color.z);
         parent.translate(center.x, center.y, center.z);
-        parent.sphere(description.radius);
-        parent.scale(2);
-        parent.rotateX(PApplet.PI/2);
-        parent.translate(0, 0, 1f);
+//        parent.stroke(color.x, color.y, color.z);
+//        parent.noFill();
+//        parent.sphere(description.radius);
+        parent.scale(2 * description.radius * (7.5f / 20));
+        parent.rotateX(PApplet.PI / 2);
         parent.shape(shape);
         parent.popMatrix();
         // next milestone
@@ -128,8 +130,9 @@ public class SphericalAgent {
             Vec3 nextMilestonePosition = path.get(currentMilestone + 1).position;
             parent.pushMatrix();
             parent.fill(1, 0, 0);
+            parent.noStroke();
             parent.translate(nextMilestonePosition.x, nextMilestonePosition.y, nextMilestonePosition.z);
-            parent.sphere(description.radius);
+            parent.sphere(NEXT_MILESTONE_HINT_SIZE);
             parent.popMatrix();
         }
     }

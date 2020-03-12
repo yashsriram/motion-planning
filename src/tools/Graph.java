@@ -7,11 +7,13 @@ import processing.core.PApplet;
 import java.util.*;
 
 public class Graph {
+    public static boolean DRAW_VERTICES = true;
+    public static float END_POINT_SIZE = 2f;
+
     final PApplet parent;
     final Vertex start;
     final Vertex finish;
     final List<Vertex> vertices = new ArrayList<>();
-    public static boolean DRAW_VERTICES = true;
 
     public Graph(PApplet parent, Vec3 startPosition, Vec3 finishPosition) {
         this.parent = parent;
@@ -73,17 +75,17 @@ public class Graph {
         }
         // Start
         parent.pushMatrix();
-        parent.fill(1, 1, 0);
+        parent.fill(0, 0, 1);
         parent.noStroke();
         parent.translate(start.position.x, start.position.y, start.position.z);
-        parent.box(2f);
+        parent.box(END_POINT_SIZE);
         parent.popMatrix();
         // Finish
         parent.pushMatrix();
-        parent.fill(0, 1, 1);
+        parent.fill(0, 1, 0);
         parent.noStroke();
         parent.translate(finish.position.x, finish.position.y, finish.position.z);
-        parent.box(2f);
+        parent.box(END_POINT_SIZE);
         parent.popMatrix();
     }
 

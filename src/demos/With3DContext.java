@@ -2,6 +2,7 @@ package demos;
 
 import camera.QueasyCam;
 import math.Vec3;
+import physical.Ground;
 import physical.SphericalAgent;
 import physical.SphericalAgentDescription;
 import physical.SphericalObstacle;
@@ -23,6 +24,7 @@ public class With3DContext extends PApplet {
     final Vec3 startPosition = Vec3.of(SIDE * (-9f / 10), 0, SIDE * (-9f / 10)).plusInPlace(OFFSET);
     final Vec3 finishPosition = Vec3.of(SIDE * (9f / 10), 0, SIDE * (9f / 10)).plusInPlace(OFFSET);
     SphericalAgentDescription sphericalAgentDescription;
+    Ground ground;
     SphericalAgent sphericalAgent;
     List<SphericalObstacle> sphericalObstacles = new ArrayList<>();
     PlainConfigurationSpace configurationSpace;
@@ -53,16 +55,28 @@ public class With3DContext extends PApplet {
         ));
         sphericalAgentDescription = new SphericalAgentDescription(
                 startPosition,
-                SIDE * (0.5f / 20)
+                SIDE * (5f / 20)
         );
         configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
-        sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, configurationSpace, 20f, Vec3.of(1));
+        sphericalAgent = new SphericalAgent(
+                this,
+                sphericalAgentDescription,
+                configurationSpace,
+                20f,
+                Vec3.of(0.5f)
+        );
+        ground = new Ground(this,
+                OFFSET.plus(Vec3.of(0, sphericalAgentDescription.radius, 0)),
+                Vec3.of(0, 0, 1), Vec3.of(1, 0, 0),
+                2 * SIDE, 2 * SIDE,
+                loadImage("ground3.jpg"));
 
         // vertex sampling
         List<Vec3> vertexPositions = new ArrayList<>();
         for (int i = 0; i < 10000; ++i) {
             vertexPositions.add(Vec3.of(random(-SIDE, SIDE), 0, random(-SIDE, SIDE)).plusInPlace(OFFSET));
         }
+        Graph.END_POINT_SIZE = 5f;
         graph = new Graph(this, startPosition, finishPosition);
         graph.generateVertices(vertexPositions, configurationSpace);
         graph.generateAdjacencies(10, configurationSpace);
@@ -87,14 +101,16 @@ public class With3DContext extends PApplet {
         long update = millis();
         // draw
         background(0);
-        // agent
-        sphericalAgent.drawSprite();
         // obstacles
         if (DRAW_OBSTACLES) {
             for (SphericalObstacle sphericalObstacle : sphericalObstacles) {
                 sphericalObstacle.draw();
             }
         }
+        // agent
+        sphericalAgent.drawSprite();
+        // ground
+        ground.draw();
         // configuration space
         configurationSpace.draw();
         // graph
