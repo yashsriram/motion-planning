@@ -17,7 +17,6 @@ public class SphericalAgent {
     final ConfigurationSpace configurationSpace;
     final float speed;
     final Vec3 color;
-    final PShape shape;
 
     Vec3 center;
     List<Vertex> path = new ArrayList<>();
@@ -32,7 +31,6 @@ public class SphericalAgent {
         this.color = color;
 
         this.center = Vec3.of(description.startPosition);
-        this.shape = parent.loadShape("data/mario/mario.obj");
     }
 
     public void update(float dt) {
@@ -106,7 +104,7 @@ public class SphericalAgent {
         }
     }
 
-    public void drawSprite() {
+    public void draw(PShape shape, float normalizedSize) {
         // path
         parent.stroke(color.x, color.y, color.z);
         for (int i = 0; i < path.size() - 1; i++) {
@@ -115,16 +113,17 @@ public class SphericalAgent {
             parent.line(v1.x, v1.y, v1.z, v2.x, v2.y, v2.z);
         }
         parent.noStroke();
+
         // agent
         parent.pushMatrix();
         parent.translate(center.x, center.y, center.z);
 //        parent.stroke(color.x, color.y, color.z);
 //        parent.noFill();
 //        parent.sphere(description.radius);
-        parent.scale(2 * description.radius * (7.5f / 20));
-        parent.rotateX(PApplet.PI / 2);
+        parent.scale(2 * description.radius / normalizedSize);
         parent.shape(shape);
         parent.popMatrix();
+
         // next milestone
         if (currentMilestone < path.size() - 1) {
             Vec3 nextMilestonePosition = path.get(currentMilestone + 1).position;

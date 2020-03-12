@@ -7,6 +7,8 @@ import physical.SphericalAgent;
 import physical.SphericalAgentDescription;
 import physical.SphericalObstacle;
 import processing.core.PApplet;
+import processing.core.PConstants;
+import processing.core.PShape;
 import tools.Graph;
 import tools.Vertex;
 import tools.configurationspace.BSHConfigurationSpace;
@@ -29,6 +31,8 @@ public class With3DContext extends PApplet {
     List<SphericalObstacle> sphericalObstacles = new ArrayList<>();
     PlainConfigurationSpace configurationSpace;
     Graph graph;
+    PShape agentShape;
+    PShape obstacleShape;
 
     QueasyCam cam;
 
@@ -55,7 +59,7 @@ public class With3DContext extends PApplet {
         ));
         sphericalAgentDescription = new SphericalAgentDescription(
                 startPosition,
-                SIDE * (5f / 20)
+                SIDE * (2f / 20)
         );
         configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
         sphericalAgent = new SphericalAgent(
@@ -63,14 +67,13 @@ public class With3DContext extends PApplet {
                 sphericalAgentDescription,
                 configurationSpace,
                 20f,
-                Vec3.of(0.5f)
+                Vec3.of(1)
         );
         ground = new Ground(this,
                 OFFSET.plus(Vec3.of(0, sphericalAgentDescription.radius, 0)),
                 Vec3.of(0, 0, 1), Vec3.of(1, 0, 0),
                 2 * SIDE, 2 * SIDE,
-                loadImage("ground3.jpg"));
-
+                loadImage("ground4.jpg"));
         // vertex sampling
         List<Vec3> vertexPositions = new ArrayList<>();
         for (int i = 0; i < 10000; ++i) {
@@ -80,6 +83,12 @@ public class With3DContext extends PApplet {
         graph = new Graph(this, startPosition, finishPosition);
         graph.generateVertices(vertexPositions, configurationSpace);
         graph.generateAdjacencies(10, configurationSpace);
+
+        agentShape = loadShape("data/mario/mario.obj");
+        PApplet.println(agentShape.width);
+        agentShape.rotateX(PApplet.PI / 2);
+        obstacleShape = loadShape("data/rocks/Rock_4.obj");
+        obstacleShape.rotateX(PConstants.PI);
     }
 
     public void draw() {
@@ -101,14 +110,17 @@ public class With3DContext extends PApplet {
         long update = millis();
         // draw
         background(0);
+        directionalLight(1, 1, 1, 0, 1, -1);
+        directionalLight(1, 1, 1, 0, 1, 1);
+        pointLight(1, 1, 1, 0, -10, 0);
         // obstacles
         if (DRAW_OBSTACLES) {
             for (SphericalObstacle sphericalObstacle : sphericalObstacles) {
-                sphericalObstacle.draw();
+                sphericalObstacle.draw(obstacleShape, 1.5f);
             }
         }
         // agent
-        sphericalAgent.drawSprite();
+        sphericalAgent.draw(agentShape, 20 / 7.5f);
         // ground
         ground.draw();
         // configuration space
