@@ -128,14 +128,14 @@ public class BSHSpeedUp extends PApplet {
         long update = millis();
         // draw
         background(0);
-        // agent
-        sphericalAgent.draw();
         // obstacles
         if (DRAW_OBSTACLES) {
             for (SphericalObstacle sphericalObstacle : sphericalObstacles) {
                 sphericalObstacle.draw();
             }
         }
+        // agent
+        sphericalAgent.draw();
         // configuration space
         configurationSpace.draw();
         // graph
