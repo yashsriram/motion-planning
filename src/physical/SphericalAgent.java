@@ -2,6 +2,7 @@ package physical;
 
 import math.Vec3;
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PShape;
 import tools.Vertex;
 import tools.configurationspace.ConfigurationSpace;
@@ -120,6 +121,10 @@ public class SphericalAgent {
 //        parent.stroke(color.x, color.y, color.z);
 //        parent.noFill();
 //        parent.sphere(description.radius);
+        if (currentMilestone < path.size() - 1) {
+            Vec3 direction = path.get(currentMilestone + 1).position.minus(center);
+            parent.rotateY((float) Math.atan2(direction.x, direction.z));
+        }
         parent.scale(2 * description.radius / normalizedSize);
         parent.shape(shape);
         parent.popMatrix();
