@@ -56,8 +56,8 @@ public class RRT extends PApplet {
         configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
         sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, configurationSpace, 20f, Vec3.of(1));
 
-        rrt = new RapidlyExploringRandomTree(this, startPosition);
-        rrt.generateTree(10000, configurationSpace);
+        rrt = new RapidlyExploringRandomTree(this, startPosition, finishPosition);
+        rrt.generateTree(5000, configurationSpace);
     }
 
     public void draw() {
@@ -106,11 +106,17 @@ public class RRT extends PApplet {
         if (key == 'g') {
             BSHConfigurationSpace.DRAW_BOUNDING_SPHERES = !BSHConfigurationSpace.DRAW_BOUNDING_SPHERES;
         }
+        if (key == '1') {
+            sphericalAgent.setPath(rrt.search());
+        }
         if (key == 'p') {
             sphericalAgent.isPaused = !sphericalAgent.isPaused;
         }
         if (key == 'x') {
             SMOOTH_PATH = !SMOOTH_PATH;
+        }
+        if (key == 'j') {
+            RapidlyExploringRandomTree.DRAW_TREE = !RapidlyExploringRandomTree.DRAW_TREE;
         }
     }
 

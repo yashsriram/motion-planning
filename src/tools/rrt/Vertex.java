@@ -20,7 +20,7 @@ class Vertex {
     final Vec3 position;
 
     private final List<Vertex> children = new ArrayList<>();
-    private Vertex parent = null;
+    Vertex parent = null;
 
     static Vertex of(PApplet parent, Vec3 position) {
         return new Vertex(parent, position);
@@ -34,7 +34,7 @@ class Vertex {
 
     void draw() {
         applet.pushMatrix();
-        applet.stroke(1);
+        applet.stroke(0, 0, 1);
         applet.point(position.x, position.y, position.z);
         applet.popMatrix();
         for (Vertex child : children) {
