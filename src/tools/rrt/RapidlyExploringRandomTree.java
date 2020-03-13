@@ -8,8 +8,8 @@ import java.util.*;
 
 public class RapidlyExploringRandomTree {
     public static float GROWTH_LIMIT = 10f;
-    public static float END_POINT_SIZE = 2f;
-    public static float FINISH_SLACK = 5f;
+    public static float END_POINT_HINT_SIZE = 2f;
+    public static float FINISH_SLACK_RADIUS = 5f;
     public static boolean DRAW_TREE = true;
 
     final PApplet applet;
@@ -62,8 +62,8 @@ public class RapidlyExploringRandomTree {
     }
 
     public void draw() {
-        // tree
         if (DRAW_TREE) {
+            // tree
             Stack<Vertex> fringe = new Stack<>();
             fringe.add(root);
 
@@ -72,33 +72,34 @@ public class RapidlyExploringRandomTree {
                 node.draw();
                 fringe.addAll(node.getChildren());
             }
+
+            // finish slack sphere
+            applet.pushMatrix();
+            applet.stroke(0, 1, 0);
+            applet.noFill();
+            applet.translate(finishPosition.x, finishPosition.y, finishPosition.z);
+            applet.sphere(FINISH_SLACK_RADIUS);
+            applet.popMatrix();
         }
         // start
         applet.pushMatrix();
         applet.fill(0, 0, 1);
         applet.noStroke();
         applet.translate(startPosition.x, startPosition.y, startPosition.z);
-        applet.box(END_POINT_SIZE);
+        applet.box(END_POINT_HINT_SIZE);
         applet.popMatrix();
         // finish
         applet.pushMatrix();
         applet.fill(0, 1, 0);
         applet.noStroke();
         applet.translate(finishPosition.x, finishPosition.y, finishPosition.z);
-        applet.box(END_POINT_SIZE);
-        applet.popMatrix();
-        // finish slack sphere
-        applet.pushMatrix();
-        applet.stroke(0, 1, 0);
-        applet.noFill();
-        applet.translate(finishPosition.x, finishPosition.y, finishPosition.z);
-        applet.box(FINISH_SLACK);
+        applet.box(END_POINT_HINT_SIZE);
         applet.popMatrix();
     }
 
     public List<Vec3> search() {
         Vertex nearestVertex = getNearestVertexFrom(finishPosition);
-        if (finishPosition.minus(nearestVertex.position).norm() < FINISH_SLACK) {
+        if (finishPosition.minus(nearestVertex.position).norm() < FINISH_SLACK_RADIUS) {
             List<Vec3> path = new ArrayList<>();
             path.add(0, finishPosition);
             Vertex node = nearestVertex.parent;
