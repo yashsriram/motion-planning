@@ -43,7 +43,7 @@ public class RapidlyExploringRandomTree {
     }
 
     public void generateNextNode(ConfigurationSpace configurationSpace) {
-        Vec3 newPosition = Vec3.of(0, applet.random(-100, 100), applet.random(-100, 100));
+        Vec3 newPosition = configurationSpace.samplePoint();
         Vertex nearestVertex = getNearestVertexFrom(newPosition);
         Vec3 growth = newPosition.minus(nearestVertex.position);
         if (growth.norm() > GROWTH_LIMIT) {

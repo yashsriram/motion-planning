@@ -6,9 +6,9 @@ import physical.*;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PShape;
-import tools.graph.Graph;
 import tools.configurationspace.BSHConfigurationSpace;
 import tools.configurationspace.PlainConfigurationSpace;
+import tools.graph.Graph;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +21,9 @@ public class With3DContext extends PApplet {
     final Vec3 OFFSET = Vec3.of(100, 100, 0);
     final Vec3 startPosition = Vec3.of(SIDE * -0.9f, 0, SIDE * -0.9f).plusInPlace(OFFSET);
     final Vec3 finishPosition = Vec3.of(SIDE * 0.9f, 0, SIDE * 0.9f).plusInPlace(OFFSET);
+    final Vec3 minCorner = Vec3.of(-SIDE, 0, -SIDE).plusInPlace(OFFSET);
+    final Vec3 maxCorner = Vec3.of(SIDE, 0, SIDE).plusInPlace(OFFSET);
+
     SphericalAgentDescription sphericalAgentDescription;
     Ground ground;
     SphericalAgent sphericalAgent;
@@ -108,7 +111,13 @@ public class With3DContext extends PApplet {
                 startPosition,
                 SIDE * 0.08f
         );
-        configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
+        configurationSpace = new PlainConfigurationSpace(
+                this,
+                sphericalAgentDescription,
+                sphericalObstacles,
+                minCorner,
+                maxCorner
+                );
         sphericalAgent = new SphericalAgent(
                 this,
                 sphericalAgentDescription,
@@ -121,14 +130,9 @@ public class With3DContext extends PApplet {
                 Vec3.of(0, 0, 1), Vec3.of(1, 0, 0),
                 2 * SIDE, 2 * SIDE,
                 loadImage("ground6.png"));
-        // vertex sampling
-        List<Vec3> vertexPositions = new ArrayList<>();
-        for (int i = 0; i < 10000; ++i) {
-            vertexPositions.add(Vec3.of(random(-SIDE, SIDE), 0, random(-SIDE, SIDE)).plusInPlace(OFFSET));
-        }
         Graph.END_POINT_SIZE = 5f;
         graph = new Graph(this, startPosition, finishPosition);
-        graph.generateVertices(vertexPositions, configurationSpace);
+        graph.generateVertices(configurationSpace.samplePoints(10000), configurationSpace);
         graph.generateAdjacencies(10, configurationSpace);
     }
 

@@ -5,17 +5,22 @@ import physical.SphericalAgentDescription;
 import physical.SphericalObstacle;
 import processing.core.PApplet;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PlainConfigurationSpace extends ConfigurationSpace {
     final PApplet parent;
     final SphericalAgentDescription sphericalAgentDescription;
     final List<SphericalObstacle> sphericalObstacles;
+    final Vec3 minCorner;
+    final Vec3 maxCorner;
 
-    public PlainConfigurationSpace(PApplet parent, SphericalAgentDescription sphericalAgentDescription, List<SphericalObstacle> sphericalObstacles) {
+    public PlainConfigurationSpace(PApplet parent, SphericalAgentDescription sphericalAgentDescription, List<SphericalObstacle> sphericalObstacles, Vec3 minCorner, Vec3 maxCorner) {
         this.parent = parent;
         this.sphericalAgentDescription = sphericalAgentDescription;
         this.sphericalObstacles = sphericalObstacles;
+        this.minCorner = minCorner;
+        this.maxCorner = maxCorner;
     }
 
     public boolean doesVertexIntersectSomeObstacle(Vec3 p) {
@@ -46,6 +51,26 @@ public class PlainConfigurationSpace extends ConfigurationSpace {
             }
         }
         return false;
+    }
+
+    public List<Vec3> samplePoints(int numberOfPoints) {
+        List<Vec3> samples = new ArrayList<>();
+        for (int i = 0; i < numberOfPoints; i++) {
+            samples.add(Vec3.of(
+                    parent.random(minCorner.x, maxCorner.x),
+                    parent.random(minCorner.y, maxCorner.y),
+                    parent.random(minCorner.z, maxCorner.z)
+            ));
+        }
+        return samples;
+    }
+
+    public Vec3 samplePoint() {
+        return Vec3.of(
+                parent.random(minCorner.x, maxCorner.x),
+                parent.random(minCorner.y, maxCorner.y),
+                parent.random(minCorner.z, maxCorner.z)
+        );
     }
 
     public void draw() {

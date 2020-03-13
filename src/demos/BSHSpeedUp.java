@@ -21,6 +21,9 @@ public class BSHSpeedUp extends PApplet {
 
     final Vec3 startPosition = Vec3.of(0, SIDE * (9f / 10), SIDE * (-9f / 10));
     final Vec3 finishPosition = Vec3.of(0, SIDE * (-9f / 10), SIDE * (9f / 10));
+    final Vec3 minCorner = Vec3.of(0, -SIDE, -SIDE);
+    final Vec3 maxCorner = Vec3.of(0, SIDE, SIDE);
+
     SphericalAgentDescription sphericalAgentDescription;
     SphericalAgent sphericalAgent;
     List<SphericalObstacle> sphericalObstacles = new ArrayList<>();
@@ -67,18 +70,13 @@ public class BSHSpeedUp extends PApplet {
     private void resetPlain() {
         DATA_STRUCTURE = "Plain";
         long startConfig = millis();
-        configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
+        configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles, minCorner, maxCorner);
         sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, configurationSpace, 20f, Vec3.of(1));
         long configSpace = millis();
-        // vertex sampling
         long start = millis();
-        List<Vec3> vertexPositions = new ArrayList<>();
-        for (int i = 0; i < 10000; ++i) {
-            vertexPositions.add(Vec3.of(0, random(-SIDE, SIDE), random(-SIDE, SIDE)));
-        }
         graph = new Graph(this, startPosition, finishPosition);
         long sampling = millis();
-        graph.generateVertices(vertexPositions, configurationSpace);
+        graph.generateVertices(configurationSpace.samplePoints(10000), configurationSpace);
         long vertex = millis();
         graph.generateAdjacencies(20, configurationSpace);
         long edge = millis();
@@ -91,18 +89,13 @@ public class BSHSpeedUp extends PApplet {
     private void resetBSH() {
         DATA_STRUCTURE = "BSH";
         long startConfig = millis();
-        configurationSpace = new BSHConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
+        configurationSpace = new BSHConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles, minCorner, maxCorner);
         sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, configurationSpace, 20f, Vec3.of(1));
         long configSpace = millis();
-        // vertex sampling
         long start = millis();
-        List<Vec3> vertexPositions = new ArrayList<>();
-        for (int i = 0; i < 10000; ++i) {
-            vertexPositions.add(Vec3.of(0, random(-SIDE, SIDE), random(-SIDE, SIDE)));
-        }
         graph = new Graph(this, startPosition, finishPosition);
         long sampling = millis();
-        graph.generateVertices(vertexPositions, configurationSpace);
+        graph.generateVertices(configurationSpace.samplePoints(10000), configurationSpace);
         long vertex = millis();
         graph.generateAdjacencies(20, configurationSpace);
         long edge = millis();

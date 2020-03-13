@@ -17,6 +17,8 @@ public class RRT extends PApplet {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 800;
     public static final int SIDE = 100;
+    final Vec3 minCorner = Vec3.of(0, -SIDE, -SIDE);
+    final Vec3 maxCorner = Vec3.of(0, SIDE, SIDE);
 
     final Vec3 startPosition = Vec3.of(0, SIDE * (9f / 10), SIDE * (-9f / 10));
     final Vec3 finishPosition = Vec3.of(0, SIDE * (-9f / 10), SIDE * (9f / 10));
@@ -52,9 +54,8 @@ public class RRT extends PApplet {
                 startPosition,
                 SIDE * (0.5f / 20)
         );
-        configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
+        configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles, minCorner, maxCorner);
         sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, configurationSpace, 20f, Vec3.of(1));
-
         rrt = new RapidlyExploringRandomTree(this, startPosition, finishPosition);
         rrt.growTree(1000, configurationSpace);
     }

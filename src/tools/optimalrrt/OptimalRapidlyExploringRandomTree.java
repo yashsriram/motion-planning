@@ -44,7 +44,7 @@ public class OptimalRapidlyExploringRandomTree {
     }
 
     public void generateNextNode(ConfigurationSpace configurationSpace) {
-        Vec3 newPosition = Vec3.of(0, applet.random(-100, 100), applet.random(-100, 100));
+        Vec3 newPosition = configurationSpace.samplePoint();
 
         // nearest vertex search
         Stack<Vertex> fringe = new Stack<>();
