@@ -57,7 +57,7 @@ public class RRT extends PApplet {
         sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, configurationSpace, 20f, Vec3.of(1));
 
         rrt = new RapidlyExploringRandomTree(this, startPosition, finishPosition);
-        rrt.generateTree(5000, configurationSpace);
+        rrt.growTree(5000, configurationSpace);
     }
 
     public void draw() {

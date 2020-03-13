@@ -55,7 +55,7 @@ public class RapidlyExploringRandomTree {
         nearestVertex.addChild(Vertex.of(applet, newPosition));
     }
 
-    public void generateTree(int numNodes, ConfigurationSpace configurationSpace) {
+    public void growTree(int numNodes, ConfigurationSpace configurationSpace) {
         for (int i = 0; i < numNodes; i++) {
             generateNextNode(configurationSpace);
         }
