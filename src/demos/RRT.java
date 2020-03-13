@@ -61,14 +61,8 @@ public class RRT extends PApplet {
 
     public void draw() {
         if (keyPressed) {
-            if (keyCode == RIGHT) {
-                sphericalAgent.stepForward();
-            }
-            if (keyCode == LEFT) {
-                sphericalAgent.stepBackward();
-            }
             if (key == 'n') {
-                rrt.generateNextNode(configurationSpace);
+                rrt.growTree(10, configurationSpace);
             }
         }
         long start = millis();
@@ -113,6 +107,12 @@ public class RRT extends PApplet {
         }
         if (key == 'x') {
             SMOOTH_PATH = !SMOOTH_PATH;
+        }
+        if (keyCode == RIGHT) {
+            sphericalAgent.stepForward();
+        }
+        if (keyCode == LEFT) {
+            sphericalAgent.stepBackward();
         }
         if (key == 'j') {
             RapidlyExploringRandomTree.DRAW_TREE = !RapidlyExploringRandomTree.DRAW_TREE;
