@@ -29,7 +29,6 @@ public class RRT extends PApplet {
     QueasyCam cam;
 
     static boolean DRAW_OBSTACLES = true;
-    static String SEARCH_ALGORITHM = "";
     static boolean SMOOTH_PATH = false;
 
     public void settings() {
@@ -57,7 +56,7 @@ public class RRT extends PApplet {
         sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, configurationSpace, 20f, Vec3.of(1));
 
         rrt = new RapidlyExploringRandomTree(this, startPosition, finishPosition);
-        rrt.growTree(5000, configurationSpace);
+        rrt.growTree(1000, configurationSpace);
     }
 
     public void draw() {
@@ -96,7 +95,7 @@ public class RRT extends PApplet {
         rrt.draw();
         long draw = millis();
 
-        surface.setTitle("Processing - FPS: " + Math.round(frameRate) + " Update: " + (update - start) + "ms Draw " + (draw - update) + "ms" + " search: " + SEARCH_ALGORITHM + " smooth-path: " + SMOOTH_PATH);
+        surface.setTitle("Processing - FPS: " + Math.round(frameRate) + " Update: " + (update - start) + "ms Draw " + (draw - update) + "ms" + " smooth-path: " + SMOOTH_PATH);
     }
 
     public void keyPressed() {
