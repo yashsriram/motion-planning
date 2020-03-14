@@ -23,6 +23,8 @@ public class With2DRotation extends PApplet {
     final Vec3 startPose = Vec3.of(PI * 1f * orientationScale, SIDE * -0.9f, SIDE * -0.9f);
     final Vec3 finishPose = Vec3.of(PI * 0f * orientationScale, SIDE * 0.9f, SIDE * -0.9f);
 
+    boolean SMOOTH_PATH = false;
+
     LineSegment2DAgentDescription lineSegment2DAgentDescription;
     LineSegment2DAgent lineSegmentAgent;
     List<SphericalObstacle> sphericalObstacles = new ArrayList<>();
@@ -45,26 +47,26 @@ public class With2DRotation extends PApplet {
         noStroke();
 
         cam = new QueasyCam(this);
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 5; i++) {
             sphericalObstacles.add(new SphericalObstacle(
                     this,
-                    Vec3.of(0, SIDE * 0.9f - 10, SIDE * -0.9f + 10 *  i - 10),
-                    SIDE * 0.05f,
+                    Vec3.of(0, SIDE * 0.9f - 20, SIDE * -0.9f + 20 *  i - 10),
+                    SIDE * 0.1f,
                     Vec3.of(1, 0, 1)
             ));
         }
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 5; i++) {
             sphericalObstacles.add(new SphericalObstacle(
                     this,
-                    Vec3.of(0, SIDE * -0.9f + 10, SIDE * -0.9f + 10 * i - 10),
-                    SIDE * 0.05f,
+                    Vec3.of(0, SIDE * -0.9f + 20, SIDE * -0.9f + 20 * i - 10),
+                    SIDE * 0.1f,
                     Vec3.of(1, 0, 1)
             ));
         }
         sphericalObstacles.add(new SphericalObstacle(
                 this,
                 Vec3.of(0, 0, 0),
-                SIDE * (2f / 20),
+                SIDE * 0.2f,
                 Vec3.of(1, 0, 1)
         ));
         lineSegment2DAgentDescription = new LineSegment2DAgentDescription(
@@ -73,7 +75,7 @@ public class With2DRotation extends PApplet {
                 20
         );
         configurationSpace = new LineSegment2DConfigurationSpace(this, lineSegment2DAgentDescription, sphericalObstacles, minCorner, maxCorner, orientationScale);
-        lineSegmentAgent = new LineSegment2DAgent(this, lineSegment2DAgentDescription, configurationSpace, 20f, Vec3.of(1));
+        lineSegmentAgent = new LineSegment2DAgent(this, lineSegment2DAgentDescription, configurationSpace, 10f, Vec3.of(1));
         Graph.END_POINT_SIZE = 3f;
         graph = new Graph(this, startPose, finishPose);
         graph.generateVertices(configurationSpace.samplePoints(20000), configurationSpace);
@@ -83,7 +85,11 @@ public class With2DRotation extends PApplet {
     public void draw() {
         long start = millis();
         // update
-        lineSegmentAgent.update(0.1f);
+        if (SMOOTH_PATH) {
+            lineSegmentAgent.smoothUpdate(0.02f);
+        } else {
+            lineSegmentAgent.update(0.1f);
+        }
         long update = millis();
         // draw
         background(0);
@@ -101,7 +107,7 @@ public class With2DRotation extends PApplet {
         graph.draw();
         long draw = millis();
 
-        surface.setTitle("Processing - FPS: " + Math.round(frameRate) + " Update: " + (update - start) + "ms Draw " + (draw - update) + "ms" + " search: " + SEARCH_ALGORITHM);
+        surface.setTitle("Processing - FPS: " + Math.round(frameRate) + " Update: " + (update - start) + "ms Draw " + (draw - update) + "ms" + " search: " + SEARCH_ALGORITHM + " smooth path: " + SMOOTH_PATH);
     }
 
     public void keyPressed() {
@@ -118,6 +124,9 @@ public class With2DRotation extends PApplet {
             } else {
                 Graph.END_POINT_SIZE = 0f;
             }
+        }
+        if (key == 'x') {
+            SMOOTH_PATH = !SMOOTH_PATH;
         }
         if (key == 'h') {
             DRAW_OBSTACLES = !DRAW_OBSTACLES;

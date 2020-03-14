@@ -52,6 +52,33 @@ public class LineSegment2DAgent {
         }
     }
 
+    public void smoothUpdate(float dt) {
+        if (isPaused) {
+            return;
+        }
+        if (currentMilestone < path.size() - 1) {
+            // reached next milestone
+            if (path.get(currentMilestone + 1).minus(pose).norm() < 2) {
+                currentMilestone++;
+                pose.set(path.get(currentMilestone));
+                return;
+            }
+            // next next milestone lookup
+            if (currentMilestone < path.size() - 2) {
+                boolean blocked = configurationSpace.doesEdgeIntersectSomeObstacleFuzzily(path.get(currentMilestone + 2), pose);
+                if (!blocked) {
+                    currentMilestone++;
+                }
+            }
+            // move towards next milestone
+            Vec3 velocityDir =
+                    path.get(currentMilestone + 1)
+                            .minus(pose)
+                            .normalizeInPlace();
+            pose.plusInPlace(velocityDir.scale(speed * dt));
+        }
+    }
+
     private void drawPose(Vec3 pose, Vec3 color) {
         parent.pushMatrix();
         parent.stroke(color.x, color.y, color.z);
@@ -95,7 +122,7 @@ public class LineSegment2DAgent {
         if (currentMilestone < path.size() - 1) {
             Vec3 nextMilestonePosition = path.get(currentMilestone + 1);
             Vec3 nextMilestoneColor = Vec3.of(1, 0, 0);
-//            drawPose(nextMilestonePosition, nextMilestoneColor);
+            drawPose(nextMilestonePosition, nextMilestoneColor);
             if (DRAW_POSITION_ORIENTATION_SPACE_PATH) {
                 parent.pushMatrix();
                 parent.fill(nextMilestoneColor.x, nextMilestoneColor.y, nextMilestoneColor.z);
