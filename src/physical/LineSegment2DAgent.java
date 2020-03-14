@@ -65,7 +65,7 @@ public class LineSegment2DAgent {
             }
             // next next milestone lookup
             if (currentMilestone < path.size() - 2) {
-                boolean blocked = configurationSpace.doesEdgeIntersectSomeObstacleFuzzily(path.get(currentMilestone + 2), pose);
+                boolean blocked = configurationSpace.doesEdgeIntersectSomeObstacleNonStrict(path.get(currentMilestone + 2), pose);
                 if (!blocked) {
                     currentMilestone++;
                 }

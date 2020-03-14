@@ -31,16 +31,16 @@ public class LineSegment2DConfigurationSpace extends ConfigurationSpace {
         Vec3 p2Position = Vec3.of(pose);
         p2Position.x = 0;
         Vec3 halfLength = Vec3.of(0, (float) (Math.sin(pose.x / orientationScale) * description.length / 2), (float) (Math.cos(pose.x / orientationScale) * description.length / 2));
-        Vec3 p1 = p1Position.minusInPlace(halfLength);
-        Vec3 p2 = p2Position.plusInPlace(halfLength);
+        p1Position.minusInPlace(halfLength);
+        p2Position.plusInPlace(halfLength);
 
         for (SphericalObstacle sphericalObstacle : sphericalObstacles) {
-            if (p1.minus(sphericalObstacle.center).norm() <= sphericalObstacle.radius
-                    || p2.minus(sphericalObstacle.center).norm() <= sphericalObstacle.radius) {
+            if (p1Position.minus(sphericalObstacle.center).norm() <= sphericalObstacle.radius
+                    || p2Position.minus(sphericalObstacle.center).norm() <= sphericalObstacle.radius) {
                 return true;
             }
-            Vec3 pb_pa = p2.minus(p1);
-            Vec3 pa_pc = p1.minus(sphericalObstacle.center);
+            Vec3 pb_pa = p2Position.minus(p1Position);
+            Vec3 pa_pc = p1Position.minus(sphericalObstacle.center);
             float r = sphericalObstacle.radius;
             float a = pb_pa.dot(pb_pa);
             float c = pa_pc.dot(pa_pc) - r * r;
@@ -63,31 +63,38 @@ public class LineSegment2DConfigurationSpace extends ConfigurationSpace {
         return false;
     }
 
-    public boolean doesEdgeIntersectSomeObstacleFuzzily(Vec3 pose1, Vec3 pose2) {
+    public boolean doesEdgeIntersectSomeObstacleNonStrict(Vec3 pose1, Vec3 pose2) {
         // Considers a bounding sphere of the line centered at center of line and radius as length / 2
         // Checks for collision of bounding sphere and obstacles
-        Vec3 p1Position = Vec3.of(pose1);
-        p1Position.x = 0;
-        Vec3 p2Position = Vec3.of(pose2);
-        p2Position.x = 0;
+        // This always returns true when there is a collision
+        // But there can be a case where there is no true collision but this return true
+        // A loss occurs in that case
+        Vec3 center1 = Vec3.of(pose1);
+        center1.x = 0;
+        Vec3 center2 = Vec3.of(pose2);
+        center2.x = 0;
 
 //        parent.pushMatrix();
 //        parent.stroke(0, 0, 1);
 //        parent.noFill();
-//        parent.translate(p1Position.x, p1Position.y, p1Position.z);
+//        parent.translate(center1.x, center1.y, center1.z);
 //        parent.sphere(description.length / 2);
 //        parent.popMatrix();
 //
 //        parent.pushMatrix();
 //        parent.stroke(0, 1, 0);
 //        parent.noFill();
-//        parent.translate(p2Position.x, p2Position.y, p2Position.z);
+//        parent.translate(center2.x, center2.y, center2.z);
 //        parent.sphere(description.length / 2);
 //        parent.popMatrix();
 
         for (SphericalObstacle sphericalObstacle : sphericalObstacles) {
-            Vec3 pb_pa = p2Position.minus(p1Position);
-            Vec3 pa_pc = p1Position.minus(sphericalObstacle.center);
+            if (center1.minus(sphericalObstacle.center).norm() <= sphericalObstacle.radius + description.length / 2
+                    || center2.minus(sphericalObstacle.center).norm() <= sphericalObstacle.radius + description.length / 2) {
+                return true;
+            }
+            Vec3 pb_pa = center2.minus(center1);
+            Vec3 pa_pc = center1.minus(sphericalObstacle.center);
             float r = sphericalObstacle.radius + description.length / 2;
             float a = pb_pa.dot(pb_pa);
             float c = pa_pc.dot(pa_pc) - r * r;

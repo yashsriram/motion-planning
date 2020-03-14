@@ -86,7 +86,7 @@ public class With2DRotation extends PApplet {
         long start = millis();
         // update
         if (SMOOTH_PATH) {
-            lineSegmentAgent.smoothUpdate(0.05f);
+            lineSegmentAgent.smoothUpdate(0.1f);
         } else {
             lineSegmentAgent.update(0.1f);
         }
