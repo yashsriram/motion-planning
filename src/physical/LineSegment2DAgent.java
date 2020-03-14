@@ -38,6 +38,7 @@ public class LineSegment2DAgent {
             // reached next milestone
             if (path.get(currentMilestone + 1).minus(pose).norm() < 2) {
                 currentMilestone++;
+                pose.set(path.get(currentMilestone));
                 return;
             }
             // move towards next milestone
@@ -65,8 +66,10 @@ public class LineSegment2DAgent {
         Vec3 e1 = pose.minus(halfLength);
         Vec3 e2 = pose.plus(halfLength);
         parent.line(0, e1.y, e1.z, 0, e2.y, e2.z);
-        parent.translate(0, e2.y, e2.z);
-        parent.sphere(1f);
+        parent.translate(0, pose.y, pose.z);
+        parent.box(1f);
+        parent.translate(0, halfLength.y, halfLength.z);
+        parent.box(1f);
         parent.popMatrix();
         // next milestone
         if (currentMilestone < path.size() - 1) {
