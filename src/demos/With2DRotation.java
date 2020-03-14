@@ -65,14 +65,6 @@ public class With2DRotation extends PApplet {
     }
 
     public void draw() {
-        if (keyPressed) {
-            if (keyCode == RIGHT) {
-                lineSegmentAgent.stepForward();
-            }
-            if (keyCode == LEFT) {
-                lineSegmentAgent.stepBackward();
-            }
-        }
         long start = millis();
         // update
         lineSegmentAgent.update(0.1f);
@@ -97,6 +89,12 @@ public class With2DRotation extends PApplet {
     }
 
     public void keyPressed() {
+        if (keyCode == RIGHT) {
+            lineSegmentAgent.stepForward();
+        }
+        if (keyCode == LEFT) {
+            lineSegmentAgent.stepBackward();
+        }
         if (key == 'h') {
             DRAW_OBSTACLES = !DRAW_OBSTACLES;
         }
