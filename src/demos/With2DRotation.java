@@ -53,6 +53,7 @@ public class With2DRotation extends PApplet {
         ));
         lineSegment2DAgentDescription = new LineSegment2DAgentDescription(
                 startPose,
+                finishPose,
                 20
         );
         configurationSpace = new LineSegment2DConfigurationSpace(this, lineSegment2DAgentDescription, sphericalObstacles, minCorner, maxCorner);

@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LineSegment2DAgent {
+    public static float NEXT_MILESTONE_HINT_SIZE = 2f;
+
     final PApplet parent;
     final LineSegment2DAgentDescription description;
     final LineSegment2DConfigurationSpace configurationSpace;
@@ -51,7 +53,26 @@ public class LineSegment2DAgent {
         }
     }
 
+    private void drawEndPose(Vec3 pose, Vec3 color) {
+        parent.pushMatrix();
+        parent.stroke(color.x, color.y, color.z);
+        parent.fill(color.x, color.y, color.z);
+        Vec3 halfLength = Vec3.of(0, (float) (Math.sin(pose.x / orientationScale) * description.length / 2), (float) (Math.cos(pose.x / orientationScale) * description.length / 2));
+        Vec3 e1 = pose.minus(halfLength);
+        Vec3 e2 = pose.plus(halfLength);
+        parent.line(0, e1.y, e1.z, 0, e2.y, e2.z);
+        parent.translate(0, pose.y, pose.z);
+        parent.box(1f);
+        parent.translate(0, halfLength.y, halfLength.z);
+        parent.box(1f);
+        parent.popMatrix();
+    }
+
     public void draw() {
+        // start pose
+        drawEndPose(description.startPose, Vec3.of(0, 0, 1));
+        // finish pose
+        drawEndPose(description.finishPose, Vec3.of(0, 1, 0));
         // path
         for (int i = 0; i < path.size() - 1; i++) {
             Vec3 v1 = path.get(i);
@@ -75,15 +96,15 @@ public class LineSegment2DAgent {
         parent.box(1f);
         parent.popMatrix();
         // next milestone
-//        if (currentMilestone < path.size() - 1) {
-//            Vec3 nextMilestonePosition = path.get(currentMilestone + 1);
-//            parent.pushMatrix();
-//            parent.fill(1, 0, 0);
-//            parent.noStroke();
-//            parent.translate(0, nextMilestonePosition.y, nextMilestonePosition.z);
-//            parent.sphere(1f);
-//            parent.popMatrix();
-//        }
+        if (currentMilestone < path.size() - 1) {
+            Vec3 nextMilestonePosition = path.get(currentMilestone + 1);
+            parent.pushMatrix();
+            parent.fill(1, 0, 0);
+            parent.noStroke();
+            parent.translate(nextMilestonePosition.x, nextMilestonePosition.y, nextMilestonePosition.z);
+            parent.sphere(NEXT_MILESTONE_HINT_SIZE);
+            parent.popMatrix();
+        }
     }
 
     public void setPath(List<Vec3> path) {
