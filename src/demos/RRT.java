@@ -6,7 +6,6 @@ import physical.SphericalAgent;
 import physical.SphericalAgentDescription;
 import physical.SphericalObstacle;
 import processing.core.PApplet;
-import tools.configurationspace.BSHConfigurationSpace;
 import tools.configurationspace.PlainConfigurationSpace;
 import tools.rrt.RapidlyExploringRandomTree;
 
@@ -96,9 +95,6 @@ public class RRT extends PApplet {
     public void keyPressed() {
         if (key == 'h') {
             DRAW_OBSTACLES = !DRAW_OBSTACLES;
-        }
-        if (key == 'g') {
-            BSHConfigurationSpace.DRAW_BOUNDING_SPHERES = !BSHConfigurationSpace.DRAW_BOUNDING_SPHERES;
         }
         if (key == '1') {
             sphericalAgent.setPath(rrt.search());

@@ -6,7 +6,6 @@ import physical.*;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PShape;
-import tools.configurationspace.BSHConfigurationSpace;
 import tools.configurationspace.PlainConfigurationSpace;
 import tools.graph.Graph;
 
@@ -180,9 +179,6 @@ public class With3DContext extends PApplet {
     public void keyPressed() {
         if (key == 'x') {
             SMOOTH_PATH = !SMOOTH_PATH;
-        }
-        if (key == 'g') {
-            BSHConfigurationSpace.DRAW_BOUNDING_SPHERES = !BSHConfigurationSpace.DRAW_BOUNDING_SPHERES;
         }
         if (key == 'h') {
             DRAW_OBSTACLES = !DRAW_OBSTACLES;

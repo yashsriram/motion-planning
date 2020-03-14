@@ -6,9 +6,7 @@ import physical.SphericalAgent;
 import physical.SphericalAgentDescription;
 import physical.SphericalObstacle;
 import processing.core.PApplet;
-import tools.configurationspace.BSHConfigurationSpace;
 import tools.configurationspace.PlainConfigurationSpace;
-import tools.rrt.RapidlyExploringRandomTree;
 import tools.optimalrrt.OptimalRapidlyExploringRandomTree;
 
 import java.util.ArrayList;
@@ -98,9 +96,6 @@ public class RRTStar extends PApplet {
         if (key == 'h') {
             DRAW_OBSTACLES = !DRAW_OBSTACLES;
         }
-        if (key == 'g') {
-            BSHConfigurationSpace.DRAW_BOUNDING_SPHERES = !BSHConfigurationSpace.DRAW_BOUNDING_SPHERES;
-        }
         if (key == '1') {
             sphericalAgent.setPath(rrt.search());
         }
@@ -117,7 +112,7 @@ public class RRTStar extends PApplet {
             sphericalAgent.stepBackward();
         }
         if (key == 'j') {
-            RapidlyExploringRandomTree.DRAW_TREE = !RapidlyExploringRandomTree.DRAW_TREE;
+            OptimalRapidlyExploringRandomTree.DRAW_TREE = !OptimalRapidlyExploringRandomTree.DRAW_TREE;
         }
     }
 
