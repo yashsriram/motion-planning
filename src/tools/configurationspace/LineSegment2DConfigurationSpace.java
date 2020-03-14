@@ -63,7 +63,7 @@ public class LineSegment2DConfigurationSpace extends ConfigurationSpace {
         return false;
     }
 
-    public boolean doesEdgeIntersectSomeObstacleNonStrict(Vec3 pose1, Vec3 pose2) {
+    public boolean doesEdgeIntersectSomeObstacleMoreStrict(Vec3 pose1, Vec3 pose2) {
         // Considers a bounding sphere of the line centered at center of line and radius as length / 2
         // Checks for collision of bounding sphere and obstacles
         // This always returns true when there is a collision
