@@ -16,11 +16,13 @@ public class With2DRotation extends PApplet {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 800;
     public static final int SIDE = 100;
-    final Vec3 minCorner = Vec3.of(0, -SIDE, -SIDE);
-    final Vec3 maxCorner = Vec3.of(2 * PI, SIDE, SIDE);
 
-    final Vec3 startPose = Vec3.of(PI / 4, SIDE * (9f / 10), SIDE * (-9f / 10));
-    final Vec3 finishPose = Vec3.of(PI / 2, SIDE * (-9f / 10), SIDE * (9f / 10));
+    final float orientationScale = 50;
+    final Vec3 minCorner = Vec3.of(0, -SIDE, -SIDE);
+    final Vec3 maxCorner = Vec3.of(2 * PI * orientationScale, SIDE, SIDE);
+    final Vec3 startPose = Vec3.of(PI * 0.25f * orientationScale, SIDE * (9f / 10), SIDE * (-9f / 10));
+    final Vec3 finishPose = Vec3.of(PI * 1.75f * orientationScale, SIDE * (-9f / 10), SIDE * (9f / 10));
+
     LineSegment2DAgentDescription lineSegment2DAgentDescription;
     LineSegment2DAgent lineSegmentAgent;
     List<SphericalObstacle> sphericalObstacles = new ArrayList<>();
@@ -54,10 +56,11 @@ public class With2DRotation extends PApplet {
                 20
         );
         configurationSpace = new LineSegment2DConfigurationSpace(this, lineSegment2DAgentDescription, sphericalObstacles, minCorner, maxCorner);
-        lineSegmentAgent = new LineSegment2DAgent(this, lineSegment2DAgentDescription, configurationSpace, 20f, Vec3.of(1));
+        lineSegmentAgent = new LineSegment2DAgent(this, lineSegment2DAgentDescription, configurationSpace, orientationScale, 20f, Vec3.of(1));
+        Graph.END_POINT_SIZE = 5f;
         graph = new Graph(this, startPose, finishPose);
         graph.generateVertices(configurationSpace.samplePoints(10000), configurationSpace);
-        graph.generateAdjacencies(10, configurationSpace);
+        graph.generateAdjacencies(20, configurationSpace);
     }
 
     public void draw() {

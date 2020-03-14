@@ -2,7 +2,6 @@ package physical;
 
 import math.Vec3;
 import processing.core.PApplet;
-import tools.configurationspace.ConfigurationSpace;
 import tools.configurationspace.LineSegment2DConfigurationSpace;
 
 import java.util.ArrayList;
@@ -14,16 +13,18 @@ public class LineSegment2DAgent {
     final LineSegment2DConfigurationSpace configurationSpace;
     final float speed;
     final Vec3 color;
+    final float orientationScale;
 
     Vec3 pose;
     List<Vec3> path = new ArrayList<>();
     int currentMilestone = 0;
     public boolean isPaused = false;
 
-    public LineSegment2DAgent(final PApplet parent, final LineSegment2DAgentDescription description, final LineSegment2DConfigurationSpace configurationSpace, float speed, Vec3 color) {
+    public LineSegment2DAgent(final PApplet parent, final LineSegment2DAgentDescription description, final LineSegment2DConfigurationSpace configurationSpace, float orientationScale, float speed, Vec3 color) {
         this.parent = parent;
         this.description = description;
         this.configurationSpace = configurationSpace;
+        this.orientationScale = orientationScale;
         this.speed = speed;
         this.color = color;
 
@@ -52,17 +53,19 @@ public class LineSegment2DAgent {
 
     public void draw() {
         // path
-        parent.stroke(color.x, color.y, color.z);
         for (int i = 0; i < path.size() - 1; i++) {
             Vec3 v1 = path.get(i);
             Vec3 v2 = path.get(i + 1);
+            parent.stroke(color.x, color.y, color.z);
             parent.line(v1.x, v1.y, v1.z, v2.x, v2.y, v2.z);
+            parent.stroke(0, 0, 1);
+            parent.line(0, v1.y, v1.z, 0, v2.y, v2.z);
         }
         parent.noStroke();
         // agent
         parent.pushMatrix();
         parent.stroke(color.x, color.y, color.z);
-        Vec3 halfLength = Vec3.of(0, (float) (Math.sin(pose.x) * description.length / 2), (float) (Math.cos(pose.x) * description.length / 2));
+        Vec3 halfLength = Vec3.of(0, (float) (Math.sin(pose.x / orientationScale) * description.length / 2), (float) (Math.cos(pose.x / orientationScale) * description.length / 2));
         Vec3 e1 = pose.minus(halfLength);
         Vec3 e2 = pose.plus(halfLength);
         parent.line(0, e1.y, e1.z, 0, e2.y, e2.z);
@@ -72,15 +75,15 @@ public class LineSegment2DAgent {
         parent.box(1f);
         parent.popMatrix();
         // next milestone
-        if (currentMilestone < path.size() - 1) {
-            Vec3 nextMilestonePosition = path.get(currentMilestone + 1);
-            parent.pushMatrix();
-            parent.fill(1, 0, 0);
-            parent.noStroke();
-            parent.translate(0, nextMilestonePosition.y, nextMilestonePosition.z);
-            parent.sphere(1f);
-            parent.popMatrix();
-        }
+//        if (currentMilestone < path.size() - 1) {
+//            Vec3 nextMilestonePosition = path.get(currentMilestone + 1);
+//            parent.pushMatrix();
+//            parent.fill(1, 0, 0);
+//            parent.noStroke();
+//            parent.translate(0, nextMilestonePosition.y, nextMilestonePosition.z);
+//            parent.sphere(1f);
+//            parent.popMatrix();
+//        }
     }
 
     public void setPath(List<Vec3> path) {
