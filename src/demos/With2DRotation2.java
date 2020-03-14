@@ -12,7 +12,7 @@ import tools.graph.Graph;
 import java.util.ArrayList;
 import java.util.List;
 
-public class With2DRotation extends PApplet {
+public class With2DRotation2 extends PApplet {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 800;
     public static final int SIDE = 100;
@@ -163,7 +163,7 @@ public class With2DRotation extends PApplet {
     }
 
     static public void main(String[] passedArgs) {
-        String[] appletArgs = new String[]{"demos.With2DRotation"};
+        String[] appletArgs = new String[]{"demos.With2DRotation2"};
         if (passedArgs != null) {
             PApplet.main(concat(appletArgs, passedArgs));
         } else {
