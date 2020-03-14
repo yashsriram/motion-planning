@@ -47,7 +47,7 @@ public class Checkin extends PApplet {
                 this,
                 Vec3.of(0, 0, 0),
                 SIDE * (2f / 20),
-                Vec3.of(1, 0, 0)
+                Vec3.of(1, 0, 1)
         ));
         sphericalAgentDescription = new SphericalAgentDescription(
                 startPosition,

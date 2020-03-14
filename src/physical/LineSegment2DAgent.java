@@ -95,7 +95,7 @@ public class LineSegment2DAgent {
         if (currentMilestone < path.size() - 1) {
             Vec3 nextMilestonePosition = path.get(currentMilestone + 1);
             Vec3 nextMilestoneColor = Vec3.of(1, 0, 0);
-            drawPose(nextMilestonePosition, nextMilestoneColor);
+//            drawPose(nextMilestonePosition, nextMilestoneColor);
             if (DRAW_POSITION_ORIENTATION_SPACE_PATH) {
                 parent.pushMatrix();
                 parent.fill(nextMilestoneColor.x, nextMilestoneColor.y, nextMilestoneColor.z);

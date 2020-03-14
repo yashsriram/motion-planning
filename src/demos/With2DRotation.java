@@ -20,8 +20,8 @@ public class With2DRotation extends PApplet {
     final float orientationScale = 25;
     final Vec3 minCorner = Vec3.of(0, -SIDE, -SIDE);
     final Vec3 maxCorner = Vec3.of(2 * PI * orientationScale, SIDE, SIDE);
-    final Vec3 startPose = Vec3.of(PI * 0.25f * orientationScale, SIDE * (9f / 10), SIDE * (-9f / 10));
-    final Vec3 finishPose = Vec3.of(PI * 1.75f * orientationScale, SIDE * (-9f / 10), SIDE * (9f / 10));
+    final Vec3 startPose = Vec3.of(PI * 1f * orientationScale, SIDE * -0.9f, SIDE * -0.9f);
+    final Vec3 finishPose = Vec3.of(PI * 0f * orientationScale, SIDE * 0.9f, SIDE * -0.9f);
 
     LineSegment2DAgentDescription lineSegment2DAgentDescription;
     LineSegment2DAgent lineSegmentAgent;
@@ -45,11 +45,27 @@ public class With2DRotation extends PApplet {
         noStroke();
 
         cam = new QueasyCam(this);
+        for (int i = 0; i < 10; i++) {
+            sphericalObstacles.add(new SphericalObstacle(
+                    this,
+                    Vec3.of(0, SIDE * 0.9f - 10, SIDE * -0.9f + 10 *  i - 10),
+                    SIDE * 0.05f,
+                    Vec3.of(1, 0, 1)
+            ));
+        }
+        for (int i = 0; i < 10; i++) {
+            sphericalObstacles.add(new SphericalObstacle(
+                    this,
+                    Vec3.of(0, SIDE * -0.9f + 10, SIDE * -0.9f + 10 * i - 10),
+                    SIDE * 0.05f,
+                    Vec3.of(1, 0, 1)
+            ));
+        }
         sphericalObstacles.add(new SphericalObstacle(
                 this,
                 Vec3.of(0, 0, 0),
                 SIDE * (2f / 20),
-                Vec3.of(1, 0, 0)
+                Vec3.of(1, 0, 1)
         ));
         lineSegment2DAgentDescription = new LineSegment2DAgentDescription(
                 startPose,
@@ -60,7 +76,7 @@ public class With2DRotation extends PApplet {
         lineSegmentAgent = new LineSegment2DAgent(this, lineSegment2DAgentDescription, configurationSpace, 20f, Vec3.of(1));
         Graph.END_POINT_SIZE = 3f;
         graph = new Graph(this, startPose, finishPose);
-        graph.generateVertices(configurationSpace.samplePoints(10000), configurationSpace);
+        graph.generateVertices(configurationSpace.samplePoints(20000), configurationSpace);
         graph.generateAdjacencies(10, configurationSpace);
     }
 
