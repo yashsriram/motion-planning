@@ -65,8 +65,8 @@ public class With2DRotation extends PApplet {
         }
         sphericalObstacles.add(new SphericalObstacle(
                 this,
-                Vec3.of(0, 0, 0),
-                SIDE * 0.2f,
+                Vec3.of(0, 0, 10),
+                SIDE * 0.35f,
                 Vec3.of(1, 0, 1)
         ));
         lineSegment2DAgentDescription = new LineSegment2DAgentDescription(
@@ -86,7 +86,7 @@ public class With2DRotation extends PApplet {
         long start = millis();
         // update
         if (SMOOTH_PATH) {
-            lineSegmentAgent.smoothUpdate(0.02f);
+            lineSegmentAgent.smoothUpdate(0.05f);
         } else {
             lineSegmentAgent.update(0.1f);
         }

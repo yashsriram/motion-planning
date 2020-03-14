@@ -35,6 +35,10 @@ public class LineSegment2DConfigurationSpace extends ConfigurationSpace {
         Vec3 p2 = p2Position.plusInPlace(halfLength);
 
         for (SphericalObstacle sphericalObstacle : sphericalObstacles) {
+            if (p1.minus(sphericalObstacle.center).norm() <= sphericalObstacle.radius
+                    || p2.minus(sphericalObstacle.center).norm() <= sphericalObstacle.radius) {
+                return true;
+            }
             Vec3 pb_pa = p2.minus(p1);
             Vec3 pa_pc = p1.minus(sphericalObstacle.center);
             float r = sphericalObstacle.radius;
