@@ -14,22 +14,44 @@ public class LineSegment2DConfigurationSpace extends ConfigurationSpace {
     final List<SphericalObstacle> sphericalObstacles;
     final Vec3 minCorner;
     final Vec3 maxCorner;
+    public final float orientationScale;
 
-    public LineSegment2DConfigurationSpace(PApplet parent, LineSegment2DAgentDescription lineSegment2DAgentDescription, List<SphericalObstacle> sphericalObstacles, Vec3 minCorner, Vec3 maxCorner) {
+    public LineSegment2DConfigurationSpace(PApplet parent, LineSegment2DAgentDescription lineSegment2DAgentDescription, List<SphericalObstacle> sphericalObstacles, Vec3 minCorner, Vec3 maxCorner, float orientationScale) {
         this.parent = parent;
         this.lineSegment2DAgentDescription = lineSegment2DAgentDescription;
         this.sphericalObstacles = sphericalObstacles;
         this.minCorner = minCorner;
         this.maxCorner = maxCorner;
+        this.orientationScale = orientationScale;
     }
 
-    public boolean doesVertexIntersectSomeObstacle(Vec3 p) {
+    public boolean doesVertexIntersectSomeObstacle(Vec3 pose) {
+//        Vec3 halfLength = Vec3.of(0, (float) (Math.sin(pose.x / orientationScale) * description.length / 2), (float) (Math.cos(pose.x / orientationScale) * description.length / 2));
+//        Vec3 e1 = pose.minus(halfLength);
+//        Vec3 e2 = pose.plus(halfLength);
+//
+//        for (SphericalObstacle sphericalObstacle : sphericalObstacles) {
+//            Vec3 pb_pa = p2.minus(p1);
+//            Vec3 pa_pc = p1.minus(sphericalObstacle.center);
+//            float r = sphericalObstacle.radius + sphericalAgentDescription.radius;
+//            float a = pb_pa.dot(pb_pa);
+//            float c = pa_pc.dot(pa_pc) - r * r;
+//            float b = 2 * pb_pa.dot(pa_pc);
+//            float discriminant = b * b - 4 * a * c;
+//            if (discriminant >= 0) {
+//                float t1 = (float) ((-b + Math.sqrt(discriminant)) / (2 * a));
+//                float t2 = (float) ((-b - Math.sqrt(discriminant)) / (2 * a));
+//                // Intersection with line segment only possible iff at least one of the solutions lies in [0, 1]
+//                if ((0 <= t1 && t1 <= 1) || (0 <= t2 && t2 <= 1)) {
+//                    return true;
+//                }
+//            }
+//        }
 
         return false;
     }
 
     public boolean doesEdgeIntersectSomeObstacle(Vec3 p1, Vec3 p2) {
-
         return false;
     }
 

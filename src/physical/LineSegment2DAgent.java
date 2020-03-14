@@ -15,18 +15,16 @@ public class LineSegment2DAgent {
     final LineSegment2DConfigurationSpace configurationSpace;
     final float speed;
     final Vec3 color;
-    final float orientationScale;
 
     Vec3 pose;
     List<Vec3> path = new ArrayList<>();
     int currentMilestone = 0;
     public boolean isPaused = false;
 
-    public LineSegment2DAgent(final PApplet parent, final LineSegment2DAgentDescription description, final LineSegment2DConfigurationSpace configurationSpace, float orientationScale, float speed, Vec3 color) {
+    public LineSegment2DAgent(final PApplet parent, final LineSegment2DAgentDescription description, final LineSegment2DConfigurationSpace configurationSpace, float speed, Vec3 color) {
         this.parent = parent;
         this.description = description;
         this.configurationSpace = configurationSpace;
-        this.orientationScale = orientationScale;
         this.speed = speed;
         this.color = color;
 
@@ -53,11 +51,11 @@ public class LineSegment2DAgent {
         }
     }
 
-    private void drawEndPose(Vec3 pose, Vec3 color) {
+    private void drawPose(Vec3 pose, Vec3 color) {
         parent.pushMatrix();
         parent.stroke(color.x, color.y, color.z);
         parent.fill(color.x, color.y, color.z);
-        Vec3 halfLength = Vec3.of(0, (float) (Math.sin(pose.x / orientationScale) * description.length / 2), (float) (Math.cos(pose.x / orientationScale) * description.length / 2));
+        Vec3 halfLength = Vec3.of(0, (float) (Math.sin(pose.x / configurationSpace.orientationScale) * description.length / 2), (float) (Math.cos(pose.x / configurationSpace.orientationScale) * description.length / 2));
         Vec3 e1 = pose.minus(halfLength);
         Vec3 e2 = pose.plus(halfLength);
         parent.line(0, e1.y, e1.z, 0, e2.y, e2.z);
@@ -70,9 +68,9 @@ public class LineSegment2DAgent {
 
     public void draw() {
         // start pose
-        drawEndPose(description.startPose, Vec3.of(0, 0, 1));
+        drawPose(description.startPose, Vec3.of(0, 0, 1));
         // finish pose
-        drawEndPose(description.finishPose, Vec3.of(0, 1, 0));
+        drawPose(description.finishPose, Vec3.of(0, 1, 0));
         // path
         for (int i = 0; i < path.size() - 1; i++) {
             Vec3 v1 = path.get(i);
@@ -84,22 +82,14 @@ public class LineSegment2DAgent {
         }
         parent.noStroke();
         // agent
-        parent.pushMatrix();
-        parent.stroke(color.x, color.y, color.z);
-        Vec3 halfLength = Vec3.of(0, (float) (Math.sin(pose.x / orientationScale) * description.length / 2), (float) (Math.cos(pose.x / orientationScale) * description.length / 2));
-        Vec3 e1 = pose.minus(halfLength);
-        Vec3 e2 = pose.plus(halfLength);
-        parent.line(0, e1.y, e1.z, 0, e2.y, e2.z);
-        parent.translate(0, pose.y, pose.z);
-        parent.box(1f);
-        parent.translate(0, halfLength.y, halfLength.z);
-        parent.box(1f);
-        parent.popMatrix();
+        drawPose(pose, color);
         // next milestone
         if (currentMilestone < path.size() - 1) {
             Vec3 nextMilestonePosition = path.get(currentMilestone + 1);
+            Vec3 nextMilestoneColor = Vec3.of(1, 0, 0);
+            drawPose(nextMilestonePosition, nextMilestoneColor);
             parent.pushMatrix();
-            parent.fill(1, 0, 0);
+            parent.fill(nextMilestoneColor.x, nextMilestoneColor.y, nextMilestoneColor.z);
             parent.noStroke();
             parent.translate(nextMilestonePosition.x, nextMilestonePosition.y, nextMilestonePosition.z);
             parent.sphere(NEXT_MILESTONE_HINT_SIZE);
