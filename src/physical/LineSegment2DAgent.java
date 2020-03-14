@@ -9,6 +9,7 @@ import java.util.List;
 
 public class LineSegment2DAgent {
     public static float NEXT_MILESTONE_HINT_SIZE = 2f;
+    public static boolean DRAW_POSITION_ORIENTATION_SPACE_PATH = true;
 
     final PApplet parent;
     final LineSegment2DAgentDescription description;
@@ -76,9 +77,16 @@ public class LineSegment2DAgent {
             Vec3 v1 = path.get(i);
             Vec3 v2 = path.get(i + 1);
             parent.stroke(color.x, color.y, color.z);
-            parent.line(v1.x, v1.y, v1.z, v2.x, v2.y, v2.z);
-            parent.stroke(0, 0, 1);
             parent.line(0, v1.y, v1.z, 0, v2.y, v2.z);
+        }
+        if (DRAW_POSITION_ORIENTATION_SPACE_PATH) {
+            // position-orientation space path
+            for (int i = 0; i < path.size() - 1; i++) {
+                Vec3 v1 = path.get(i);
+                Vec3 v2 = path.get(i + 1);
+                parent.stroke(0, 0, 1);
+                parent.line(v1.x, v1.y, v1.z, v2.x, v2.y, v2.z);
+            }
         }
         parent.noStroke();
         // agent
@@ -88,12 +96,14 @@ public class LineSegment2DAgent {
             Vec3 nextMilestonePosition = path.get(currentMilestone + 1);
             Vec3 nextMilestoneColor = Vec3.of(1, 0, 0);
             drawPose(nextMilestonePosition, nextMilestoneColor);
-            parent.pushMatrix();
-            parent.fill(nextMilestoneColor.x, nextMilestoneColor.y, nextMilestoneColor.z);
-            parent.noStroke();
-            parent.translate(nextMilestonePosition.x, nextMilestonePosition.y, nextMilestonePosition.z);
-            parent.sphere(NEXT_MILESTONE_HINT_SIZE);
-            parent.popMatrix();
+            if (DRAW_POSITION_ORIENTATION_SPACE_PATH) {
+                parent.pushMatrix();
+                parent.fill(nextMilestoneColor.x, nextMilestoneColor.y, nextMilestoneColor.z);
+                parent.noStroke();
+                parent.translate(nextMilestonePosition.x, nextMilestonePosition.y, nextMilestonePosition.z);
+                parent.sphere(NEXT_MILESTONE_HINT_SIZE);
+                parent.popMatrix();
+            }
         }
     }
 
