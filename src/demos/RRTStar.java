@@ -19,8 +19,8 @@ public class RRTStar extends PApplet {
     final Vec3 minCorner = Vec3.of(0, -SIDE, -SIDE);
     final Vec3 maxCorner = Vec3.of(0, SIDE, SIDE);
 
-    final Vec3 startPosition = Vec3.of(0, SIDE * (7f / 10), SIDE * (-6f / 10));
-    final Vec3 finishPosition = Vec3.of(0, SIDE * (-1f / 10), SIDE * (1f / 10));
+    final Vec3 startPosition = Vec3.of(0, SIDE * 0.9f, -SIDE * 0.9f);
+    final Vec3 finishPosition = Vec3.of(0, -SIDE * 0.9f, SIDE * 0.9f);
     SphericalAgentDescription sphericalAgentDescription;
     SphericalAgent sphericalAgent;
     List<SphericalObstacle> sphericalObstacles = new ArrayList<>();
@@ -43,12 +43,38 @@ public class RRTStar extends PApplet {
         noStroke();
 
         cam = new QueasyCam(this);
-        sphericalObstacles.add(new SphericalObstacle(
-                this,
-                Vec3.of(0, 0, 0),
-                SIDE * (2f / 20),
-                Vec3.of(1, 0, 1)
-        ));
+        for (int i = 0; i < 9; i++) {
+            sphericalObstacles.add(new SphericalObstacle(
+                    this,
+                    Vec3.of(0, SIDE * 0.9f - 20, SIDE * -0.9f + 20 * i - 10),
+                    SIDE * 0.1f,
+                    Vec3.of(1, 0, 1)
+            ));
+        }
+        for (int i = 0; i < 9; i++) {
+            sphericalObstacles.add(new SphericalObstacle(
+                    this,
+                    Vec3.of(0, SIDE * 0.9f - 60, SIDE * -0.5f + 20 * i - 10),
+                    SIDE * 0.1f,
+                    Vec3.of(1, 0, 1)
+            ));
+        }
+        for (int i = 0; i < 9; i++) {
+            sphericalObstacles.add(new SphericalObstacle(
+                    this,
+                    Vec3.of(0, SIDE * -0.9f + 20, SIDE * -0.5f + 20 * i - 10),
+                    SIDE * 0.1f,
+                    Vec3.of(1, 0, 1)
+            ));
+        }
+        for (int i = 0; i < 9; i++) {
+            sphericalObstacles.add(new SphericalObstacle(
+                    this,
+                    Vec3.of(0, SIDE * -0.9f + 60, SIDE * -0.9f + 20 * i - 10),
+                    SIDE * 0.1f,
+                    Vec3.of(1, 0, 1)
+            ));
+        }
         sphericalAgentDescription = new SphericalAgentDescription(
                 startPosition,
                 SIDE * (0.5f / 20)
@@ -81,12 +107,12 @@ public class RRTStar extends PApplet {
                 sphericalObstacle.draw();
             }
         }
-        // agent
-        sphericalAgent.draw();
         // configuration space
         configurationSpace.draw();
         // rrt
         rrt.draw();
+        // agent
+        sphericalAgent.draw();
         long draw = millis();
 
         surface.setTitle("Processing - FPS: " + Math.round(frameRate) + " Update: " + (update - start) + "ms Draw " + (draw - update) + "ms" + " smooth-path: " + SMOOTH_PATH);

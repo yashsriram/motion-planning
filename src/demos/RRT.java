@@ -81,12 +81,12 @@ public class RRT extends PApplet {
                 sphericalObstacle.draw();
             }
         }
-        // agent
-        sphericalAgent.draw();
         // configuration space
         configurationSpace.draw();
         // rrt
         rrt.draw();
+        // agent
+        sphericalAgent.draw();
         long draw = millis();
 
         surface.setTitle("Processing - FPS: " + Math.round(frameRate) + " Update: " + (update - start) + "ms Draw " + (draw - update) + "ms" + " smooth-path: " + SMOOTH_PATH);

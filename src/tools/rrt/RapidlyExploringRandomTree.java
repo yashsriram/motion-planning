@@ -109,6 +109,7 @@ public class RapidlyExploringRandomTree {
             }
             return path;
         }
+        PApplet.println("Could not find path to finish position");
         return Collections.singletonList(startPosition);
     }
 }
