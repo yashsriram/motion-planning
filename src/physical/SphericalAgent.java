@@ -139,6 +139,42 @@ public class SphericalAgent {
         }
     }
 
+    public void draw(List<PShape> shapes, float normalizedSize) {
+        // path
+        parent.stroke(color.x, color.y, color.z);
+        for (int i = 0; i < path.size() - 1; i++) {
+            Vec3 v1 = path.get(i);
+            Vec3 v2 = path.get(i + 1);
+            parent.line(v1.x, v1.y, v1.z, v2.x, v2.y, v2.z);
+        }
+        parent.noStroke();
+
+        // agent
+        parent.pushMatrix();
+        parent.translate(center.x, center.y, center.z);
+//        parent.stroke(color.x, color.y, color.z);
+//        parent.noFill();
+//        parent.sphere(description.radius);
+        if (currentMilestone < path.size() - 1) {
+            Vec3 direction = path.get(currentMilestone + 1).minus(center);
+            parent.rotateY((float) Math.atan2(direction.x, direction.z));
+        }
+        parent.scale(2 * description.radius / normalizedSize);
+        parent.shape(shapes.get(currentMilestone % shapes.size()));
+        parent.popMatrix();
+
+        // next milestone
+        if (currentMilestone < path.size() - 1) {
+            Vec3 nextMilestonePosition = path.get(currentMilestone + 1);
+            parent.pushMatrix();
+            parent.fill(1, 0, 0);
+            parent.noStroke();
+            parent.translate(nextMilestonePosition.x, nextMilestonePosition.y, nextMilestonePosition.z);
+            parent.sphere(NEXT_MILESTONE_HINT_SIZE);
+            parent.popMatrix();
+        }
+    }
+
     public void setPath(List<Vec3> path) {
         this.path = path;
         currentMilestone = 0;
