@@ -12,7 +12,7 @@ import tools.optimalrrt.OptimalRapidlyExploringRandomTree;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RRTStar extends PApplet {
+public class RRTStar2 extends PApplet {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 800;
     public static final int SIDE = 100;
@@ -143,7 +143,7 @@ public class RRTStar extends PApplet {
     }
 
     static public void main(String[] passedArgs) {
-        String[] appletArgs = new String[]{"demos.RRTStar"};
+        String[] appletArgs = new String[]{"demos.RRTStar2"};
         if (passedArgs != null) {
             PApplet.main(concat(appletArgs, passedArgs));
         } else {
