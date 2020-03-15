@@ -25,4 +25,13 @@ public class SphericalObstacle {
         parent.popMatrix();
     }
 
+    public void drawBox() {
+        parent.pushMatrix();
+        parent.noStroke();
+        parent.fill(color.x, color.y, color.z);
+        parent.translate(center.x, center.y, center.z);
+        parent.box(radius);
+        parent.popMatrix();
+    }
+
 }

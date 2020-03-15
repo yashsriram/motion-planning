@@ -1,8 +1,8 @@
 package tools.graph;
 
 import math.Vec3;
-import tools.configurationspace.ConfigurationSpace;
 import processing.core.PApplet;
+import tools.configurationspace.ConfigurationSpace;
 
 import java.util.*;
 
@@ -66,6 +66,14 @@ public class Graph {
         }
         PApplet.println("# edges culled: " + numEdgesCulled);
         PApplet.println("# edges generated: " + numEdges);
+    }
+
+    public void clearAdjacencies() {
+        for (Vertex vertex : vertices) {
+            vertex.neighbours.clear();
+            vertex.edgeColors.clear();
+            vertex.searchState.reset();
+        }
     }
 
     public void draw() {
