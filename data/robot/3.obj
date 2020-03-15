@@ -1,6 +1,6 @@
 # Blender v2.82 (sub 7) OBJ File: 'robot.blend'
 # www.blender.org
-mtllib robot1.mtl
+mtllib 0.mtl
 o Cylinder
 v 0.560008 -0.737740 -0.438037
 v 0.559636 -0.822543 -0.399861

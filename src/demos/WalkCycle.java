@@ -15,7 +15,7 @@ import java.util.List;
 public class WalkCycle extends PApplet {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 800;
-    public static final int SIDE = 200;
+    public static final int SIDE = 1000;
 
     final Vec3 OFFSET = Vec3.of(100, 100, 0);
     final Vec3 startPosition = Vec3.of(SIDE * -0.9f, 0, SIDE * -0.9f).plusInPlace(OFFSET);
@@ -46,6 +46,8 @@ public class WalkCycle extends PApplet {
         colorMode(RGB, 1.0f);
         rectMode(CENTER);
         noStroke();
+        cam = new QueasyCam(this);
+        cam.speed = 10f;
 
         for (int i = 0; i < 7; i++) {
             if (i == 0) {
@@ -78,8 +80,6 @@ public class WalkCycle extends PApplet {
             shape.rotateX(PConstants.PI);
             obstacleShapes.add(shape);
         }
-
-        cam = new QueasyCam(this);
         int gridSize = 5;
         float randomnessSize = 20;
         for (int i = 0; i < gridSize; i++) {
@@ -114,11 +114,13 @@ public class WalkCycle extends PApplet {
                 minCorner,
                 maxCorner
         );
+        SphericalAgent.MILESTONE_REACHED_RADIUS = 6f;
+        SphericalAgent.NEXT_MILESTONE_HINT_SIZE = 18f;
         sphericalAgent = new SphericalAgent(
                 this,
                 sphericalAgentDescription,
                 configurationSpace,
-                20f,
+                60f,
                 Vec3.of(1)
         );
         ground = new Ground(this,
@@ -126,13 +128,13 @@ public class WalkCycle extends PApplet {
                 Vec3.of(0, 0, 1), Vec3.of(1, 0, 0),
                 2 * SIDE, 2 * SIDE,
                 loadImage("ground6.png"));
-        Graph.END_POINT_SIZE = 5f;
+        Graph.END_POINT_SIZE = 20f;
         graph = new Graph(this, startPosition, finishPosition);
         graph.generateVertices(configurationSpace.samplePoints(10000), configurationSpace);
-        graph.generateAdjacencies(10, configurationSpace);
+        graph.generateAdjacencies(50, configurationSpace);
 
-        for (int i = 0; i < 2; i++) {
-            PShape agentShape = loadShape("data/robot/robot" + (i + 1) + ".obj");
+        for (int i = 0; i < 8; i++) {
+            PShape agentShape = loadShape("data/robot/" + (i + 1) + ".obj");
             agentShape.rotateX(PApplet.PI);
             agentShape.rotateY(PApplet.PI);
             agentWalkCycleShapes.add(agentShape);
@@ -140,14 +142,6 @@ public class WalkCycle extends PApplet {
     }
 
     public void draw() {
-        if (keyPressed) {
-            if (keyCode == RIGHT) {
-                sphericalAgent.stepForward();
-            }
-            if (keyCode == LEFT) {
-                sphericalAgent.stepBackward();
-            }
-        }
         long start = millis();
         // update
         if (SMOOTH_PATH) {
@@ -181,6 +175,12 @@ public class WalkCycle extends PApplet {
     }
 
     public void keyPressed() {
+        if (keyCode == RIGHT) {
+            sphericalAgent.stepForward();
+        }
+        if (keyCode == LEFT) {
+            sphericalAgent.stepBackward();
+        }
         if (key == 'x') {
             SMOOTH_PATH = !SMOOTH_PATH;
         }

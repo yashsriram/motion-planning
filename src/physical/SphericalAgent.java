@@ -10,6 +10,8 @@ import java.util.List;
 
 public class SphericalAgent {
     public static float NEXT_MILESTONE_HINT_SIZE = 2f;
+    public static float MILESTONE_REACHED_RADIUS = 2f;
+    public static float SPRITE_CHANGE_DISTANCE_SCALE = 20f;
 
     final PApplet parent;
     final SphericalAgentDescription description;
@@ -20,6 +22,7 @@ public class SphericalAgent {
     Vec3 center;
     List<Vec3> path = new ArrayList<>();
     int currentMilestone = 0;
+    float distanceCovered = 0;
     public boolean isPaused = false;
 
     public SphericalAgent(final PApplet parent, final SphericalAgentDescription description, final ConfigurationSpace configurationSpace, float speed, Vec3 color) {
@@ -38,7 +41,7 @@ public class SphericalAgent {
         }
         if (currentMilestone < path.size() - 1) {
             // reached next milestone
-            if (path.get(currentMilestone + 1).minus(center).norm() < 2) {
+            if (path.get(currentMilestone + 1).minus(center).norm() < MILESTONE_REACHED_RADIUS) {
                 currentMilestone++;
                 return;
             }
@@ -47,7 +50,9 @@ public class SphericalAgent {
                     path.get(currentMilestone + 1)
                             .minus(center)
                             .normalizeInPlace();
-            center.plusInPlace(velocityDir.scale(speed * dt));
+            Vec3 displacement = velocityDir.scaleInPlace(speed * dt);
+            center.plusInPlace(displacement);
+            distanceCovered += displacement.norm();
         }
     }
 
@@ -57,7 +62,7 @@ public class SphericalAgent {
         }
         if (currentMilestone < path.size() - 1) {
             // reached next milestone
-            if (path.get(currentMilestone + 1).minus(center).norm() < 2) {
+            if (path.get(currentMilestone + 1).minus(center).norm() < MILESTONE_REACHED_RADIUS) {
                 currentMilestone++;
                 return;
             }
@@ -73,7 +78,9 @@ public class SphericalAgent {
                     path.get(currentMilestone + 1)
                             .minus(center)
                             .normalizeInPlace();
-            center.plusInPlace(velocityDir.scale(speed * dt));
+            Vec3 displacement = velocityDir.scaleInPlace(speed * dt);
+            center.plusInPlace(displacement);
+            distanceCovered += displacement.norm();
         }
     }
 
@@ -160,7 +167,7 @@ public class SphericalAgent {
             parent.rotateY((float) Math.atan2(direction.x, direction.z));
         }
         parent.scale(2 * description.radius / normalizedSize);
-        parent.shape(shapes.get(currentMilestone % shapes.size()));
+        parent.shape(shapes.get((int) ((distanceCovered / SPRITE_CHANGE_DISTANCE_SCALE) % shapes.size())));
         parent.popMatrix();
 
         // next milestone
