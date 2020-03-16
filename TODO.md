@@ -14,7 +14,7 @@ navigation structure to allow your agents to navigate through complex environmen
 without getting stuck at local minima.
 
 ## Robot pipeline
-### Given
+### Input
 - Agent, Start pose, Finish pose
 
 ### Sensing

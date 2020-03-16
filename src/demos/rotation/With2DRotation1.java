@@ -72,8 +72,8 @@ public class With2DRotation1 extends PApplet {
         lineSegmentAgent = new LineSegment2DAgent(this, lineSegment2DAgentDescription, configurationSpace, minCorner, maxCorner, 10f, Vec3.of(1));
         Graph.END_POINT_SIZE = 3f;
         graph = new Graph(this, startPose, finishPose);
-        graph.generateVertices(lineSegmentAgent.samplePoints(20000), configurationSpace);
-        graph.generateAdjacencies(15, configurationSpace);
+        graph.generateVertices(lineSegmentAgent.samplePoints(25000), configurationSpace);
+        graph.generateAdjacencies(10, configurationSpace);
     }
 
     public void draw() {
