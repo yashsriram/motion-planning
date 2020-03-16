@@ -51,6 +51,7 @@ public class Checkin extends PApplet {
         ));
         sphericalAgentDescription = new SphericalAgentDescription(
                 startPosition,
+                finishPosition,
                 SIDE * (0.5f / 20)
         );
         configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);

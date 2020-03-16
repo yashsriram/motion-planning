@@ -1,4 +1,4 @@
-package demos;
+package demos.rotation;
 
 import camera.QueasyCam;
 import math.Vec3;
@@ -12,7 +12,7 @@ import robot.planning.graph.Graph;
 import java.util.ArrayList;
 import java.util.List;
 
-public class With2DRotation2 extends PApplet {
+public class With2DRotation1 extends PApplet {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 800;
     public static final int SIDE = 100;
@@ -63,23 +63,17 @@ public class With2DRotation2 extends PApplet {
                     Vec3.of(1, 0, 1)
             ));
         }
-        sphericalObstacles.add(new SphericalObstacle(
-                this,
-                Vec3.of(0, 0, 10),
-                SIDE * 0.35f,
-                Vec3.of(1, 0, 1)
-        ));
         lineSegment2DAgentDescription = new LineSegment2DAgentDescription(
                 startPose,
                 finishPose,
-                20
+                60
         );
         configurationSpace = new LineSegment2DConfigurationSpace(this, lineSegment2DAgentDescription, sphericalObstacles, orientationScale);
         lineSegmentAgent = new LineSegment2DAgent(this, lineSegment2DAgentDescription, configurationSpace, minCorner, maxCorner, 10f, Vec3.of(1));
         Graph.END_POINT_SIZE = 3f;
         graph = new Graph(this, startPose, finishPose);
         graph.generateVertices(lineSegmentAgent.samplePoints(20000), configurationSpace);
-        graph.generateAdjacencies(10, configurationSpace);
+        graph.generateAdjacencies(15, configurationSpace);
     }
 
     public void draw() {
@@ -163,7 +157,7 @@ public class With2DRotation2 extends PApplet {
     }
 
     static public void main(String[] passedArgs) {
-        String[] appletArgs = new String[]{"demos.With2DRotation2"};
+        String[] appletArgs = new String[]{"demos.rotation.With2DRotation1"};
         if (passedArgs != null) {
             PApplet.main(concat(appletArgs, passedArgs));
         } else {

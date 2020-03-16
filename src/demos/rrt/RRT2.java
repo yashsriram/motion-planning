@@ -1,4 +1,4 @@
-package demos;
+package demos.rrt;
 
 import camera.QueasyCam;
 import fixed.SphericalObstacle;
@@ -77,6 +77,7 @@ public class RRT2 extends PApplet {
         }
         sphericalAgentDescription = new SphericalAgentDescription(
                 startPosition,
+                finishPosition,
                 SIDE * (0.5f / 20)
         );
         configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
@@ -143,7 +144,7 @@ public class RRT2 extends PApplet {
     }
 
     static public void main(String[] passedArgs) {
-        String[] appletArgs = new String[]{"demos.RRT2"};
+        String[] appletArgs = new String[]{"demos.rrt.RRT2"};
         if (passedArgs != null) {
             PApplet.main(concat(appletArgs, passedArgs));
         } else {

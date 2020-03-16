@@ -1,18 +1,18 @@
-package demos;
+package demos.rrtstar;
 
 import camera.QueasyCam;
+import fixed.SphericalObstacle;
 import math.Vec3;
+import processing.core.PApplet;
 import robot.acting.SphericalAgent;
 import robot.input.SphericalAgentDescription;
-import fixed.SphericalObstacle;
-import processing.core.PApplet;
+import robot.planning.optimalrrt.OptimalRapidlyExploringRandomTree;
 import robot.sensing.PlainConfigurationSpace;
-import robot.planning.rrt.RapidlyExploringRandomTree;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RRT1 extends PApplet {
+public class RRTStar1 extends PApplet {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 800;
     public static final int SIDE = 100;
@@ -25,7 +25,7 @@ public class RRT1 extends PApplet {
     SphericalAgent sphericalAgent;
     List<SphericalObstacle> sphericalObstacles = new ArrayList<>();
     PlainConfigurationSpace configurationSpace;
-    RapidlyExploringRandomTree rrt;
+    OptimalRapidlyExploringRandomTree rrt;
 
     QueasyCam cam;
 
@@ -67,11 +67,12 @@ public class RRT1 extends PApplet {
         ));
         sphericalAgentDescription = new SphericalAgentDescription(
                 startPosition,
+                finishPosition,
                 SIDE * (0.5f / 20)
         );
         configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
         sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, configurationSpace, minCorner, maxCorner, 20f, Vec3.of(1));
-        rrt = new RapidlyExploringRandomTree(this, startPosition, finishPosition);
+        rrt = new OptimalRapidlyExploringRandomTree(this, startPosition, finishPosition);
         rrt.growTree(sphericalAgent.samplePoints(1000), configurationSpace);
     }
 
@@ -128,12 +129,12 @@ public class RRT1 extends PApplet {
             sphericalAgent.stepBackward();
         }
         if (key == 'j') {
-            RapidlyExploringRandomTree.DRAW_TREE = !RapidlyExploringRandomTree.DRAW_TREE;
+            OptimalRapidlyExploringRandomTree.DRAW_TREE = !OptimalRapidlyExploringRandomTree.DRAW_TREE;
         }
     }
 
     static public void main(String[] passedArgs) {
-        String[] appletArgs = new String[]{"demos.RRT1"};
+        String[] appletArgs = new String[]{"demos.rrtstar.RRTStar1"};
         if (passedArgs != null) {
             PApplet.main(concat(appletArgs, passedArgs));
         } else {

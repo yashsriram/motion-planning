@@ -1,4 +1,4 @@
-package demos;
+package demos.rrtstar;
 
 import camera.QueasyCam;
 import fixed.SphericalObstacle;
@@ -12,15 +12,15 @@ import robot.sensing.PlainConfigurationSpace;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RRTStar0 extends PApplet {
+public class RRTStar2 extends PApplet {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 800;
     public static final int SIDE = 100;
     final Vec3 minCorner = Vec3.of(0, -SIDE, -SIDE);
     final Vec3 maxCorner = Vec3.of(0, SIDE, SIDE);
 
-    final Vec3 startPosition = Vec3.of(0, SIDE * (9f / 10), SIDE * (-9f / 10));
-    final Vec3 finishPosition = Vec3.of(0, SIDE * (-1f / 10), SIDE * (1f / 10));
+    final Vec3 startPosition = Vec3.of(0, SIDE * 0.9f, -SIDE * 0.9f);
+    final Vec3 finishPosition = Vec3.of(0, -SIDE * 0.9f, SIDE * 0.9f);
     SphericalAgentDescription sphericalAgentDescription;
     SphericalAgent sphericalAgent;
     List<SphericalObstacle> sphericalObstacles = new ArrayList<>();
@@ -43,14 +43,41 @@ public class RRTStar0 extends PApplet {
         noStroke();
 
         cam = new QueasyCam(this);
-        sphericalObstacles.add(new SphericalObstacle(
-                this,
-                Vec3.of(0, 0, 0),
-                SIDE * (2f / 20),
-                Vec3.of(1, 0, 1)
-        ));
+        for (int i = 0; i < 9; i++) {
+            sphericalObstacles.add(new SphericalObstacle(
+                    this,
+                    Vec3.of(0, SIDE * 0.9f - 20, SIDE * -0.9f + 20 * i - 10),
+                    SIDE * 0.1f,
+                    Vec3.of(1, 0, 1)
+            ));
+        }
+        for (int i = 0; i < 9; i++) {
+            sphericalObstacles.add(new SphericalObstacle(
+                    this,
+                    Vec3.of(0, SIDE * 0.9f - 60, SIDE * -0.5f + 20 * i - 10),
+                    SIDE * 0.1f,
+                    Vec3.of(1, 0, 1)
+            ));
+        }
+        for (int i = 0; i < 9; i++) {
+            sphericalObstacles.add(new SphericalObstacle(
+                    this,
+                    Vec3.of(0, SIDE * -0.9f + 20, SIDE * -0.5f + 20 * i - 10),
+                    SIDE * 0.1f,
+                    Vec3.of(1, 0, 1)
+            ));
+        }
+        for (int i = 0; i < 9; i++) {
+            sphericalObstacles.add(new SphericalObstacle(
+                    this,
+                    Vec3.of(0, SIDE * -0.9f + 60, SIDE * -0.9f + 20 * i - 10),
+                    SIDE * 0.1f,
+                    Vec3.of(1, 0, 1)
+            ));
+        }
         sphericalAgentDescription = new SphericalAgentDescription(
                 startPosition,
+                finishPosition,
                 SIDE * (0.5f / 20)
         );
         configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
@@ -117,7 +144,7 @@ public class RRTStar0 extends PApplet {
     }
 
     static public void main(String[] passedArgs) {
-        String[] appletArgs = new String[]{"demos.RRTStar0"};
+        String[] appletArgs = new String[]{"demos.rrtstar.RRTStar2"};
         if (passedArgs != null) {
             PApplet.main(concat(appletArgs, passedArgs));
         } else {

@@ -110,6 +110,7 @@ public class With3DContext extends PApplet {
         }
         sphericalAgentDescription = new SphericalAgentDescription(
                 startPosition,
+                finishPosition,
                 SIDE * 0.08f
         );
         configurationSpace = new PlainConfigurationSpace(

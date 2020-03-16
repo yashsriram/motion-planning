@@ -67,6 +67,7 @@ public class BSHSpeedUp extends PApplet {
         }
         sphericalAgentDescription = new SphericalAgentDescription(
                 startPosition,
+                finishPosition,
                 SIDE * 0.025f
         );
 
