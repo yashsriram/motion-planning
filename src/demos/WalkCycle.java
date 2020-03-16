@@ -1,15 +1,17 @@
 package demos;
 
-import robot.acting.SphericalAgent;
 import camera.QueasyCam;
-import robot.input.SphericalAgentDescription;
+import fixed.Ground;
+import fixed.SphericalObstacle;
+import fixed.SpriteSphericalObstacle;
 import math.Vec3;
-import fixed.*;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PShape;
-import robot.sensing.PlainConfigurationSpace;
+import robot.acting.SphericalAgent;
+import robot.input.SphericalAgentDescription;
 import robot.planning.graph.Graph;
+import robot.sensing.PlainConfigurationSpace;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,16 +114,15 @@ public class WalkCycle extends PApplet {
         configurationSpace = new PlainConfigurationSpace(
                 this,
                 sphericalAgentDescription,
-                sphericalObstacles,
-                minCorner,
-                maxCorner
-        );
+                sphericalObstacles
+                );
         SphericalAgent.MILESTONE_REACHED_RADIUS = 6f;
         SphericalAgent.NEXT_MILESTONE_HINT_SIZE = 18f;
         sphericalAgent = new SphericalAgent(
                 this,
                 sphericalAgentDescription,
                 configurationSpace,
+                minCorner, maxCorner,
                 60f,
                 Vec3.of(1)
         );
@@ -132,7 +133,7 @@ public class WalkCycle extends PApplet {
                 loadImage("ground6.png"));
         Graph.END_POINT_SIZE = 20f;
         graph = new Graph(this, startPosition, finishPosition);
-        graph.generateVertices(configurationSpace.samplePoints(10000), configurationSpace);
+        graph.generateVertices(sphericalAgent.samplePoints(10000), configurationSpace);
         graph.generateAdjacencies(50, configurationSpace);
 
         for (int i = 0; i < 8; i++) {

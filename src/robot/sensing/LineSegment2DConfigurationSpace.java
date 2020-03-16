@@ -12,16 +12,12 @@ public class LineSegment2DConfigurationSpace extends ConfigurationSpace {
     final PApplet parent;
     final LineSegment2DAgentDescription description;
     final List<SphericalObstacle> sphericalObstacles;
-    final Vec3 minCorner;
-    final Vec3 maxCorner;
     public final float orientationScale;
 
-    public LineSegment2DConfigurationSpace(PApplet parent, LineSegment2DAgentDescription description, List<SphericalObstacle> sphericalObstacles, Vec3 minCorner, Vec3 maxCorner, float orientationScale) {
+    public LineSegment2DConfigurationSpace(PApplet parent, LineSegment2DAgentDescription description, List<SphericalObstacle> sphericalObstacles, float orientationScale) {
         this.parent = parent;
         this.description = description;
         this.sphericalObstacles = sphericalObstacles;
-        this.minCorner = minCorner;
-        this.maxCorner = maxCorner;
         this.orientationScale = orientationScale;
     }
 
@@ -111,26 +107,6 @@ public class LineSegment2DConfigurationSpace extends ConfigurationSpace {
         }
 
         return false;
-    }
-
-    public List<Vec3> samplePoints(int numberOfPoints) {
-        List<Vec3> samples = new ArrayList<>();
-        for (int i = 0; i < numberOfPoints; i++) {
-            samples.add(Vec3.of(
-                    parent.random(minCorner.x, maxCorner.x),
-                    parent.random(minCorner.y, maxCorner.y),
-                    parent.random(minCorner.z, maxCorner.z)
-            ));
-        }
-        return samples;
-    }
-
-    public Vec3 samplePoint() {
-        return Vec3.of(
-                parent.random(minCorner.x, maxCorner.x),
-                parent.random(minCorner.y, maxCorner.y),
-                parent.random(minCorner.z, maxCorner.z)
-        );
     }
 
     public void draw() {

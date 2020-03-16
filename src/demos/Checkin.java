@@ -1,13 +1,13 @@
 package demos;
 
 import camera.QueasyCam;
+import fixed.SphericalObstacle;
 import math.Vec3;
+import processing.core.PApplet;
 import robot.acting.SphericalAgent;
 import robot.input.SphericalAgentDescription;
-import fixed.SphericalObstacle;
-import processing.core.PApplet;
-import robot.sensing.PlainConfigurationSpace;
 import robot.planning.graph.Graph;
+import robot.sensing.PlainConfigurationSpace;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,10 +53,10 @@ public class Checkin extends PApplet {
                 startPosition,
                 SIDE * (0.5f / 20)
         );
-        configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles, minCorner, maxCorner);
-        sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, configurationSpace, 20f, Vec3.of(1));
+        configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
+        sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, configurationSpace, minCorner, maxCorner, 20f, Vec3.of(1));
         graph = new Graph(this, startPosition, finishPosition);
-        graph.generateVertices(configurationSpace.samplePoints(10000), configurationSpace);
+        graph.generateVertices(sphericalAgent.samplePoints(10000), configurationSpace);
         graph.generateAdjacencies(10, configurationSpace);
     }
 

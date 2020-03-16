@@ -1,15 +1,15 @@
 package demos;
 
 import camera.QueasyCam;
+import fixed.SphericalObstacle;
 import math.Vec3;
+import processing.core.PApplet;
 import robot.acting.SphericalAgent;
 import robot.input.SphericalAgentDescription;
-import fixed.SphericalObstacle;
-import processing.core.PApplet;
+import robot.planning.graph.Graph;
 import robot.sensing.BSHConfigurationSpace;
 import robot.sensing.ConfigurationSpace;
 import robot.sensing.PlainConfigurationSpace;
-import robot.planning.graph.Graph;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,9 +70,9 @@ public class BSHSpeedUp extends PApplet {
                 SIDE * 0.025f
         );
 
-        configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles, minCorner, maxCorner);
+        configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
         graph = new Graph(this, startPosition, finishPosition);
-        graph.generateVertices(configurationSpace.samplePoints(7000), configurationSpace);
+        graph.generateVertices(sphericalAgent.samplePoints(7000), configurationSpace);
 
         resetBSH();
         sphericalAgent.setPath(graph.weightedAStar(1.5f));
@@ -81,8 +81,8 @@ public class BSHSpeedUp extends PApplet {
     private void resetPlain() {
         DATA_STRUCTURE = "Plain";
         long startConfig = millis();
-        configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles, minCorner, maxCorner);
-        sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, configurationSpace, 20f, Vec3.of(1));
+        configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
+        sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, configurationSpace, minCorner, maxCorner, 20f, Vec3.of(1));
         long configSpace = millis();
         graph.clearAdjacencies();
         graph.generateAdjacencies(10, configurationSpace);
@@ -94,8 +94,8 @@ public class BSHSpeedUp extends PApplet {
     private void resetBSH() {
         DATA_STRUCTURE = "BSH";
         long startConfig = millis();
-        configurationSpace = new BSHConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles, minCorner, maxCorner);
-        sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, configurationSpace, 20f, Vec3.of(1));
+        configurationSpace = new BSHConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
+        sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, configurationSpace, minCorner, maxCorner, 20f, Vec3.of(1));
         long configSpace = millis();
         graph.clearAdjacencies();
         graph.generateAdjacencies(10, configurationSpace);

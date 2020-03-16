@@ -27,14 +27,10 @@ public class BSHConfigurationSpace extends ConfigurationSpace {
     final PApplet parent;
     final SphericalAgentDescription sphericalAgentDescription;
     final BoundingSphere root;
-    final Vec3 minCorner;
-    final Vec3 maxCorner;
 
-    public BSHConfigurationSpace(final PApplet parent, final SphericalAgentDescription sphericalAgentDescription, final List<SphericalObstacle> sphericalObstacles, Vec3 minCorner, Vec3 maxCorner) {
+    public BSHConfigurationSpace(final PApplet parent, final SphericalAgentDescription sphericalAgentDescription, final List<SphericalObstacle> sphericalObstacles) {
         this.parent = parent;
         this.sphericalAgentDescription = sphericalAgentDescription;
-        this.minCorner = minCorner;
-        this.maxCorner = maxCorner;
 
         if (sphericalObstacles.size() == 0) {
             throw new IllegalArgumentException("Need at least one obstacle");
@@ -222,25 +218,5 @@ public class BSHConfigurationSpace extends ConfigurationSpace {
 
     public boolean doesEdgeIntersectSomeObstacle(final Vec3 p1, final Vec3 p2) {
         return doesEdgeIntersectSomeObstacleUnderThisBoundingSphere(p1, p2, root);
-    }
-
-    public List<Vec3> samplePoints(int numberOfPoints) {
-        List<Vec3> samples = new ArrayList<>();
-        for (int i = 0; i < numberOfPoints; i++) {
-            samples.add(Vec3.of(
-                    parent.random(minCorner.x, maxCorner.x),
-                    parent.random(minCorner.y, maxCorner.y),
-                    parent.random(minCorner.z, maxCorner.z)
-            ));
-        }
-        return samples;
-    }
-
-    public Vec3 samplePoint() {
-        return Vec3.of(
-                parent.random(minCorner.x, maxCorner.x),
-                parent.random(minCorner.y, maxCorner.y),
-                parent.random(minCorner.z, maxCorner.z)
-        );
     }
 }

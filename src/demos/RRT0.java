@@ -53,16 +53,16 @@ public class RRT0 extends PApplet {
                 startPosition,
                 SIDE * (0.5f / 20)
         );
-        configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles, minCorner, maxCorner);
-        sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, configurationSpace, 20f, Vec3.of(1));
+        configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
+        sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, configurationSpace, minCorner, maxCorner, 20f, Vec3.of(1));
         rrt = new RapidlyExploringRandomTree(this, startPosition, finishPosition);
-        rrt.growTree(1000, configurationSpace);
+        rrt.growTree(sphericalAgent.samplePoints(1000), configurationSpace);
     }
 
     public void draw() {
         if (keyPressed) {
             if (key == 'n') {
-                rrt.growTree(10, configurationSpace);
+                rrt.growTree(sphericalAgent.samplePoints(10), configurationSpace);
             }
         }
         long start = millis();

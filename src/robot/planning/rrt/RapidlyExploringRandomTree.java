@@ -42,8 +42,7 @@ public class RapidlyExploringRandomTree {
         return nearestVertex;
     }
 
-    public void generateNextNode(ConfigurationSpace configurationSpace) {
-        Vec3 newPosition = configurationSpace.samplePoint();
+    public void generateNextNode(Vec3 newPosition, ConfigurationSpace configurationSpace) {
         Vertex nearestVertex = getNearestVertexFrom(newPosition);
         Vec3 growth = newPosition.minus(nearestVertex.position);
         if (growth.norm() > GROWTH_LIMIT) {
@@ -55,9 +54,9 @@ public class RapidlyExploringRandomTree {
         nearestVertex.addChild(Vertex.of(applet, newPosition));
     }
 
-    public void growTree(int numNodes, ConfigurationSpace configurationSpace) {
-        for (int i = 0; i < numNodes; i++) {
-            generateNextNode(configurationSpace);
+    public void growTree(List<Vec3> newPositions, ConfigurationSpace configurationSpace) {
+        for (Vec3 newPosition : newPositions) {
+            generateNextNode(newPosition, configurationSpace);
         }
     }
 

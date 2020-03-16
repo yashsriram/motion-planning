@@ -1,13 +1,13 @@
 package demos;
 
 import camera.QueasyCam;
+import fixed.SphericalObstacle;
 import math.Vec3;
+import processing.core.PApplet;
 import robot.acting.SphericalAgent;
 import robot.input.SphericalAgentDescription;
-import fixed.SphericalObstacle;
-import processing.core.PApplet;
-import robot.sensing.PlainConfigurationSpace;
 import robot.planning.optimalrrt.OptimalRapidlyExploringRandomTree;
+import robot.sensing.PlainConfigurationSpace;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,16 +69,16 @@ public class RRTStar1 extends PApplet {
                 startPosition,
                 SIDE * (0.5f / 20)
         );
-        configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles, minCorner, maxCorner);
-        sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, configurationSpace, 20f, Vec3.of(1));
+        configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
+        sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, configurationSpace, minCorner, maxCorner, 20f, Vec3.of(1));
         rrt = new OptimalRapidlyExploringRandomTree(this, startPosition, finishPosition);
-        rrt.growTree(1000, configurationSpace);
+        rrt.growTree(sphericalAgent.samplePoints(1000), configurationSpace);
     }
 
     public void draw() {
         if (keyPressed) {
             if (key == 'n') {
-                rrt.growTree(10, configurationSpace);
+                rrt.growTree(sphericalAgent.samplePoints(10), configurationSpace);
             }
         }
         long start = millis();

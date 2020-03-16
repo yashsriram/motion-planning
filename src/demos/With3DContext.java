@@ -115,14 +115,14 @@ public class With3DContext extends PApplet {
         configurationSpace = new PlainConfigurationSpace(
                 this,
                 sphericalAgentDescription,
-                sphericalObstacles,
-                minCorner,
-                maxCorner
+                sphericalObstacles
                 );
         sphericalAgent = new SphericalAgent(
                 this,
                 sphericalAgentDescription,
                 configurationSpace,
+                minCorner,
+                maxCorner,
                 20f,
                 Vec3.of(1)
         );
@@ -133,7 +133,7 @@ public class With3DContext extends PApplet {
                 loadImage("ground6.png"));
         Graph.END_POINT_SIZE = 5f;
         graph = new Graph(this, startPosition, finishPosition);
-        graph.generateVertices(configurationSpace.samplePoints(10000), configurationSpace);
+        graph.generateVertices(sphericalAgent.samplePoints(10000), configurationSpace);
         graph.generateAdjacencies(10, configurationSpace);
     }
 

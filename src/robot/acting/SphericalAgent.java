@@ -1,9 +1,9 @@
 package robot.acting;
 
-import robot.input.SphericalAgentDescription;
 import math.Vec3;
 import processing.core.PApplet;
 import processing.core.PShape;
+import robot.input.SphericalAgentDescription;
 import robot.sensing.ConfigurationSpace;
 
 import java.util.ArrayList;
@@ -19,6 +19,8 @@ public class SphericalAgent {
     final ConfigurationSpace configurationSpace;
     final float speed;
     final Vec3 color;
+    final Vec3 minCorner;
+    final Vec3 maxCorner;
 
     Vec3 center;
     List<Vec3> path = new ArrayList<>();
@@ -26,7 +28,7 @@ public class SphericalAgent {
     float distanceCovered = 0;
     public boolean isPaused = false;
 
-    public SphericalAgent(final PApplet parent, final SphericalAgentDescription description, final ConfigurationSpace configurationSpace, float speed, Vec3 color) {
+    public SphericalAgent(final PApplet parent, final SphericalAgentDescription description, final ConfigurationSpace configurationSpace, Vec3 minCorner, Vec3 maxCorner, float speed, Vec3 color) {
         this.parent = parent;
         this.description = description;
         this.configurationSpace = configurationSpace;
@@ -34,6 +36,8 @@ public class SphericalAgent {
         this.color = color;
 
         this.center = Vec3.of(description.startPosition);
+        this.minCorner = minCorner;
+        this.maxCorner = maxCorner;
     }
 
     public void update(float dt) {
@@ -209,4 +213,23 @@ public class SphericalAgent {
         }
     }
 
+    public List<Vec3> samplePoints(int numberOfPoints) {
+        List<Vec3> samples = new ArrayList<>();
+        for (int i = 0; i < numberOfPoints; i++) {
+            samples.add(Vec3.of(
+                    parent.random(minCorner.x, maxCorner.x),
+                    parent.random(minCorner.y, maxCorner.y),
+                    parent.random(minCorner.z, maxCorner.z)
+            ));
+        }
+        return samples;
+    }
+
+    public Vec3 samplePoint() {
+        return Vec3.of(
+                parent.random(minCorner.x, maxCorner.x),
+                parent.random(minCorner.y, maxCorner.y),
+                parent.random(minCorner.z, maxCorner.z)
+        );
+    }
 }

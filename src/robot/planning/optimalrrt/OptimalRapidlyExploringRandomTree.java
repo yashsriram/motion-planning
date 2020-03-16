@@ -43,9 +43,7 @@ public class OptimalRapidlyExploringRandomTree {
         return nearestVertex;
     }
 
-    public void generateNextNode(ConfigurationSpace configurationSpace) {
-        Vec3 newPosition = configurationSpace.samplePoint();
-
+    public void generateNextNode(Vec3 newPosition, ConfigurationSpace configurationSpace) {
         // nearest vertex search
         Stack<Vertex> fringe = new Stack<>();
         List<Vertex> neighbours = new ArrayList<>();
@@ -102,9 +100,9 @@ public class OptimalRapidlyExploringRandomTree {
         }
     }
 
-    public void growTree(int numNodes, ConfigurationSpace configurationSpace) {
-        for (int i = 0; i < numNodes; i++) {
-            generateNextNode(configurationSpace);
+    public void growTree(List<Vec3> newPositions, ConfigurationSpace configurationSpace) {
+        for (Vec3 newPosition : newPositions) {
+            generateNextNode(newPosition, configurationSpace);
         }
     }
 

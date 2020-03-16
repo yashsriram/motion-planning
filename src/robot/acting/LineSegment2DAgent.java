@@ -17,18 +17,22 @@ public class LineSegment2DAgent {
     final LineSegment2DConfigurationSpace configurationSpace;
     final float speed;
     final Vec3 color;
+    final Vec3 minCorner;
+    final Vec3 maxCorner;
 
     Vec3 pose;
     List<Vec3> path = new ArrayList<>();
     int currentMilestone = 0;
     public boolean isPaused = false;
 
-    public LineSegment2DAgent(final PApplet parent, final LineSegment2DAgentDescription description, final LineSegment2DConfigurationSpace configurationSpace, float speed, Vec3 color) {
+    public LineSegment2DAgent(final PApplet parent, final LineSegment2DAgentDescription description, final LineSegment2DConfigurationSpace configurationSpace, Vec3 minCorner, Vec3 maxCorner, float speed, Vec3 color) {
         this.parent = parent;
         this.description = description;
         this.configurationSpace = configurationSpace;
         this.speed = speed;
         this.color = color;
+        this.minCorner = minCorner;
+        this.maxCorner = maxCorner;
 
         this.pose = Vec3.of(description.startPose);
     }
@@ -161,4 +165,23 @@ public class LineSegment2DAgent {
         }
     }
 
+    public List<Vec3> samplePoints(int numberOfPoints) {
+        List<Vec3> samples = new ArrayList<>();
+        for (int i = 0; i < numberOfPoints; i++) {
+            samples.add(Vec3.of(
+                    parent.random(minCorner.x, maxCorner.x),
+                    parent.random(minCorner.y, maxCorner.y),
+                    parent.random(minCorner.z, maxCorner.z)
+            ));
+        }
+        return samples;
+    }
+
+    public Vec3 samplePoint() {
+        return Vec3.of(
+                parent.random(minCorner.x, maxCorner.x),
+                parent.random(minCorner.y, maxCorner.y),
+                parent.random(minCorner.z, maxCorner.z)
+        );
+    }
 }
