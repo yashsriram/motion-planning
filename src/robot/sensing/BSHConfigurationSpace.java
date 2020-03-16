@@ -1,8 +1,8 @@
-package tools.configurationspace;
+package robot.sensing;
 
 import math.Vec3;
-import physical.SphericalAgentDescription;
-import physical.SphericalObstacle;
+import robot.input.SphericalAgentDescription;
+import fixed.SphericalObstacle;
 import processing.core.PApplet;
 
 import java.util.ArrayList;

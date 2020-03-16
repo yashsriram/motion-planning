@@ -2,12 +2,12 @@ package demos;
 
 import camera.QueasyCam;
 import math.Vec3;
-import physical.SphericalAgent;
-import physical.SphericalAgentDescription;
-import physical.SphericalObstacle;
+import robot.acting.SphericalAgent;
+import robot.input.SphericalAgentDescription;
+import fixed.SphericalObstacle;
 import processing.core.PApplet;
-import tools.configurationspace.PlainConfigurationSpace;
-import tools.graph.Graph;
+import robot.sensing.PlainConfigurationSpace;
+import robot.planning.graph.Graph;
 
 import java.util.ArrayList;
 import java.util.List;

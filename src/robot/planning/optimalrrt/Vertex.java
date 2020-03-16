@@ -1,4 +1,4 @@
-package tools.optimalrrt;
+package robot.planning.optimalrrt;
 
 import math.Vec3;
 import processing.core.PApplet;

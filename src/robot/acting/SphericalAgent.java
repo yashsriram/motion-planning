@@ -1,9 +1,10 @@
-package physical;
+package robot.acting;
 
+import robot.input.SphericalAgentDescription;
 import math.Vec3;
 import processing.core.PApplet;
 import processing.core.PShape;
-import tools.configurationspace.ConfigurationSpace;
+import robot.sensing.ConfigurationSpace;
 
 import java.util.ArrayList;
 import java.util.List;

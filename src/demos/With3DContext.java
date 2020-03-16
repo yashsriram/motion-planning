@@ -1,13 +1,15 @@
 package demos;
 
+import robot.acting.SphericalAgent;
 import camera.QueasyCam;
+import robot.input.SphericalAgentDescription;
 import math.Vec3;
-import physical.*;
+import fixed.*;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PShape;
-import tools.configurationspace.PlainConfigurationSpace;
-import tools.graph.Graph;
+import robot.sensing.PlainConfigurationSpace;
+import robot.planning.graph.Graph;
 
 import java.util.ArrayList;
 import java.util.List;

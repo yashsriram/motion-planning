@@ -1,8 +1,9 @@
-package physical;
+package robot.acting;
 
+import robot.input.LineSegment2DAgentDescription;
 import math.Vec3;
 import processing.core.PApplet;
-import tools.configurationspace.LineSegment2DConfigurationSpace;
+import robot.sensing.LineSegment2DConfigurationSpace;
 
 import java.util.ArrayList;
 import java.util.List;

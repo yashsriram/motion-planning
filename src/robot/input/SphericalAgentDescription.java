@@ -1,9 +1,9 @@
-package physical;
+package robot.input;
 
 import math.Vec3;
 
 public class SphericalAgentDescription {
-    final Vec3 startPosition;
+    public final Vec3 startPosition;
     public final float radius;
 
     public SphericalAgentDescription(Vec3 startPosition, float radius) {

@@ -1,4 +1,4 @@
-package tools.configurationspace;
+package robot.sensing;
 
 import math.Vec3;
 

@@ -2,12 +2,12 @@ package demos;
 
 import camera.QueasyCam;
 import math.Vec3;
-import physical.LineSegment2DAgent;
-import physical.LineSegment2DAgentDescription;
-import physical.SphericalObstacle;
+import robot.acting.LineSegment2DAgent;
+import robot.input.LineSegment2DAgentDescription;
+import fixed.SphericalObstacle;
 import processing.core.PApplet;
-import tools.configurationspace.LineSegment2DConfigurationSpace;
-import tools.graph.Graph;
+import robot.sensing.LineSegment2DConfigurationSpace;
+import robot.planning.graph.Graph;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package tools.graph;
+package robot.planning.graph;
 
 import math.Vec3;
 import processing.core.PApplet;
