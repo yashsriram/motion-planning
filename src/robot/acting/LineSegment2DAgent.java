@@ -1,8 +1,8 @@
 package robot.acting;
 
-import robot.input.LineSegment2DAgentDescription;
 import math.Vec3;
 import processing.core.PApplet;
+import robot.input.LineSegment2DAgentDescription;
 import robot.sensing.LineSegment2DConfigurationSpace;
 
 import java.util.ArrayList;
@@ -177,11 +177,4 @@ public class LineSegment2DAgent {
         return samples;
     }
 
-    public Vec3 samplePoint() {
-        return Vec3.of(
-                parent.random(minCorner.x, maxCorner.x),
-                parent.random(minCorner.y, maxCorner.y),
-                parent.random(minCorner.z, maxCorner.z)
-        );
-    }
 }

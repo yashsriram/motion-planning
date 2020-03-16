@@ -225,11 +225,4 @@ public class SphericalAgent {
         return samples;
     }
 
-    public Vec3 samplePoint() {
-        return Vec3.of(
-                parent.random(minCorner.x, maxCorner.x),
-                parent.random(minCorner.y, maxCorner.y),
-                parent.random(minCorner.z, maxCorner.z)
-        );
-    }
 }
