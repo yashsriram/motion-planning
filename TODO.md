@@ -13,16 +13,31 @@ such as flocking, herding or lane formation. You should incorporate a global
 navigation structure to allow your agents to navigate through complex environment
 without getting stuck at local minima.
 
-## Planning pipeline
-1. Input = obstacles, agent, start pose, finish pose,
-2. Find configuration space (minkowski sum/...)
-3. Vertex sampling (PRM/Surface PRM/...)
-4. In obstacle vertex culling (Parallelizable/Spatial data structure)
-5. Obstacle intersecting edge culling (Parallelizable/Spatial data structure)
-6. Graph representation (List of edges/adjacency matrix/adjacency list/...)
-7. optimal path search (DFS/BFS/UCS/A*/eA*/...)
-8. Action/animation (lerp/...)
-9. Online furthest node lookout (forward/backward/...)
+## Robot pipeline
+### Given
+- Agent, Start pose, Finish pose
+
+### Sensing
+- Obstacles (known/unknown/partially-known/...)
+- Building configuration space (minkowski sum/...)
+    - In obstacle vertex culling (Parallelizable/Spatial data structure)
+    - Obstacle intersecting edge culling (Parallelizable/Spatial data structure)
+
+### Planning
+- Continuous space discretization
+    - Vertex sampling (PRM/Surface PRM/...)
+- Graph creation
+    - Graph
+    - Tree (RRT/RRT*/...)
+- Graph Representation (List of edges/adjacency matrix/adjacency list/...)
+- Shortest path search
+    - Graph (DFS/BFS/UCS/A*/eA*/...)
+    - Tree (follow parent to start)
+
+### Acting
+- Action/animation
+    - moving from start to finish (lerp/...)
+    - online furthest node lookout (backward/forward/...)
 
 ### Check-in (Required):
 Consider the following scenario:
