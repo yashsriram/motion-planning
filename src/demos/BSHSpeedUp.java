@@ -73,6 +73,7 @@ public class BSHSpeedUp extends PApplet {
 
         configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
         graph = new Graph(this, startPosition, finishPosition);
+        sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, configurationSpace, minCorner, maxCorner, 20f, Vec3.of(1));
         graph.generateVertices(sphericalAgent.samplePoints(7000), configurationSpace);
 
         resetBSH();
