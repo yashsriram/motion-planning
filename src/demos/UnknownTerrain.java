@@ -29,7 +29,7 @@ public class UnknownTerrain extends PApplet {
     QueasyCam cam;
 
     static boolean DRAW_OBSTACLES = true;
-    static String SEARCH_ALGORITHM = "";
+    static String ALGORITHM = "";
 
     public void settings() {
         size(WIDTH, HEIGHT, P3D);
@@ -116,6 +116,7 @@ public class UnknownTerrain extends PApplet {
                 5000,
                 5,
                 OnlineSphericalAgent.Algorithm.AStar);
+        ALGORITHM = "A*";
         onlineSphericalAgent.isPaused = true;
     }
 
@@ -146,7 +147,7 @@ public class UnknownTerrain extends PApplet {
         configurationSpace.draw();
         long draw = millis();
 
-        surface.setTitle("Processing - FPS: " + Math.round(frameRate) + " Update: " + (update - start) + "ms Draw " + (draw - update) + "ms" + " search: " + SEARCH_ALGORITHM);
+        surface.setTitle("Processing - FPS: " + Math.round(frameRate) + " Update: " + (update - start) + "ms Draw " + (draw - update) + "ms" + " search: " + ALGORITHM);
     }
 
     public void keyPressed() {
@@ -167,23 +168,23 @@ public class UnknownTerrain extends PApplet {
         }
         if (key == '1') {
             onlineSphericalAgent.algorithm = OnlineSphericalAgent.Algorithm.DFS;
-            SEARCH_ALGORITHM = "DFS";
+            ALGORITHM = "DFS";
         }
         if (key == '2') {
             onlineSphericalAgent.algorithm = OnlineSphericalAgent.Algorithm.BFS;
-            SEARCH_ALGORITHM = "BFS";
+            ALGORITHM = "BFS";
         }
         if (key == '3') {
             onlineSphericalAgent.algorithm = OnlineSphericalAgent.Algorithm.UCS;
-            SEARCH_ALGORITHM = "UCS";
+            ALGORITHM = "UCS";
         }
         if (key == '4') {
             onlineSphericalAgent.algorithm = OnlineSphericalAgent.Algorithm.AStar;
-            SEARCH_ALGORITHM = "A*";
+            ALGORITHM = "A*";
         }
         if (key == '5') {
             onlineSphericalAgent.algorithm = OnlineSphericalAgent.Algorithm.WeightedAStar;
-            SEARCH_ALGORITHM = "weighted A*";
+            ALGORITHM = "weighted A*";
         }
     }
 

@@ -99,7 +99,6 @@ public class DynamicGraph {
     }
 
     private void resetSearchState() {
-        PApplet.println("Resetting search states of vertices");
         for (Vertex v : vertices) {
             if (v.isOutsideObstacle) {
                 v.searchState.reset();
