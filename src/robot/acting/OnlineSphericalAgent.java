@@ -90,6 +90,46 @@ public class OnlineSphericalAgent {
         }
     }
 
+    public void smoothUpdate(float dt) {
+        if (isPaused) {
+            return;
+        }
+        if (!path.get(currentMilestone).isSensed) {
+            replan();
+            return;
+        }
+        if (currentMilestone < path.size() - 1) {
+            // proceed only if next milestone sensed
+            if (!path.get(currentMilestone + 1).isSensed) {
+                replan();
+                return;
+            }
+            // reached next milestone
+            if (path.get(currentMilestone + 1).position.minus(center).norm() < MILESTONE_REACHED_RADIUS) {
+                currentMilestone++;
+                return;
+            }
+            // next next milestone lookup
+            if (currentMilestone < path.size() - 2) {
+                if (path.get(currentMilestone + 2).isSensed) {
+                    boolean blocked = configurationSpace.doesEdgeIntersectSomeObstacle(path.get(currentMilestone + 2).position, center);
+                    if (!blocked) {
+                        currentMilestone++;
+                    }
+                }
+            }
+            // move towards next milestone
+            Vec3 velocityDir =
+                    path.get(currentMilestone + 1)
+                            .position
+                            .minus(center)
+                            .normalizeInPlace();
+            Vec3 displacement = velocityDir.scaleInPlace(speed * dt);
+            center.plusInPlace(displacement);
+            distanceCovered += displacement.norm();
+        }
+    }
+
     public void draw() {
         // graph
         dynamicGraph.draw();

@@ -29,6 +29,7 @@ public class UnknownTerrain extends PApplet {
     QueasyCam cam;
 
     static boolean DRAW_OBSTACLES = true;
+    static boolean SMOOTH_PATH = false;
     static String ALGORITHM = "";
 
     public void settings() {
@@ -131,7 +132,11 @@ public class UnknownTerrain extends PApplet {
         }
         long start = millis();
         // update
-        onlineSphericalAgent.update(0.1f);
+        if (SMOOTH_PATH) {
+            onlineSphericalAgent.smoothUpdate(0.1f);
+        } else {
+            onlineSphericalAgent.update(0.1f);
+        }
         long update = millis();
         // draw
         background(0);
@@ -151,6 +156,9 @@ public class UnknownTerrain extends PApplet {
     }
 
     public void keyPressed() {
+        if (key == 'x') {
+            SMOOTH_PATH = !SMOOTH_PATH;
+        }
         if (key == 'h') {
             DRAW_OBSTACLES = !DRAW_OBSTACLES;
         }
