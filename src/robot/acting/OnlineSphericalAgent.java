@@ -11,6 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OnlineSphericalAgent {
+    public enum Algorithm {
+        DFS, BFS, UCS, AStar, WeightedAStar
+    }
+
     public static float NEXT_MILESTONE_HINT_SIZE = 2f;
     public static float MILESTONE_REACHED_RADIUS = 2f;
     public static float SENSE_RADIUS = 50f;
@@ -23,6 +27,7 @@ public class OnlineSphericalAgent {
     final Vec3 minCorner;
     final Vec3 maxCorner;
     public final DynamicGraph dynamicGraph;
+    public Algorithm algorithm;
 
     Vec3 center;
     List<Vertex> path = new ArrayList<>();
@@ -37,7 +42,8 @@ public class OnlineSphericalAgent {
                                 float speed,
                                 Vec3 color,
                                 int numSamples,
-                                float maxEdgeLen) {
+                                float maxEdgeLen,
+                                Algorithm algorithm) {
         this.parent = parent;
         this.description = description;
         this.configurationSpace = configurationSpace;
@@ -47,6 +53,7 @@ public class OnlineSphericalAgent {
         this.maxCorner = maxCorner;
         this.dynamicGraph = new DynamicGraph(parent, description.startPosition, description.finishPosition);
         dynamicGraph.generateGraph(samplePoints(numSamples), maxEdgeLen);
+        this.algorithm = algorithm;
 
         this.center = Vec3.of(description.startPosition);
         this.path.add(dynamicGraph.start);
@@ -56,10 +63,14 @@ public class OnlineSphericalAgent {
         if (isPaused) {
             return;
         }
+        if (!path.get(currentMilestone).isSensed) {
+            replan();
+            return;
+        }
         if (currentMilestone < path.size() - 1) {
             // proceed only if next milestone sensed
             if (!path.get(currentMilestone + 1).isSensed) {
-                step();
+                replan();
                 return;
             }
             // reached next milestone
@@ -107,14 +118,25 @@ public class OnlineSphericalAgent {
         }
     }
 
-    public void step() {
+    private void replan() {
         dynamicGraph.senseAndUpdate(center, SENSE_RADIUS, configurationSpace);
-        List<Vertex> path = dynamicGraph.aStar(this.path.get(currentMilestone));
-        setPath(path);
-    }
-
-    private void setPath(List<Vertex> path) {
-        this.path = path;
+        switch (algorithm) {
+            case DFS:
+                path = dynamicGraph.dfs(path.get(currentMilestone));
+                break;
+            case BFS:
+                path = dynamicGraph.bfs(path.get(currentMilestone));
+                break;
+            case UCS:
+                path = dynamicGraph.ucs(path.get(currentMilestone));
+                break;
+            case AStar:
+                path = dynamicGraph.aStar(path.get(currentMilestone));
+                break;
+            case WeightedAStar:
+                path = dynamicGraph.weightedAStar(path.get(currentMilestone), 1.5f);
+                break;
+        }
         currentMilestone = 0;
     }
 

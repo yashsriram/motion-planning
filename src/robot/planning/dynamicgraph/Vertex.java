@@ -95,8 +95,7 @@ public class Vertex {
         parent.pushMatrix();
         parent.fill(searchState.color.x, searchState.color.y, searchState.color.z);
         parent.stroke(searchState.color.x, searchState.color.y, searchState.color.z);
-        parent.translate(position.x, position.y, position.z);
-        parent.box(1);
+        parent.point(position.x, position.y, position.z);
         parent.popMatrix();
         if (DynamicGraph.DRAW_EDGES) {
             for (int i = 0; i < neighbours.size(); ++i) {

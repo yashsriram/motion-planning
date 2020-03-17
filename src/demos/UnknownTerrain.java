@@ -59,11 +59,12 @@ public class UnknownTerrain extends PApplet {
                 sphericalAgentDescription,
                 configurationSpace,
                 minCorner, maxCorner,
-                20f,
+                10f,
                 Vec3.of(1),
                 3000,
-                10);
-        DynamicGraph.DRAW_EDGES = true;
+                10,
+                OnlineSphericalAgent.Algorithm.AStar);
+        onlineSphericalAgent.isPaused = true;
     }
 
     public void draw() {
@@ -97,9 +98,6 @@ public class UnknownTerrain extends PApplet {
     }
 
     public void keyPressed() {
-        if (key == '0') {
-            onlineSphericalAgent.step();
-        }
         if (key == 'h') {
             DRAW_OBSTACLES = !DRAW_OBSTACLES;
         }
@@ -113,18 +111,23 @@ public class UnknownTerrain extends PApplet {
             onlineSphericalAgent.isPaused = !onlineSphericalAgent.isPaused;
         }
         if (key == '1') {
+            onlineSphericalAgent.algorithm = OnlineSphericalAgent.Algorithm.DFS;
             SEARCH_ALGORITHM = "DFS";
         }
         if (key == '2') {
+            onlineSphericalAgent.algorithm = OnlineSphericalAgent.Algorithm.BFS;
             SEARCH_ALGORITHM = "BFS";
         }
         if (key == '3') {
+            onlineSphericalAgent.algorithm = OnlineSphericalAgent.Algorithm.UCS;
             SEARCH_ALGORITHM = "UCS";
         }
         if (key == '4') {
+            onlineSphericalAgent.algorithm = OnlineSphericalAgent.Algorithm.AStar;
             SEARCH_ALGORITHM = "A*";
         }
         if (key == '5') {
+            onlineSphericalAgent.algorithm = OnlineSphericalAgent.Algorithm.WeightedAStar;
             SEARCH_ALGORITHM = "weighted A*";
         }
     }
