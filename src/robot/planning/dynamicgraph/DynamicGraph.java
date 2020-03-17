@@ -69,7 +69,8 @@ public class DynamicGraph {
         parent.popMatrix();
     }
 
-    public void senseAndUpdate(Vec3 center, float radius, ConfigurationSpace configurationSpace) {
+    public boolean senseAndUpdate(Vec3 center, float radius, ConfigurationSpace configurationSpace) {
+        boolean obstaclesDetected = false;
         List<Vertex> sensedVertices = new ArrayList<>();
         for (Vertex vertex : vertices) {
             if (vertex.position.minus(center).norm() > radius) {
@@ -81,6 +82,7 @@ public class DynamicGraph {
         for (Vertex vertex : sensedVertices) {
             if (configurationSpace.doesVertexIntersectSomeObstacle(vertex.position)) {
                 vertex.setInsideObstacle();
+                obstaclesDetected = true;
             }
         }
         for (Vertex vertex : sensedVertices) {
@@ -94,8 +96,10 @@ public class DynamicGraph {
             // Actually remove them here; all this to avoid java.util.ConcurrentModificationException
             for (Vertex neighbour : neighboursToRemove) {
                 vertex.removeNeighbour(neighbour);
+                obstaclesDetected = true;
             }
         }
+        return obstaclesDetected;
     }
 
     private void resetSearchState() {

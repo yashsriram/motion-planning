@@ -159,7 +159,10 @@ public class OnlineSphericalAgent {
     }
 
     private void replan() {
-        dynamicGraph.senseAndUpdate(center, SENSE_RADIUS, configurationSpace);
+        boolean obstaclesDetected = dynamicGraph.senseAndUpdate(center, SENSE_RADIUS, configurationSpace);
+        if (!obstaclesDetected && path.size() > 1) {
+            return;
+        }
         switch (algorithm) {
             case DFS:
                 path = dynamicGraph.dfs(path.get(currentMilestone));
