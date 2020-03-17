@@ -19,8 +19,8 @@ public class UnknownTerrain extends PApplet {
     final Vec3 minCorner = Vec3.of(0, -SIDE, -SIDE);
     final Vec3 maxCorner = Vec3.of(0, SIDE, SIDE);
 
-    final Vec3 startPosition = Vec3.of(0, SIDE * (9f / 10), SIDE * (-9f / 10));
-    final Vec3 finishPosition = Vec3.of(0, SIDE * (-9f / 10), SIDE * (9f / 10));
+    final Vec3 startPosition = Vec3.of(0, SIDE * 0.9f, SIDE * -0.9f);
+    final Vec3 finishPosition = Vec3.of(0, SIDE * -0.9f, SIDE * 0.9f);
     SphericalAgentDescription sphericalAgentDescription;
     OnlineSphericalAgent onlineSphericalAgent;
     List<SphericalObstacle> sphericalObstacles = new ArrayList<>();
@@ -44,8 +44,56 @@ public class UnknownTerrain extends PApplet {
         cam = new QueasyCam(this);
         sphericalObstacles.add(new SphericalObstacle(
                 this,
+                Vec3.of(0, -5 * SIDE * 0.2f, 0),
+                SIDE * 0.1f,
+                Vec3.of(1, 0, 1)
+        ));
+        sphericalObstacles.add(new SphericalObstacle(
+                this,
+                Vec3.of(0, -4 * SIDE * 0.2f, 0),
+                SIDE * 0.1f,
+                Vec3.of(1, 0, 1)
+        ));
+        sphericalObstacles.add(new SphericalObstacle(
+                this,
+                Vec3.of(0, -3 * SIDE * 0.2f, 0),
+                SIDE * 0.1f,
+                Vec3.of(1, 0, 1)
+        ));
+        sphericalObstacles.add(new SphericalObstacle(
+                this,
+                Vec3.of(0, -2 * SIDE * 0.2f, 0),
+                SIDE * 0.1f,
+                Vec3.of(1, 0, 1)
+        ));
+        sphericalObstacles.add(new SphericalObstacle(
+                this,
+                Vec3.of(0, -SIDE * 0.2f, 0),
+                SIDE * 0.1f,
+                Vec3.of(1, 0, 1)
+        ));
+        sphericalObstacles.add(new SphericalObstacle(
+                this,
                 Vec3.of(0, 0, 0),
-                SIDE * (2f / 20),
+                SIDE * 0.1f,
+                Vec3.of(1, 0, 1)
+        ));
+        sphericalObstacles.add(new SphericalObstacle(
+                this,
+                Vec3.of(0, SIDE * 0.2f, 0),
+                SIDE * 0.1f,
+                Vec3.of(1, 0, 1)
+        ));
+        sphericalObstacles.add(new SphericalObstacle(
+                this,
+                Vec3.of(0, 2 * SIDE * 0.2f, 0),
+                SIDE * 0.1f,
+                Vec3.of(1, 0, 1)
+        ));
+        sphericalObstacles.add(new SphericalObstacle(
+                this,
+                Vec3.of(0, 3 * SIDE * 0.2f, 0),
+                SIDE * 0.1f,
                 Vec3.of(1, 0, 1)
         ));
         sphericalAgentDescription = new SphericalAgentDescription(
@@ -65,8 +113,8 @@ public class UnknownTerrain extends PApplet {
                 minCorner, maxCorner,
                 10f,
                 Vec3.of(1),
-                3000,
-                10,
+                5000,
+                5,
                 OnlineSphericalAgent.Algorithm.AStar);
         onlineSphericalAgent.isPaused = true;
     }
