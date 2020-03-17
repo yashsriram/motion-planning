@@ -98,7 +98,7 @@ public class Graph {
         parent.popMatrix();
     }
 
-    private void reset() {
+    private void resetSearchState() {
         PApplet.println("Resetting search states of vertices");
         for (Vertex v : vertices) {
             if (v.isOutsideObstacle) {
@@ -115,7 +115,7 @@ public class Graph {
     public List<Vec3> dfs() {
         PApplet.println("DFS");
 
-        reset();
+        resetSearchState();
         final Stack<Vertex> fringe = new Stack<>();
         int numVerticesExplored = 0;
 
@@ -180,20 +180,20 @@ public class Graph {
 
     public List<Vec3> bfs() {
         PApplet.println("BFS");
-        reset();
+        resetSearchState();
         return search(new LinkedList<>());
     }
 
     public List<Vec3> ucs() {
         PApplet.println("UCS");
-        reset();
+        resetSearchState();
         return search(new PriorityQueue<>((v1, v2) ->
                 (int) (v1.searchState.distanceFromStart - v2.searchState.distanceFromStart)));
     }
 
     public List<Vec3> aStar() {
         PApplet.println("A*");
-        reset();
+        resetSearchState();
         return search(new PriorityQueue<>((v1, v2) -> (int) (
                 (v1.searchState.distanceFromStart + v1.heuristicDistanceToFinish)
                         - (v2.searchState.distanceFromStart + v2.heuristicDistanceToFinish)
@@ -202,7 +202,7 @@ public class Graph {
 
     public List<Vec3> weightedAStar(final float epislon) {
         PApplet.println("Weighted A* with epsilon = " + epislon);
-        reset();
+        resetSearchState();
         return search(new PriorityQueue<>((v1, v2) -> (int) (
                 (v1.searchState.distanceFromStart + epislon * v1.heuristicDistanceToFinish)
                         - (v2.searchState.distanceFromStart + epislon * v2.heuristicDistanceToFinish)
