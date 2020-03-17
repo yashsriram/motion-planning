@@ -18,26 +18,29 @@ public class Graph {
 
     public Graph(PApplet parent, Vec3 startPosition, Vec3 finishPosition) {
         this.parent = parent;
-        this.start = Vertex.start(parent, startPosition, finishPosition.minus(startPosition).norm());
-        this.finish = Vertex.finish(parent, finishPosition, 0);
+        this.start = Vertex.start(parent, startPosition, finishPosition.minus(startPosition).norm(), true);
+        this.finish = Vertex.finish(parent, finishPosition, 0, true);
         this.vertices.add(start);
         this.vertices.add(finish);
     }
 
     public void generateVertices(List<Vec3> newVertexPositions, ConfigurationSpace configurationSpace) {
+        int numVerticesCulled = 0;
         for (Vec3 position : newVertexPositions) {
             float distanceToFinish = finish.position.minus(position).norm();
-            vertices.add(Vertex.of(
-                    parent,
-                    position,
-                    distanceToFinish));
-        }
-        int numVerticesCulled = 0;
-        for (Vertex vertex : vertices) {
-            if (configurationSpace.doesVertexIntersectSomeObstacle(vertex.position)) {
-                vertex.searchState.color = Vec3.of(1, 0, 1);
-                vertex.isOutsideObstacle = false;
+            if (configurationSpace.doesVertexIntersectSomeObstacle(position)) {
                 numVerticesCulled++;
+                vertices.add(Vertex.of(
+                        parent,
+                        position,
+                        distanceToFinish,
+                        false));
+            } else {
+                vertices.add(Vertex.of(
+                        parent,
+                        position,
+                        distanceToFinish,
+                        true));
             }
         }
         PApplet.println("# vertices before culling: " + vertices.size());

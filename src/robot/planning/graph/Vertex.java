@@ -23,7 +23,7 @@ class Vertex {
     final Vec3 position;
     final float heuristicDistanceToFinish;
 
-    boolean isOutsideObstacle = true;
+    final boolean isOutsideObstacle;
     final List<Vertex> neighbours = new ArrayList<>();
     final List<Vec3> edgeColors = new ArrayList<>();
 
@@ -31,10 +31,18 @@ class Vertex {
         boolean isExplored = false;
         float distanceFromStart = 0;
         List<Vec3> pathFromStart = new ArrayList<>();
-        Vec3 color = Vec3.of(1);
+        Vec3 color;
+
+        public SearchState() {
+            this.color = Vertex.this.isOutsideObstacle ? Vec3.of(1) : Vec3.of(1, 0, 1);
+        }
 
         void reset() {
-            color.set(1, 1, 1);
+            if (isOutsideObstacle) {
+                color.set(1, 1, 1);
+            } else {
+                color.set(1, 0, 1);
+            }
             isExplored = false;
             distanceFromStart = 0;
             pathFromStart.clear();
@@ -54,23 +62,24 @@ class Vertex {
 
     final SearchState searchState;
 
-    static Vertex start(PApplet parent, Vec3 position, float distanceToFinish) {
-        return new Vertex(parent, START_ID, position, distanceToFinish);
+    static Vertex start(PApplet parent, Vec3 position, float distanceToFinish, boolean isOutsideObstacle) {
+        return new Vertex(parent, START_ID, position, distanceToFinish, isOutsideObstacle);
     }
 
-    static Vertex finish(PApplet parent, Vec3 position, float distanceToFinish) {
-        return new Vertex(parent, FINISH_ID, position, distanceToFinish);
+    static Vertex finish(PApplet parent, Vec3 position, float distanceToFinish, boolean isOutsideObstacle) {
+        return new Vertex(parent, FINISH_ID, position, distanceToFinish, isOutsideObstacle);
     }
 
-    static Vertex of(PApplet parent, Vec3 position, float distanceToFinish) {
-        return new Vertex(parent, getNextId(), position, distanceToFinish);
+    static Vertex of(PApplet parent, Vec3 position, float distanceToFinish, boolean isOutsideObstacle) {
+        return new Vertex(parent, getNextId(), position, distanceToFinish, isOutsideObstacle);
     }
 
-    private Vertex(PApplet parent, int id, Vec3 position, float heuristicDistanceToFinish) {
+    private Vertex(PApplet parent, int id, Vec3 position, float heuristicDistanceToFinish, boolean isOutsideObstacle) {
         this.parent = parent;
         this.id = id;
         this.position = Vec3.of(position);
         this.heuristicDistanceToFinish = heuristicDistanceToFinish;
+        this.isOutsideObstacle = isOutsideObstacle;
         this.searchState = new SearchState();
     }
 
