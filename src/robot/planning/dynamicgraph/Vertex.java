@@ -2,6 +2,7 @@ package robot.planning.dynamicgraph;
 
 import math.Vec3;
 import processing.core.PApplet;
+import processing.core.PConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,7 +96,11 @@ public class Vertex {
         parent.pushMatrix();
         parent.fill(searchState.color.x, searchState.color.y, searchState.color.z);
         parent.stroke(searchState.color.x, searchState.color.y, searchState.color.z);
-        parent.point(position.x, position.y, position.z);
+        parent.beginShape(PConstants.TRIANGLE);
+        parent.vertex(position.x, position.y, position.z);
+        parent.vertex(position.x, position.y + 1, position.z + 1);
+        parent.vertex(position.x, position.y, position.z + 1);
+        parent.endShape();
         parent.popMatrix();
         if (DynamicGraph.DRAW_EDGES) {
             for (int i = 0; i < neighbours.size(); ++i) {

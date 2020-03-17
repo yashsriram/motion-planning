@@ -17,7 +17,7 @@ public class OnlineSphericalAgent {
 
     public static float NEXT_MILESTONE_HINT_SIZE = 2f;
     public static float MILESTONE_REACHED_RADIUS = 2f;
-    public static float SENSE_RADIUS = 50f;
+    public static float SENSE_RADIUS = 20f;
 
     final PApplet parent;
     final SphericalAgentDescription description;

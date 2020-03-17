@@ -54,6 +54,10 @@ public class UnknownTerrain extends PApplet {
                 SIDE * (0.5f / 20)
         );
         configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
+        reset();
+    }
+
+    private void reset() {
         onlineSphericalAgent = new OnlineSphericalAgent(
                 this,
                 sphericalAgentDescription,
@@ -109,6 +113,9 @@ public class UnknownTerrain extends PApplet {
         }
         if (key == 'p') {
             onlineSphericalAgent.isPaused = !onlineSphericalAgent.isPaused;
+        }
+        if (key == 'r') {
+            reset();
         }
         if (key == '1') {
             onlineSphericalAgent.algorithm = OnlineSphericalAgent.Algorithm.DFS;
