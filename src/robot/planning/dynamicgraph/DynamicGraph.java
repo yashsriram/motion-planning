@@ -69,7 +69,7 @@ public class DynamicGraph {
         parent.popMatrix();
     }
 
-    public void sense(Vec3 center, float radius, ConfigurationSpace configurationSpace) {
+    public void senseAndUpdate(Vec3 center, float radius, ConfigurationSpace configurationSpace) {
         List<Vertex> sensedVertices = new ArrayList<>();
         for (Vertex vertex : vertices) {
             if (vertex.position.minus(center).norm() > radius) {

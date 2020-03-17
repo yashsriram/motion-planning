@@ -4,7 +4,7 @@ import camera.QueasyCam;
 import fixed.SphericalObstacle;
 import math.Vec3;
 import processing.core.PApplet;
-import robot.acting.SensingSphericalAgent;
+import robot.acting.OnlineSphericalAgent;
 import robot.input.SphericalAgentDescription;
 import robot.planning.dynamicgraph.DynamicGraph;
 import robot.sensing.PlainConfigurationSpace;
@@ -22,7 +22,7 @@ public class UnknownTerrain extends PApplet {
     final Vec3 startPosition = Vec3.of(0, SIDE * (9f / 10), SIDE * (-9f / 10));
     final Vec3 finishPosition = Vec3.of(0, SIDE * (-9f / 10), SIDE * (9f / 10));
     SphericalAgentDescription sphericalAgentDescription;
-    SensingSphericalAgent sensingSphericalAgent;
+    OnlineSphericalAgent onlineSphericalAgent;
     List<SphericalObstacle> sphericalObstacles = new ArrayList<>();
     PlainConfigurationSpace configurationSpace;
 
@@ -54,7 +54,7 @@ public class UnknownTerrain extends PApplet {
                 SIDE * (0.5f / 20)
         );
         configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
-        sensingSphericalAgent = new SensingSphericalAgent(
+        onlineSphericalAgent = new OnlineSphericalAgent(
                 this,
                 sphericalAgentDescription,
                 configurationSpace,
@@ -69,15 +69,15 @@ public class UnknownTerrain extends PApplet {
     public void draw() {
         if (keyPressed) {
             if (keyCode == RIGHT) {
-                sensingSphericalAgent.stepForward();
+                onlineSphericalAgent.stepForward();
             }
             if (keyCode == LEFT) {
-                sensingSphericalAgent.stepBackward();
+                onlineSphericalAgent.stepBackward();
             }
         }
         long start = millis();
         // update
-        sensingSphericalAgent.update(0.1f);
+        onlineSphericalAgent.update(0.1f);
         long update = millis();
         // draw
         background(0);
@@ -88,7 +88,7 @@ public class UnknownTerrain extends PApplet {
             }
         }
         // agent
-        sensingSphericalAgent.draw();
+        onlineSphericalAgent.draw();
         // configuration space
         configurationSpace.draw();
         long draw = millis();
@@ -98,7 +98,7 @@ public class UnknownTerrain extends PApplet {
 
     public void keyPressed() {
         if (key == '0') {
-            sensingSphericalAgent.step();
+            onlineSphericalAgent.step();
         }
         if (key == 'h') {
             DRAW_OBSTACLES = !DRAW_OBSTACLES;
@@ -110,7 +110,7 @@ public class UnknownTerrain extends PApplet {
             DynamicGraph.DRAW_EDGES = !DynamicGraph.DRAW_EDGES;
         }
         if (key == 'p') {
-            sensingSphericalAgent.isPaused = !sensingSphericalAgent.isPaused;
+            onlineSphericalAgent.isPaused = !onlineSphericalAgent.isPaused;
         }
         if (key == '1') {
             SEARCH_ALGORITHM = "DFS";

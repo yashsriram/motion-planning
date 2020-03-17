@@ -10,7 +10,7 @@ import robot.sensing.ConfigurationSpace;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SensingSphericalAgent {
+public class OnlineSphericalAgent {
     public static float NEXT_MILESTONE_HINT_SIZE = 2f;
     public static float MILESTONE_REACHED_RADIUS = 2f;
     public static float SENSE_RADIUS = 50f;
@@ -30,14 +30,14 @@ public class SensingSphericalAgent {
     float distanceCovered = 0;
     public boolean isPaused = false;
 
-    public SensingSphericalAgent(final PApplet parent,
-                                 final SphericalAgentDescription description,
-                                 final ConfigurationSpace configurationSpace,
-                                 Vec3 minCorner, Vec3 maxCorner,
-                                 float speed,
-                                 Vec3 color,
-                                 int numSamples,
-                                 float maxEdgeLen) {
+    public OnlineSphericalAgent(final PApplet parent,
+                                final SphericalAgentDescription description,
+                                final ConfigurationSpace configurationSpace,
+                                Vec3 minCorner, Vec3 maxCorner,
+                                float speed,
+                                Vec3 color,
+                                int numSamples,
+                                float maxEdgeLen) {
         this.parent = parent;
         this.description = description;
         this.configurationSpace = configurationSpace;
@@ -60,6 +60,7 @@ public class SensingSphericalAgent {
             // proceed only if next milestone sensed
             if (!path.get(currentMilestone + 1).isSensed) {
                 step();
+                return;
             }
             // reached next milestone
             if (path.get(currentMilestone + 1).position.minus(center).norm() < MILESTONE_REACHED_RADIUS) {
@@ -107,7 +108,7 @@ public class SensingSphericalAgent {
     }
 
     public void step() {
-        dynamicGraph.sense(center, SENSE_RADIUS, configurationSpace);
+        dynamicGraph.senseAndUpdate(center, SENSE_RADIUS, configurationSpace);
         List<Vertex> path = dynamicGraph.aStar(this.path.get(currentMilestone));
         setPath(path);
     }
