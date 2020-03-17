@@ -43,60 +43,14 @@ public class UnknownTerrain extends PApplet {
         noStroke();
 
         cam = new QueasyCam(this);
-        sphericalObstacles.add(new SphericalObstacle(
-                this,
-                Vec3.of(0, -5 * SIDE * 0.2f, 0),
-                SIDE * 0.1f,
-                Vec3.of(1, 0, 1)
-        ));
-        sphericalObstacles.add(new SphericalObstacle(
-                this,
-                Vec3.of(0, -4 * SIDE * 0.2f, 0),
-                SIDE * 0.1f,
-                Vec3.of(1, 0, 1)
-        ));
-        sphericalObstacles.add(new SphericalObstacle(
-                this,
-                Vec3.of(0, -3 * SIDE * 0.2f, 0),
-                SIDE * 0.1f,
-                Vec3.of(1, 0, 1)
-        ));
-        sphericalObstacles.add(new SphericalObstacle(
-                this,
-                Vec3.of(0, -2 * SIDE * 0.2f, 0),
-                SIDE * 0.1f,
-                Vec3.of(1, 0, 1)
-        ));
-        sphericalObstacles.add(new SphericalObstacle(
-                this,
-                Vec3.of(0, -SIDE * 0.2f, 0),
-                SIDE * 0.1f,
-                Vec3.of(1, 0, 1)
-        ));
-        sphericalObstacles.add(new SphericalObstacle(
-                this,
-                Vec3.of(0, 0, 0),
-                SIDE * 0.1f,
-                Vec3.of(1, 0, 1)
-        ));
-        sphericalObstacles.add(new SphericalObstacle(
-                this,
-                Vec3.of(0, SIDE * 0.2f, 0),
-                SIDE * 0.1f,
-                Vec3.of(1, 0, 1)
-        ));
-        sphericalObstacles.add(new SphericalObstacle(
-                this,
-                Vec3.of(0, 2 * SIDE * 0.2f, 0),
-                SIDE * 0.1f,
-                Vec3.of(1, 0, 1)
-        ));
-        sphericalObstacles.add(new SphericalObstacle(
-                this,
-                Vec3.of(0, 3 * SIDE * 0.2f, 0),
-                SIDE * 0.1f,
-                Vec3.of(1, 0, 1)
-        ));
+        for (int i = 0; i < 9; i++) {
+            sphericalObstacles.add(new SphericalObstacle(
+                    this,
+                    Vec3.of(0, (i - 5) * SIDE * 0.2f, 0),
+                    SIDE * 0.1f,
+                    Vec3.of(1, 0, 1)
+            ));
+        }
         sphericalAgentDescription = new SphericalAgentDescription(
                 startPosition,
                 finishPosition,
