@@ -28,8 +28,15 @@ public class PlainConfigurationSpace extends ConfigurationSpace {
         return false;
     }
 
+    private boolean doesVertexIntersectThisSphere(final Vec3 p, final SphericalObstacle node) {
+        return p.minus(node.center).norm() <= node.radius + sphericalAgentDescription.radius;
+    }
+
     public boolean doesEdgeIntersectSomeObstacle(Vec3 p1, Vec3 p2) {
         for (SphericalObstacle sphericalObstacle : sphericalObstacles) {
+            if (doesVertexIntersectThisSphere(p1, sphericalObstacle) || doesVertexIntersectThisSphere(p2, sphericalObstacle)) {
+                return true;
+            }
             Vec3 pb_pa = p2.minus(p1);
             Vec3 pa_pc = p1.minus(sphericalObstacle.center);
             float r = sphericalObstacle.radius + sphericalAgentDescription.radius;
