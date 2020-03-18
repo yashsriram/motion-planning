@@ -7,9 +7,8 @@ import robot.sensing.ConfigurationSpace;
 import java.util.*;
 
 public class RapidlyExploringRandomTree {
-    public static float GROWTH_LIMIT = 10f;
+    public static float GROWTH_LIMIT = 20f;
     public static float END_POINT_HINT_SIZE = 2f;
-    public static float FINISH_SLACK_RADIUS = 5f;
     public static boolean DRAW_TREE = true;
 
     final PApplet applet;
@@ -42,7 +41,23 @@ public class RapidlyExploringRandomTree {
         return nearestVertex;
     }
 
-    public void generateNextNode(Vec3 newPosition, ConfigurationSpace configurationSpace) {
+    private Vertex getFinishVertex() {
+        Stack<Vertex> fringe = new Stack<>();
+        fringe.add(root);
+        Vertex finishVertex = null;
+
+        while (fringe.size() > 0) {
+            Vertex node = fringe.pop();
+            if (node.position.equals(finishPosition)) {
+                finishVertex = node;
+                break;
+            }
+            fringe.addAll(node.getChildren());
+        }
+        return finishVertex;
+    }
+
+    private void generateNextNode(Vec3 newPosition, ConfigurationSpace configurationSpace) {
         Vertex nearestVertex = getNearestVertexFrom(newPosition);
         Vec3 growth = newPosition.minus(nearestVertex.position);
         if (growth.norm() > GROWTH_LIMIT) {
@@ -56,6 +71,10 @@ public class RapidlyExploringRandomTree {
 
     public void growTree(List<Vec3> newPositions, ConfigurationSpace configurationSpace) {
         for (Vec3 newPosition : newPositions) {
+            // generate node at finish position with a small probability
+            if (applet.random(1) <= 0.01) {
+                generateNextNode(finishPosition, configurationSpace);
+            }
             generateNextNode(newPosition, configurationSpace);
         }
     }
@@ -71,14 +90,6 @@ public class RapidlyExploringRandomTree {
                 node.draw();
                 fringe.addAll(node.getChildren());
             }
-
-            // finish slack sphere
-            applet.pushMatrix();
-            applet.stroke(0, 1, 0);
-            applet.noFill();
-            applet.translate(finishPosition.x, finishPosition.y, finishPosition.z);
-            applet.sphere(FINISH_SLACK_RADIUS);
-            applet.popMatrix();
         }
         // start
         applet.pushMatrix();
@@ -97,11 +108,11 @@ public class RapidlyExploringRandomTree {
     }
 
     public List<Vec3> search() {
-        Vertex nearestVertex = getNearestVertexFrom(finishPosition);
-        if (finishPosition.minus(nearestVertex.position).norm() < FINISH_SLACK_RADIUS) {
+        Vertex finishVertex = getFinishVertex();
+        if (finishVertex != null) {
             List<Vec3> path = new ArrayList<>();
-            path.add(0, nearestVertex.position);
-            Vertex node = nearestVertex.parent;
+            path.add(0, finishVertex.position);
+            Vertex node = finishVertex.parent;
             while (node != null) {
                 path.add(0, node.position);
                 node = node.parent;
