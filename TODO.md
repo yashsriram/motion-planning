@@ -52,7 +52,8 @@ visualize the roadmap the agent is following, including the start and goal posit
 milestones, and edges.
 
  - [x] continuous edge obstacle collision detection
- - [x] Bug in BSH, cannot recognize collision with small sized obstacles [previously was not continuing intersection search if edge is encapsulated by a bounding sphere]
+ - [x] Bug in BSH, cannot recognize collision with small sized obstacles [previously was not continuing intersection search if edge is encapsulated by a bounding sphere
+ - [x] update RRT and RRT* to sample finish position as the random point with some probability and remove the finish slack region
 
 ### Crowd/Flocking Simulation (Required) (80 Points)
 Simulate multiple agents sharing the environment as follows:

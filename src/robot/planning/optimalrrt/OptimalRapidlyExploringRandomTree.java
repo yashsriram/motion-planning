@@ -4,12 +4,14 @@ import math.Vec3;
 import processing.core.PApplet;
 import robot.sensing.ConfigurationSpace;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Stack;
 
 public class OptimalRapidlyExploringRandomTree {
     public static float GROWTH_LIMIT = 10f;
     public static float END_POINT_HINT_SIZE = 2f;
-    public static float FINISH_SLACK_RADIUS = 5f;
     public static float NEIGHBOUR_RADIUS = 10f;
     public static boolean DRAW_TREE = true;
 
@@ -43,6 +45,22 @@ public class OptimalRapidlyExploringRandomTree {
         return nearestVertex;
     }
 
+    private Vertex getFinishVertex() {
+        Stack<Vertex> fringe = new Stack<>();
+        fringe.add(root);
+        Vertex finishVertex = null;
+
+        while (fringe.size() > 0) {
+            Vertex node = fringe.pop();
+            if (node.position.equals(finishPosition)) {
+                finishVertex = node;
+                break;
+            }
+            fringe.addAll(node.getChildren());
+        }
+        return finishVertex;
+    }
+
     public void generateNextNode(Vec3 newPosition, ConfigurationSpace configurationSpace) {
         // nearest vertex search
         Stack<Vertex> fringe = new Stack<>();
@@ -69,7 +87,7 @@ public class OptimalRapidlyExploringRandomTree {
         // min cost vertex search
         Vertex minCostVertex = nearestVertex;
         float minCost = nearestVertex.costFromStart + nearestVertex.position.minus(newPosition).norm();
-        for (Vertex neighbour: neighbours) {
+        for (Vertex neighbour : neighbours) {
             float cost = neighbour.costFromStart + neighbour.position.minus(newPosition).norm();
             if (cost < minCost) {
                 minCostVertex = neighbour;
@@ -90,7 +108,7 @@ public class OptimalRapidlyExploringRandomTree {
         Vertex newVertex = Vertex.of(applet, newPosition, distanceFromStart);
         minCostVertex.addChild(newVertex);
         // rewiring
-        for (Vertex neighbour: neighbours) {
+        for (Vertex neighbour : neighbours) {
             float cost = newVertex.costFromStart + newVertex.position.minus(neighbour.position).norm();
             if (cost < neighbour.costFromStart) {
                 neighbour.costFromStart = cost;
@@ -102,6 +120,10 @@ public class OptimalRapidlyExploringRandomTree {
 
     public void growTree(List<Vec3> newPositions, ConfigurationSpace configurationSpace) {
         for (Vec3 newPosition : newPositions) {
+            // generate node at finish position with a small probability
+            if (applet.random(1) <= 0.01) {
+                generateNextNode(finishPosition, configurationSpace);
+            }
             generateNextNode(newPosition, configurationSpace);
         }
     }
@@ -117,14 +139,6 @@ public class OptimalRapidlyExploringRandomTree {
                 node.draw();
                 fringe.addAll(node.getChildren());
             }
-
-            // finish slack sphere
-            applet.pushMatrix();
-            applet.stroke(0, 1, 0);
-            applet.noFill();
-            applet.translate(finishPosition.x, finishPosition.y, finishPosition.z);
-            applet.sphere(FINISH_SLACK_RADIUS);
-            applet.popMatrix();
         }
         // start
         applet.pushMatrix();
@@ -143,11 +157,11 @@ public class OptimalRapidlyExploringRandomTree {
     }
 
     public List<Vec3> search() {
-        Vertex nearestVertex = getNearestVertexFrom(finishPosition);
-        if (finishPosition.minus(nearestVertex.position).norm() < FINISH_SLACK_RADIUS) {
+        Vertex finishVertex = getFinishVertex();
+        if (finishVertex != null) {
             List<Vec3> path = new ArrayList<>();
-            path.add(0, nearestVertex.position);
-            Vertex node = nearestVertex.parent;
+            path.add(0, finishVertex.position);
+            Vertex node = finishVertex.parent;
             while (node != null) {
                 path.add(0, node.position);
                 node = node.parent;
