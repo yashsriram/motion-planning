@@ -5,8 +5,8 @@ import fixed.SphericalObstacle;
 import math.Vec3;
 import processing.core.PApplet;
 import processing.core.PImage;
-import robot.acting.Boid;
-import robot.acting.Clan;
+import robot.acting.BoidAgent;
+import robot.acting.ClanAgent;
 import robot.acting.SphericalAgent;
 import robot.input.SphericalAgentDescription;
 import robot.planning.rrt.RapidlyExploringRandomTree;
@@ -29,7 +29,7 @@ public class Clash extends PApplet {
     List<SphericalAgent> agents = new ArrayList<>() ;
     List<PlainConfigurationSpace> configurationSpaces = new ArrayList<>() ;
     List<RapidlyExploringRandomTree> rrts = new ArrayList<>() ;
-    List<Boid> flock = new ArrayList<>();
+    List<BoidAgent> flock = new ArrayList<>();
     PImage bg ;
 
     QueasyCam cam;
@@ -94,7 +94,7 @@ public class Clash extends PApplet {
         rrts.get(0).growTree(agents.get(1).samplePoints(100), configurationSpaces.get(1));
 
         for(int i = 0 ; i < 100; i++){
-            flock.add(new Clan(this, 5,minCorner, maxCorner, Vec3.of(0, SIDE * (random(-10,10) / 10), SIDE * (random(-10,10) / 10)), impactRadius, sphericalObstacles));
+            flock.add(new ClanAgent(this, 5,minCorner, maxCorner, Vec3.of(0, SIDE * (random(-10,10) / 10), SIDE * (random(-10,10) / 10)), impactRadius, sphericalObstacles));
         }
     }
 
@@ -144,32 +144,32 @@ public class Clash extends PApplet {
             fight(flock);
         }
 
-        for(Boid boid : flock){
-            Clan cl = (Clan) boid;
+        for(BoidAgent boidAgent : flock){
+            ClanAgent cl = (ClanAgent) boidAgent;
             if(cl.isBlue){
-                boid.update(flock, 0.01f, agents.get(1).getCenter());
+                boidAgent.update(flock, 0.01f, agents.get(1).getCenter());
             }
             else{
-                boid.update(flock, 0.01f, agents.get(0).getCenter());
+                boidAgent.update(flock, 0.01f, agents.get(0).getCenter());
             }
-            boid.draw();
+            boidAgent.draw();
         }
 
         surface.setTitle("Processing - FPS: " + Math.round(frameRate) + " Update: " + (update - start) + "ms Draw " + (draw - update) + "ms" + " smooth-path: " + SMOOTH_PATH);
     }
 
-    public void fight(List<Boid> flock) {
+    public void fight(List<BoidAgent> flock) {
         int size = flock.size() ;
         boolean []change = new boolean[size] ;
-        for(Boid boid : flock){
-            Clan cl = (Clan) boid ;
+        for(BoidAgent boidAgent : flock){
+            ClanAgent cl = (ClanAgent) boidAgent;
             float enemies = 0 ;
             float neighbors = 0 ;
             for(int i = 0 ; i < size; i++){
                 Vec3 force =  cl.center.minus(flock.get(i).center);
                 float distance = force.norm() ;
                 if( distance < cl.impactRadius && distance > 0 && !cl.isDead ){
-                    Clan n = (Clan) flock.get(i);
+                    ClanAgent n = (ClanAgent) flock.get(i);
                     if(!n.isDead && n.isBlue!=cl.isBlue){
                         neighbors += 1 ;
                         enemies += 1 ;
@@ -181,12 +181,12 @@ public class Clash extends PApplet {
             }
             if((enemies/neighbors) > 0.8){
                 cl.isDead = true ;
-                change[flock.indexOf(boid)] = true ;
+                change[flock.indexOf(boidAgent)] = true ;
             }
             if(neighbors < 8){
                 if(enemies > 2){
                     cl.isDead = true ;
-                    change[flock.indexOf(boid)] = true ;
+                    change[flock.indexOf(boidAgent)] = true ;
                 }
             }
         }

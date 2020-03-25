@@ -6,10 +6,10 @@ import processing.core.PApplet;
 
 import java.util.List;
 
-public class Clan extends Boid {
+public class ClanAgent extends BoidAgent {
     public boolean isBlue;
     public boolean isDead ;
-    public Clan(PApplet parent, float radius, Vec3 minCorner, Vec3 maxCorner, Vec3 center, float impactRadius, List<SphericalObstacle> obstacles) {
+    public ClanAgent(PApplet parent, float radius, Vec3 minCorner, Vec3 maxCorner, Vec3 center, float impactRadius, List<SphericalObstacle> obstacles) {
         super(parent, radius, minCorner, maxCorner, center, impactRadius, obstacles);
         float coinFLip = parent.random(0,1);
         if(coinFLip >= 0.5){
@@ -23,7 +23,7 @@ public class Clan extends Boid {
         isDead = false;
     }
 
-    public void update(List<Boid> flock, float dt, Vec3 lead){
+    public void update(List<BoidAgent> flock, float dt, Vec3 lead){
         if(!this.isDead){
             super.update(flock, dt, lead);
         }else{
