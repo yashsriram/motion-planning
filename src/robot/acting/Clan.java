@@ -13,11 +13,11 @@ public class Clan extends Boid {
         super(parent, radius, minCorner, maxCorner, center, impactRadius, obstacles);
         float coinFLip = parent.random(0,1);
         if(coinFLip >= 0.5){
-            this.color = Vec3.of(parent.random(100, 150),0,0);
+            this.color = Vec3.of(parent.random(100, 150),parent.random(100, 150),0);
             isBlue = false;
         }
         else{
-            this.color = Vec3.of(0,0,parent.random(100, 150));
+            this.color = Vec3.of(parent.random(100, 150),0,0);
             isBlue = true;
         }
         isDead = false;

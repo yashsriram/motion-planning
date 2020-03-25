@@ -4,6 +4,7 @@ import camera.QueasyCam;
 import fixed.SphericalObstacle;
 import math.Vec3;
 import processing.core.PApplet;
+import processing.core.PImage;
 import robot.acting.Boid;
 import robot.acting.Clan;
 import robot.acting.SphericalAgent;
@@ -29,13 +30,14 @@ public class Clash extends PApplet {
     List<PlainConfigurationSpace> configurationSpaces = new ArrayList<>() ;
     List<RapidlyExploringRandomTree> rrts = new ArrayList<>() ;
     List<Boid> flock = new ArrayList<>();
+    PImage bg ;
 
     QueasyCam cam;
 
     static boolean DRAW_OBSTACLES = true;
     static boolean SMOOTH_PATH = false;
     static boolean WAR = false ;
-    static final float impactRadius = 10 ;
+    static final float impactRadius = 20 ;
 
     public void settings() {
         size(WIDTH, HEIGHT, P3D);
@@ -48,27 +50,28 @@ public class Clash extends PApplet {
         noStroke();
 
         cam = new QueasyCam(this);
+        bg = loadImage("data/Houses.jpg") ;
         startPositions.add(Vec3.of(0, SIDE * (9f / 10), SIDE * (-9f / 10))) ;
         startPositions.add(Vec3.of(0, SIDE * (-9f / 10), SIDE * (9f / 10))) ;
 
-        sphericalObstacles.add(new SphericalObstacle(
-                this,
-                Vec3.of(0, SIDE * (4f / 10), SIDE * (-1f / 10)),
-                SIDE * (2f / 20),
-                Vec3.of(1, 0, 1)
-        ));
+//        sphericalObstacles.add(new SphericalObstacle(
+//                this,
+//                Vec3.of(0, SIDE * (4f / 10), SIDE * (-1f / 10)),
+//                SIDE * (2f / 20),
+//                Vec3.of(1, 0, 1)
+//        ));
         sphericalObstacles.add(new SphericalObstacle(
                 this,
                 Vec3.of(0, SIDE * (-1f / 10), SIDE * (6f / 10)),
                 SIDE * (2f / 20),
                 Vec3.of(1, 0, 1)
         ));
-        sphericalObstacles.add(new SphericalObstacle(
-                this,
-                Vec3.of(0, SIDE * (-3f / 10), SIDE * (-2f / 10)),
-                SIDE * (2f / 20),
-                Vec3.of(1, 0, 1)
-        ));
+//        sphericalObstacles.add(new SphericalObstacle(
+//                this,
+//                Vec3.of(0, SIDE * (-3f / 10), SIDE * (-2f / 10)),
+//                SIDE * (2f / 20),
+//                Vec3.of(1, 0, 1)
+//        ));
         sphericalObstacles.add(new SphericalObstacle(
                 this,
                 Vec3.of(0, SIDE * (-1f / 10), SIDE * (-7f / 10)),
@@ -113,7 +116,7 @@ public class Clash extends PApplet {
 
         long update = millis();
         // draw
-        background(0);
+        background(bg);
         // obstacles
         if (DRAW_OBSTACLES) {
             for (SphericalObstacle sphericalObstacle : sphericalObstacles) {
