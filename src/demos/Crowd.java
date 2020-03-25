@@ -1,31 +1,35 @@
-package demos.rrt;
+package demos;
 
 import camera.QueasyCam;
+import fixed.SphericalObstacle;
 import math.Vec3;
+import processing.core.PApplet;
+import robot.acting.Boid;
 import robot.acting.SphericalAgent;
 import robot.input.SphericalAgentDescription;
-import fixed.SphericalObstacle;
-import processing.core.PApplet;
-import robot.sensing.PlainConfigurationSpace;
 import robot.planning.rrt.RapidlyExploringRandomTree;
+import robot.sensing.PlainConfigurationSpace;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RRT0 extends PApplet {
+public class Crowd extends PApplet {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 800;
     public static final int SIDE = 100;
     final Vec3 minCorner = Vec3.of(0, -SIDE, -SIDE);
     final Vec3 maxCorner = Vec3.of(0, SIDE, SIDE);
+    final Vec3 center = Vec3.of(0, 0,0 );
 
     final Vec3 startPosition = Vec3.of(0, SIDE * (9f / 10), SIDE * (-9f / 10));
-    final Vec3 finishPosition = Vec3.of(0, SIDE * (-1f / 10), SIDE * (1f / 10));
+    final Vec3 finishPosition = Vec3.of(0, SIDE * (-9f / 10), SIDE * (9f / 10));
     SphericalAgentDescription sphericalAgentDescription;
     SphericalAgent sphericalAgent;
     List<SphericalObstacle> sphericalObstacles = new ArrayList<>();
     PlainConfigurationSpace configurationSpace;
     RapidlyExploringRandomTree rrt;
+
+    List<Boid> flock = new ArrayList<>();
 
     QueasyCam cam;
 
@@ -43,6 +47,7 @@ public class RRT0 extends PApplet {
         noStroke();
 
         cam = new QueasyCam(this);
+
         sphericalObstacles.add(new SphericalObstacle(
                 this,
                 Vec3.of(0, 0, 0),
@@ -59,22 +64,25 @@ public class RRT0 extends PApplet {
         sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, configurationSpace, minCorner, maxCorner, 20f, Vec3.of(1));
         rrt = new RapidlyExploringRandomTree(this, startPosition, finishPosition);
         rrt.growTree(sphericalAgent.samplePoints(100), configurationSpace);
+
+        for(int i = 0 ; i < 50; i++){
+            flock.add(new Boid(this, 5,minCorner, maxCorner, Vec3.of(0, SIDE * (random(-10,10) / 10), SIDE * (random(-10,10) / 10)), 20, sphericalObstacles));
+        }
+
     }
 
-    public void draw() {
+    public void draw(){
         if (keyPressed) {
             if (key == 'n') {
                 rrt.growTree(sphericalAgent.samplePoints(10), configurationSpace);
             }
         }
-        long start = millis();
         // update
         if (SMOOTH_PATH) {
             sphericalAgent.smoothUpdate(0.1f);
         } else {
             sphericalAgent.update(0.1f);
         }
-        long update = millis();
         // draw
         background(0);
         // obstacles
@@ -89,12 +97,15 @@ public class RRT0 extends PApplet {
         rrt.draw();
         // agent
         sphericalAgent.draw();
-        long draw = millis();
+        for(Boid boid : flock){
+            boid.draw();
+            boid.update(flock, 0.01f, sphericalAgent.getCenter());
+        }
 
-        surface.setTitle("Processing - FPS: " + Math.round(frameRate) + " Update: " + (update - start) + "ms Draw " + (draw - update) + "ms" + " smooth-path: " + SMOOTH_PATH);
+        surface.setTitle("Processing - FPS: " + Math.round(frameRate));
     }
 
-    public void keyPressed() {
+    public void keyPressed(){
         if (key == 'h') {
             DRAW_OBSTACLES = !DRAW_OBSTACLES;
         }
@@ -113,13 +124,25 @@ public class RRT0 extends PApplet {
         if (keyCode == LEFT) {
             sphericalAgent.stepBackward();
         }
-        if (key == 'j') {
+        if (key == 'g') {
             RapidlyExploringRandomTree.DRAW_TREE = !RapidlyExploringRandomTree.DRAW_TREE;
+        }
+        if(key=='i'){
+            center.y -= 20;
+        }
+        if(key=='k'){
+            center.y += 20;
+        }
+        if(key=='l'){
+            center.z += 20;
+        }
+        if(key=='j'){
+            center.z -= 20;
         }
     }
 
     static public void main(String[] passedArgs) {
-        String[] appletArgs = new String[]{"demos.rrt.RRT0"};
+        String[] appletArgs = new String[]{"demos.Crowd"};
         if (passedArgs != null) {
             PApplet.main(concat(appletArgs, passedArgs));
         } else {
