@@ -59,16 +59,16 @@ milestones, and edges.
 Simulate multiple agents sharing the environment as follows:
  - [ ] Implement a local interaction technique (Boids, Helbing, RVO/ORCA, TTC, etc.).
  - [ ] Find 2 or 3 scenarios showing interesting interactions between the agents
- - [ ] Implement a global navigation strategy for the agents (PRM/A*, RRT, etc.)
- - [ ] Your roadmap needs to account for the extent of the agents, and should support multiple obstacles in the environment
+ - [x] Implement a global navigation strategy for the agents (PRM/A*, RRT, etc.)
+ - [x] Your roadmap needs to account for the extent of the agents, and should support multiple obstacles in the environment
  - [ ] Show 2 or 3 scenarios of groups of agents successfully navigating through environments with local minima.
  - [ ] Find a scenario where your overall simulation breaks and produces odd behavior
 
 ### Additional Features
  - [ ] (10) Implement and compare two different group interaction techniques
- - [ ] (10) Implement and compare two different global navigation techniques
- - [ ] (10) Nicely rendered 3D scenes w/models to give context (2D navigation is okay)
- - [ ] (10) Support full 3D navigation (e.g., birds flocking around 3D obstacles)
+ - [x] (10) Implement and compare two different global navigation techniques
+ - [x] (10) Nicely rendered 3D scenes w/models to give context (2D navigation is okay)
+ - [x] (10) Support full 3D navigation (e.g., birds flocking around 3D obstacles)
 
 ### User Interaction
  - [ ] (5) Allow the user to add and move obstacles at run time
@@ -76,21 +76,21 @@ Simulate multiple agents sharing the environment as follows:
  - [ ] (15) Allow user to control some characters or obstacles in real time, simulated agents should replan or react dynamically to the user
 
 ### Better rendering and animation of scenario
- - [ ] (20) Animate the agent as a walking virtual character (using a walk cycle)
+ - [x] (20) Animate the agent as a walking virtual character (using a walk cycle)
  - [ ] (30) Load and render complex environments (e.g. quake or doom game level), and plan a path through the level.
  - [ ] (50) Blend clips from a mo-cap database to drive complex character motions through the environment.
 
 ### Faster motion planning
- - [ ] (5) Implement A* for graph search, must document performance improvement
+ - [x] (5) Implement A* for graph search, must document performance improvement
  - [ ] (10) Implement a spatial data structure (such as KD-tree) or some other to accelerate the nearest neighbor search for the PRM construction or neighbors search in crowds, compare performance to the brute force method
- - [ ] (15) Implement a spatial data structure (such as a BSP-tree) to accelerate thechecking of potential collision with obstacles for building roadmap links or obstacleneighbor search in crowds, compare performance to the brute force method
+ - [x] (15) Implement a spatial data structure (such as a BSP-tree) to accelerate thechecking of potential collision with obstacles for building roadmap links or obstacleneighbor search in crowds, compare performance to the brute force method
  
 ### Better motion planning [can illustrate on a single agent]
- - [ ] (5) Implement path smoothing (e.g., walk to furthest visible node on path)
- - [ ] (10) Implement an RRT. Briefly compare the RRT to the PRM method in terms of generated path, and ease of coding.
- - [ ] (15) Implement the Optimal RRT algorithm (RRT*)
- - [ ] (20) Allow agents to rotate, implement a scenario where the agents must rotate to reach to goal. (Smooth the rotation for a small bonus.)
- - [ ] (30) Implement D* Lite, Lifelong A*, or any method where agents must explore the world as they navigates to their goal (the agent should only see nearby obstacles).
+ - [x] (5) Implement path smoothing (e.g., walk to furthest visible node on path)
+ - [x] (10) Implement an RRT. Briefly compare the RRT to the PRM method in terms of generated path, and ease of coding.
+ - [x] (15) Implement the Optimal RRT algorithm (RRT*)
+ - [x] (20) Allow agents to rotate, implement a scenario where the agents must rotate to reach to goal. (Smooth the rotation for a small bonus.)
+ - [x] (30) Implement D* Lite, Lifelong A*, or any method where agents must explore the world as they navigates to their goal (the agent should only see nearby obstacles).
 
 ### Game & Dance Contest [you’ll get points for only one or the other]
  - [ ] (5) Make a game-like scenario involving the planning tool; best game is 10 points.
