@@ -26,6 +26,15 @@ public class SphericalAgent {
     List<Vec3> path = new ArrayList<>();
     int currentMilestone = 0;
     float distanceCovered = 0;
+
+    public Vec3 getCenter() {
+        return center;
+    }
+
+    public void setCenter(Vec3 center) {
+        this.center = center;
+    }
+
     public boolean isPaused = false;
 
     public SphericalAgent(final PApplet parent, final SphericalAgentDescription description, final ConfigurationSpace configurationSpace, Vec3 minCorner, Vec3 maxCorner, float speed, Vec3 color) {
@@ -59,6 +68,53 @@ public class SphericalAgent {
             center.plusInPlace(displacement);
             distanceCovered += displacement.norm();
         }
+    }
+
+    public void update(List<SphericalAgent> flock, float dt){
+        if (isPaused) {
+            return;
+        }
+        if (currentMilestone < path.size() - 1) {
+            // reached next milestone
+            if (path.get(currentMilestone + 1).minus(center).norm() < MILESTONE_REACHED_RADIUS) {
+                currentMilestone++;
+                return;
+            }
+            // keep the flock together
+            Vec3 boidVelocity = boidForce(flock) ;
+
+            // move towards next milestone
+            Vec3 velocityDir =
+                    path.get(currentMilestone + 1)
+                            .minus(center)
+                            .normalizeInPlace();
+
+            velocityDir.plusInPlace(boidVelocity) ;
+            Vec3 displacement = velocityDir.scaleInPlace(speed * dt);
+            center.plusInPlace(displacement);
+            distanceCovered += displacement.norm();
+        }
+    }
+
+    private Vec3 boidForce(List<SphericalAgent> flock) {
+        Vec3 seperationforce = Vec3.zero() ;
+        Vec3 centroid = Vec3.zero() ;
+        Vec3 alignment = Vec3.zero() ;
+        for(SphericalAgent boid : flock){
+            Vec3 force = this.center.minus(boid.center);
+            float distance = force.norm() ;
+            if( distance < 20 && distance > 0){
+                force.normalizeInPlace() ;
+                seperationforce.plusInPlace(force.scaleInPlace(1f*(20-distance)));
+                centroid.plusInPlace((this.center.plus(boid.center)).normalizeInPlace().scaleInPlace(1f));
+                Vec3 mydir = path.get(currentMilestone).minus(center).normalizeInPlace();
+                Vec3 udir = boid.path.get(boid.currentMilestone).minus(boid.center).normalizeInPlace();
+                alignment.plusInPlace((udir.minus(mydir)).normalizeInPlace().scaleInPlace(10f));
+            }
+        }
+
+        Vec3 finalForce = seperationforce.plus(centroid.plus(alignment)) ;
+        return finalForce ;
     }
 
     public void smoothUpdate(float dt) {
