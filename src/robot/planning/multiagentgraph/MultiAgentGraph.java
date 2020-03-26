@@ -17,8 +17,21 @@ public class MultiAgentGraph {
     final List<Vertex> finishes = new ArrayList<>();
     final List<Vertex> vertices = new ArrayList<>();
 
+    public MultiAgentGraph(PApplet parent, Vec3 startPosition, Vec3 finishPosition) {
+        this.parent = parent;
+        Vertex start = Vertex.of(parent, startPosition, true);
+        this.starts.add(start);
+        this.vertices.add(start);
+
+        Vertex finish = Vertex.of(parent, finishPosition, true);
+        this.finishes.add(finish);
+        this.vertices.add(finish);
+    }
+
     public MultiAgentGraph(PApplet parent, List<SphericalAgentDescription> sphericalAgentDescriptions) {
         this.parent = parent;
+        // At least one spherical agent description is required
+        assert (sphericalAgentDescriptions.size() > 0);
         for (SphericalAgentDescription description : sphericalAgentDescriptions) {
             Vertex start = Vertex.of(parent, description.startPosition, true);
             this.starts.add(start);
@@ -147,6 +160,10 @@ public class MultiAgentGraph {
         return Collections.singletonList(starts.get(agentIndex).position);
     }
 
+    public List<Vec3> dfs() {
+        return dfs(0);
+    }
+
     private void addToFringe(final Queue<Vertex> fringe, final Vertex current, final Vertex next) {
         next.searchState.distanceFromStart = current.searchState.distanceFromStart + next.position.minus(current.position).norm();
         fringe.add(next);
@@ -187,12 +204,20 @@ public class MultiAgentGraph {
         return search(new LinkedList<>(), agentIndex);
     }
 
+    public List<Vec3> bfs() {
+        return bfs(0);
+    }
+
     public List<Vec3> ucs(int agentIndex) {
         PApplet.println("UCS");
         resetSearchState(finishes.get(agentIndex).position);
         return search(new PriorityQueue<>((v1, v2) ->
                         (int) (v1.searchState.distanceFromStart - v2.searchState.distanceFromStart)),
                 agentIndex);
+    }
+
+    public List<Vec3> ucs() {
+        return ucs(0);
     }
 
     public List<Vec3> aStar(int agentIndex) {
@@ -204,6 +229,10 @@ public class MultiAgentGraph {
                 agentIndex);
     }
 
+    public List<Vec3> aStar() {
+        return aStar(0);
+    }
+
     public List<Vec3> weightedAStar(final float epislon, int agentIndex) {
         PApplet.println("Weighted A* with epsilon = " + epislon);
         resetSearchState(finishes.get(agentIndex).position);
@@ -211,6 +240,10 @@ public class MultiAgentGraph {
                         (v1.searchState.distanceFromStart + epislon * v1.searchState.heuristicDistanceToFinish)
                                 - (v2.searchState.distanceFromStart + epislon * v2.searchState.heuristicDistanceToFinish))),
                 agentIndex);
+    }
+
+    public List<Vec3> weightedAStar(final float epislon) {
+        return weightedAStar(epislon, 0);
     }
 
 }
