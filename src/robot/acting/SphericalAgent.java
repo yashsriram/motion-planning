@@ -1,5 +1,6 @@
 package robot.acting;
 
+import fixed.SphericalObstacle;
 import math.Vec3;
 import processing.core.PApplet;
 import processing.core.PShape;
@@ -70,7 +71,7 @@ public class SphericalAgent {
         }
     }
 
-    public void update(List<SphericalAgent> flock, float dt) {
+    public void boidUpdate(List<SphericalAgent> flock, List<SphericalObstacle> obstacles, float dt) {
         if (isPaused) {
             return;
         }
@@ -80,14 +81,26 @@ public class SphericalAgent {
                 currentMilestone++;
                 return;
             }
-            // keep the flock together
-            Vec3 boidVelocity = boidForce(flock);
+            // next next milestone lookup
+            if (currentMilestone < path.size() - 2) {
+                boolean blocked = configurationSpace.doesEdgeIntersectSomeObstacle(path.get(currentMilestone + 2), center);
+                if (!blocked) {
+                    currentMilestone++;
+                }
+            }
 
-            // move towards next milestone
+            Vec3 boidVelocity = boidForce(flock, obstacles);
             Vec3 velocityDir =
                     path.get(currentMilestone + 1)
                             .minus(center)
                             .normalizeInPlace();
+            Vec3 repelDir = boidVelocity.normalize();
+            if(boidVelocity.norm()!= 0 && repelDir.cross(velocityDir).norm()==0){
+                System.out.println(currentMilestone);
+                currentMilestone+=1 ;
+                return;
+            }
+            // move towards next milestone
 
             velocityDir.plusInPlace(boidVelocity);
             Vec3 displacement = velocityDir.scaleInPlace(speed * dt);
@@ -96,24 +109,37 @@ public class SphericalAgent {
         }
     }
 
-    private Vec3 boidForce(List<SphericalAgent> flock) {
+    public Vec3 boidForce(List<SphericalAgent> flock, List<SphericalObstacle> obstacles) {
         Vec3 seperationforce = Vec3.zero();
         Vec3 centroid = Vec3.zero();
         Vec3 alignment = Vec3.zero();
         for (SphericalAgent boid : flock) {
             Vec3 force = this.center.minus(boid.center);
             float distance = force.norm();
-            if (distance < 20 && distance > 0) {
+            if (distance < 10 && distance > 0) {
                 force.normalizeInPlace();
-                seperationforce.plusInPlace(force.scaleInPlace(1f * (20 - distance)));
-                centroid.plusInPlace((this.center.plus(boid.center)).normalizeInPlace().scaleInPlace(1f));
+                seperationforce.plusInPlace(force.scaleInPlace(0.5f * (10 - distance)));
+                centroid.plusInPlace((this.center.plus(boid.center)).normalizeInPlace().scaleInPlace(0.05f));
                 Vec3 mydir = path.get(currentMilestone).minus(center).normalizeInPlace();
                 Vec3 udir = boid.path.get(boid.currentMilestone).minus(boid.center).normalizeInPlace();
-                alignment.plusInPlace((udir.minus(mydir)).normalizeInPlace().scaleInPlace(10f));
+                alignment.plusInPlace((udir.minus(mydir)).normalizeInPlace().scaleInPlace(0.02f));
             }
         }
 
         Vec3 finalForce = seperationforce.plus(centroid.plus(alignment));
+        Vec3 obstacleAvoidanceForce = Vec3.zero() ;
+        for(SphericalObstacle  obstacle: obstacles){
+            Vec3 force = this.center.minus(obstacle.center);
+            float distance = force.norm();
+            if (distance  < this.description.radius + obstacle.radius) {
+                force.normalizeInPlace();
+                obstacleAvoidanceForce.plusInPlace(force.scale(1f));
+            }
+        }
+
+        finalForce.plusInPlace(obstacleAvoidanceForce);
+
+
         return finalForce;
     }
 

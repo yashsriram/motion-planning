@@ -1,5 +1,6 @@
 package robot.acting;
 
+import fixed.SphericalObstacle;
 import math.Vec3;
 import processing.core.PApplet;
 import robot.input.SphericalAgentDescription;
@@ -48,6 +49,12 @@ public class MultiSphericalAgentSystem {
     public void smoothUpdate(float dt) {
         for (SphericalAgent agent : sphericalAgents) {
             agent.smoothUpdate(dt);
+        }
+    }
+
+    public void updateBoid(List<SphericalObstacle> obstacles, float dt){
+        for(SphericalAgent agent : sphericalAgents){
+            agent.boidUpdate(sphericalAgents, obstacles, dt);
         }
     }
 

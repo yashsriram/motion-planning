@@ -52,10 +52,47 @@ public class CrowdSmoothPath extends PApplet {
                 SIDE * (0.5f / 20)
         ));
         sphericalAgentDescriptions.add(new SphericalAgentDescription(
+                Vec3.of(0, SIDE * 0.9f, SIDE * -0.95f),
                 Vec3.of(0, SIDE * -0.9f, SIDE * 0.9f),
-                Vec3.of(0, SIDE * 0.9f, SIDE * -0.9f),
                 SIDE * (0.5f / 20)
         ));
+        sphericalAgentDescriptions.add(new SphericalAgentDescription(
+                Vec3.of(0, SIDE * 0.9f, SIDE * -0.85f),
+                Vec3.of(0, SIDE * -0.9f, SIDE * 0.9f),
+                SIDE * (0.5f / 20)
+        ));
+        sphericalAgentDescriptions.add(new SphericalAgentDescription(
+                Vec3.of(0, SIDE * 0.8f, SIDE * -0.85f),
+                Vec3.of(0, SIDE * -0.9f, SIDE * 0.9f),
+                SIDE * (0.5f / 20)
+        ));
+        sphericalAgentDescriptions.add(new SphericalAgentDescription(
+                Vec3.of(0, SIDE * 0.8f, SIDE * -0.9f),
+                Vec3.of(0, SIDE * -0.9f, SIDE * 0.9f),
+                SIDE * (0.5f / 20)
+        ));
+        sphericalAgentDescriptions.add(new SphericalAgentDescription(
+                Vec3.of(0, SIDE * 0.8f, SIDE * -0.95f),
+                Vec3.of(0, SIDE * -0.9f, SIDE * 0.9f),
+                SIDE * (0.5f / 20)
+        ));
+
+        sphericalAgentDescriptions.add(new SphericalAgentDescription(
+                Vec3.of(0, SIDE * 0.7f, SIDE * -0.85f),
+                Vec3.of(0, SIDE * -0.9f, SIDE * 0.9f),
+                SIDE * (0.5f / 20)
+        ));
+        sphericalAgentDescriptions.add(new SphericalAgentDescription(
+                Vec3.of(0, SIDE * 0.7f, SIDE * -0.9f),
+                Vec3.of(0, SIDE * -0.9f, SIDE * 0.9f),
+                SIDE * (0.5f / 20)
+        ));
+        sphericalAgentDescriptions.add(new SphericalAgentDescription(
+                Vec3.of(0, SIDE * 0.7f, SIDE * -0.95f),
+                Vec3.of(0, SIDE * -0.9f, SIDE * 0.9f),
+                SIDE * (0.5f / 20)
+        ));
+
         ConfigurationSpace configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescriptions.get(0), sphericalObstacles);
         multiSphericalAgentSystem = new MultiSphericalAgentSystem(this, sphericalAgentDescriptions, configurationSpace, minCorner, maxCorner);
     }
@@ -66,7 +103,7 @@ public class CrowdSmoothPath extends PApplet {
         if (SMOOTH_PATH) {
             multiSphericalAgentSystem.smoothUpdate(0.1f);
         } else {
-            multiSphericalAgentSystem.update(0.1f);
+            multiSphericalAgentSystem.updateBoid(sphericalObstacles,0.1f);
         }
         long update = millis();
         // draw
