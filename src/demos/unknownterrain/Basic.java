@@ -4,9 +4,9 @@ import camera.QueasyCam;
 import fixed.SphericalObstacle;
 import math.Vec3;
 import processing.core.PApplet;
-import robot.acting.OnlineSphericalAgent;
+import robot.acting.AnytimeSphericalAgent;
 import robot.input.SphericalAgentDescription;
-import robot.planning.dynamicgraph.DynamicGraph;
+import robot.planning.anytimegraph.AnytimeGraph;
 import robot.sensing.PlainConfigurationSpace;
 
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ public class Basic extends PApplet {
     final Vec3 startPosition = Vec3.of(0, SIDE * 0.9f, SIDE * -0.9f);
     final Vec3 finishPosition = Vec3.of(0, SIDE * -0.9f, SIDE * 0.9f);
     SphericalAgentDescription sphericalAgentDescription;
-    OnlineSphericalAgent onlineSphericalAgent;
+    AnytimeSphericalAgent anytimeSphericalAgent;
     List<SphericalObstacle> sphericalObstacles = new ArrayList<>();
     PlainConfigurationSpace configurationSpace;
 
@@ -61,7 +61,7 @@ public class Basic extends PApplet {
     }
 
     private void reset() {
-        onlineSphericalAgent = new OnlineSphericalAgent(
+        anytimeSphericalAgent = new AnytimeSphericalAgent(
                 this,
                 sphericalAgentDescription,
                 configurationSpace,
@@ -70,26 +70,26 @@ public class Basic extends PApplet {
                 Vec3.of(1),
                 5000,
                 5,
-                OnlineSphericalAgent.Algorithm.AStar);
+                AnytimeSphericalAgent.Algorithm.AStar);
         ALGORITHM = "A*";
-        onlineSphericalAgent.isPaused = true;
+        anytimeSphericalAgent.isPaused = true;
     }
 
     public void draw() {
         if (keyPressed) {
             if (keyCode == RIGHT) {
-                onlineSphericalAgent.stepForward();
+                anytimeSphericalAgent.stepForward();
             }
             if (keyCode == LEFT) {
-                onlineSphericalAgent.stepBackward();
+                anytimeSphericalAgent.stepBackward();
             }
         }
         long start = millis();
         // update
         if (SMOOTH_PATH) {
-            onlineSphericalAgent.smoothUpdate(0.1f);
+            anytimeSphericalAgent.smoothUpdate(0.1f);
         } else {
-            onlineSphericalAgent.update(0.1f);
+            anytimeSphericalAgent.update(0.1f);
         }
         long update = millis();
         // draw
@@ -101,7 +101,7 @@ public class Basic extends PApplet {
             }
         }
         // agent
-        onlineSphericalAgent.draw();
+        anytimeSphericalAgent.draw();
         // configuration space
         configurationSpace.draw();
         long draw = millis();
@@ -117,35 +117,35 @@ public class Basic extends PApplet {
             DRAW_OBSTACLES = !DRAW_OBSTACLES;
         }
         if (key == 'k') {
-            DynamicGraph.DRAW_VERTICES = !DynamicGraph.DRAW_VERTICES;
+            AnytimeGraph.DRAW_VERTICES = !AnytimeGraph.DRAW_VERTICES;
         }
         if (key == 'j') {
-            DynamicGraph.DRAW_EDGES = !DynamicGraph.DRAW_EDGES;
+            AnytimeGraph.DRAW_EDGES = !AnytimeGraph.DRAW_EDGES;
         }
         if (key == 'p') {
-            onlineSphericalAgent.isPaused = !onlineSphericalAgent.isPaused;
+            anytimeSphericalAgent.isPaused = !anytimeSphericalAgent.isPaused;
         }
         if (key == 'r') {
             reset();
         }
         if (key == '1') {
-            onlineSphericalAgent.algorithm = OnlineSphericalAgent.Algorithm.DFS;
+            anytimeSphericalAgent.algorithm = AnytimeSphericalAgent.Algorithm.DFS;
             ALGORITHM = "DFS";
         }
         if (key == '2') {
-            onlineSphericalAgent.algorithm = OnlineSphericalAgent.Algorithm.BFS;
+            anytimeSphericalAgent.algorithm = AnytimeSphericalAgent.Algorithm.BFS;
             ALGORITHM = "BFS";
         }
         if (key == '3') {
-            onlineSphericalAgent.algorithm = OnlineSphericalAgent.Algorithm.UCS;
+            anytimeSphericalAgent.algorithm = AnytimeSphericalAgent.Algorithm.UCS;
             ALGORITHM = "UCS";
         }
         if (key == '4') {
-            onlineSphericalAgent.algorithm = OnlineSphericalAgent.Algorithm.AStar;
+            anytimeSphericalAgent.algorithm = AnytimeSphericalAgent.Algorithm.AStar;
             ALGORITHM = "A*";
         }
         if (key == '5') {
-            onlineSphericalAgent.algorithm = OnlineSphericalAgent.Algorithm.WeightedAStar;
+            anytimeSphericalAgent.algorithm = AnytimeSphericalAgent.Algorithm.WeightedAStar;
             ALGORITHM = "weighted A*";
         }
     }

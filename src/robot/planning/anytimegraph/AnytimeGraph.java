@@ -1,4 +1,4 @@
-package robot.planning.dynamicgraph;
+package robot.planning.anytimegraph;
 
 import math.Vec3;
 import processing.core.PApplet;
@@ -6,7 +6,7 @@ import robot.sensing.ConfigurationSpace;
 
 import java.util.*;
 
-public class DynamicGraph {
+public class AnytimeGraph {
     public static boolean DRAW_VERTICES = true;
     public static boolean DRAW_EDGES = false;
     public static float END_POINT_SIZE = 2f;
@@ -16,7 +16,7 @@ public class DynamicGraph {
     final Vertex finish;
     final List<Vertex> vertices = new ArrayList<>();
 
-    public DynamicGraph(PApplet parent, Vec3 startPosition, Vec3 finishPosition) {
+    public AnytimeGraph(PApplet parent, Vec3 startPosition, Vec3 finishPosition) {
         this.parent = parent;
         this.start = Vertex.start(parent, startPosition, finishPosition.minus(startPosition).norm());
         this.finish = Vertex.finish(parent, finishPosition, 0);

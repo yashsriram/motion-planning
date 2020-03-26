@@ -3,14 +3,14 @@ package robot.acting;
 import math.Vec3;
 import processing.core.PApplet;
 import robot.input.SphericalAgentDescription;
-import robot.planning.dynamicgraph.DynamicGraph;
-import robot.planning.dynamicgraph.Vertex;
+import robot.planning.anytimegraph.AnytimeGraph;
+import robot.planning.anytimegraph.Vertex;
 import robot.sensing.ConfigurationSpace;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class OnlineSphericalAgent {
+public class AnytimeSphericalAgent {
     public enum Algorithm {
         DFS, BFS, UCS, AStar, WeightedAStar
     }
@@ -26,7 +26,7 @@ public class OnlineSphericalAgent {
     final Vec3 color;
     final Vec3 minCorner;
     final Vec3 maxCorner;
-    public final DynamicGraph dynamicGraph;
+    public final AnytimeGraph anytimeGraph;
     public Algorithm algorithm;
 
     Vec3 center;
@@ -35,15 +35,15 @@ public class OnlineSphericalAgent {
     float distanceCovered = 0;
     public boolean isPaused = false;
 
-    public OnlineSphericalAgent(final PApplet parent,
-                                final SphericalAgentDescription description,
-                                final ConfigurationSpace configurationSpace,
-                                Vec3 minCorner, Vec3 maxCorner,
-                                float speed,
-                                Vec3 color,
-                                int numSamples,
-                                float maxEdgeLen,
-                                Algorithm algorithm) {
+    public AnytimeSphericalAgent(final PApplet parent,
+                                 final SphericalAgentDescription description,
+                                 final ConfigurationSpace configurationSpace,
+                                 Vec3 minCorner, Vec3 maxCorner,
+                                 float speed,
+                                 Vec3 color,
+                                 int numSamples,
+                                 float maxEdgeLen,
+                                 Algorithm algorithm) {
         this.parent = parent;
         this.description = description;
         this.configurationSpace = configurationSpace;
@@ -51,12 +51,12 @@ public class OnlineSphericalAgent {
         this.color = color;
         this.minCorner = minCorner;
         this.maxCorner = maxCorner;
-        this.dynamicGraph = new DynamicGraph(parent, description.startPosition, description.finishPosition);
-        dynamicGraph.generateGraph(samplePoints(numSamples), maxEdgeLen);
+        this.anytimeGraph = new AnytimeGraph(parent, description.startPosition, description.finishPosition);
+        anytimeGraph.generateGraph(samplePoints(numSamples), maxEdgeLen);
         this.algorithm = algorithm;
 
         this.center = Vec3.of(description.startPosition);
-        this.path.add(dynamicGraph.start);
+        this.path.add(anytimeGraph.start);
     }
 
     public void update(float dt) {
@@ -132,7 +132,7 @@ public class OnlineSphericalAgent {
 
     public void draw() {
         // graph
-        dynamicGraph.draw();
+        anytimeGraph.draw();
         // path
         parent.stroke(color.x, color.y, color.z);
         for (int i = 0; i < path.size() - 1; i++) {
@@ -159,25 +159,25 @@ public class OnlineSphericalAgent {
     }
 
     private void replan() {
-        boolean obstaclesDetected = dynamicGraph.senseAndUpdate(center, SENSE_RADIUS, configurationSpace);
+        boolean obstaclesDetected = anytimeGraph.senseAndUpdate(center, SENSE_RADIUS, configurationSpace);
         if (!obstaclesDetected && path.size() > 1) {
             return;
         }
         switch (algorithm) {
             case DFS:
-                path = dynamicGraph.dfs(path.get(currentMilestone));
+                path = anytimeGraph.dfs(path.get(currentMilestone));
                 break;
             case BFS:
-                path = dynamicGraph.bfs(path.get(currentMilestone));
+                path = anytimeGraph.bfs(path.get(currentMilestone));
                 break;
             case UCS:
-                path = dynamicGraph.ucs(path.get(currentMilestone));
+                path = anytimeGraph.ucs(path.get(currentMilestone));
                 break;
             case AStar:
-                path = dynamicGraph.aStar(path.get(currentMilestone));
+                path = anytimeGraph.aStar(path.get(currentMilestone));
                 break;
             case WeightedAStar:
-                path = dynamicGraph.weightedAStar(path.get(currentMilestone), 1.5f);
+                path = anytimeGraph.weightedAStar(path.get(currentMilestone), 1.5f);
                 break;
         }
         currentMilestone = 0;

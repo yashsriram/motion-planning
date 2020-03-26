@@ -1,4 +1,4 @@
-package robot.planning.dynamicgraph;
+package robot.planning.anytimegraph;
 
 import math.Vec3;
 import processing.core.PApplet;
@@ -102,7 +102,7 @@ public class Vertex {
         parent.vertex(position.x, position.y, position.z + 1);
         parent.endShape();
         parent.popMatrix();
-        if (DynamicGraph.DRAW_EDGES) {
+        if (AnytimeGraph.DRAW_EDGES) {
             for (int i = 0; i < neighbours.size(); ++i) {
                 Vertex neighbour = neighbours.get(i);
                 Vec3 color = edgeColors.get(i);
