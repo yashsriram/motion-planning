@@ -190,15 +190,6 @@ public class Clash extends PApplet {
                 }
             }
         }
-//        int i = 0 ;
-//        while (i != flock.size()){
-//            if(change[i]){
-//                flock.remove(i);
-//            }
-//            else{
-//                i += 1 ;
-//            }
-//        }
     }
 
     public void keyPressed() {

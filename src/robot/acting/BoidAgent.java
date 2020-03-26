@@ -28,6 +28,7 @@ public class BoidAgent {
         this.impactRadius = impactRadius;
         this.obstacles = obstacles;
         this.velocity = Vec3.of(0,parent.random(-50, 50),parent.random(-30, 70));
+        this.color = Vec3.of(parent.random(50, 100),parent.random(50, 100),parent.random(50, 100));
         this.acceleration = Vec3.zero();
     }
 
@@ -49,7 +50,6 @@ public class BoidAgent {
             }
         }
 
-
         Vec3 finalForce = seperationforce.plus(centroid.plus(alignment)) ;
         this.velocity.plusInPlace(finalForce.scale(dt));
         this.center.plusInPlace(this.velocity.scale(dt));
@@ -60,30 +60,17 @@ public class BoidAgent {
             if(distance.norm() < obstacle.radius+this.radius){
                 distance.normalizeInPlace();
                 this.center = distance.scaleInPlace(-1*(obstacle.radius+this.radius));
-                distance = obstacle.center.minus(this.center);
-                distance.normalizeInPlace();
-                this.velocity.minusInPlace(this.velocity.plus(distance.scaleInPlace(this.velocity.dot(distance))).scaleInPlace(1.5f));
             }
         }
-
-//        if(center.y < minCorner.y || center.y > maxCorner.y){
-//            velocity.y = -velocity.y ;
-//        }
-//        if(center.z < minCorner.z || center.z > maxCorner.z){
-//            velocity.z = -velocity.z ;
-//        }
     }
 
     public void draw(){
         parent.pushMatrix();
         parent.translate(center.x, center.y, center.z);
-//        parent.stroke(200,0,0);
-//        parent.noFill();
         parent.rotateY(PConstants.PI/2);
-//        parent.circle(0,0,impactRadius);
         parent.noStroke();
         parent.fill(color.x, color.y, color.z);
-        parent.ellipse(0,0 , radius, radius/2);
+        parent.circle(0,0 , radius);
         parent.popMatrix();
     }
 }
