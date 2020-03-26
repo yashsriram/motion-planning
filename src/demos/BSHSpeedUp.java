@@ -6,7 +6,7 @@ import math.Vec3;
 import processing.core.PApplet;
 import robot.acting.SphericalAgent;
 import robot.input.SphericalAgentDescription;
-import robot.planning.graph.Graph;
+import robot.planning.multiagentgraph.MultiAgentGraph;
 import robot.sensing.BSHConfigurationSpace;
 import robot.sensing.ConfigurationSpace;
 import robot.sensing.PlainConfigurationSpace;
@@ -28,7 +28,7 @@ public class BSHSpeedUp extends PApplet {
     SphericalAgent sphericalAgent;
     List<SphericalObstacle> sphericalObstacles = new ArrayList<>();
     ConfigurationSpace configurationSpace;
-    Graph graph;
+    MultiAgentGraph graph;
 
     QueasyCam cam;
 
@@ -72,7 +72,7 @@ public class BSHSpeedUp extends PApplet {
         );
 
         configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
-        graph = new Graph(this, startPosition, finishPosition);
+        graph = new MultiAgentGraph(this, startPosition, finishPosition);
         sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, configurationSpace, minCorner, maxCorner, 20f, Vec3.of(1));
         graph.generateVertices(sphericalAgent.samplePoints(7000), configurationSpace);
 
@@ -86,7 +86,7 @@ public class BSHSpeedUp extends PApplet {
         configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
         sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, configurationSpace, minCorner, maxCorner, 20f, Vec3.of(1));
         long configSpace = millis();
-        graph.clearAdjacencies();
+        graph.clearAdjacenciesOnlyUseInBSHSpeedUp();
         graph.generateAdjacencies(10, configurationSpace);
         long edge = millis();
         DATA_STRUCTURE_CREATION_TIME = configSpace - startConfig;
@@ -99,7 +99,7 @@ public class BSHSpeedUp extends PApplet {
         configurationSpace = new BSHConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
         sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, configurationSpace, minCorner, maxCorner, 20f, Vec3.of(1));
         long configSpace = millis();
-        graph.clearAdjacencies();
+        graph.clearAdjacenciesOnlyUseInBSHSpeedUp();
         graph.generateAdjacencies(10, configurationSpace);
         long edge = millis();
         DATA_STRUCTURE_CREATION_TIME = configSpace - startConfig;
@@ -159,10 +159,10 @@ public class BSHSpeedUp extends PApplet {
             DRAW_OBSTACLES = !DRAW_OBSTACLES;
         }
         if (key == 'k') {
-            Graph.DRAW_VERTICES = !Graph.DRAW_VERTICES;
+            MultiAgentGraph.DRAW_VERTICES = !MultiAgentGraph.DRAW_VERTICES;
         }
         if (key == 'j') {
-            Graph.DRAW_EDGES = !Graph.DRAW_EDGES;
+            MultiAgentGraph.DRAW_EDGES = !MultiAgentGraph.DRAW_EDGES;
         }
         if (key == 'p') {
             sphericalAgent.isPaused = !sphericalAgent.isPaused;

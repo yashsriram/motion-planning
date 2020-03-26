@@ -87,6 +87,14 @@ public class MultiAgentGraph {
         PApplet.println("# edges generated: " + numEdges);
     }
 
+    public void clearAdjacenciesOnlyUseInBSHSpeedUp() {
+        for (Vertex vertex : vertices) {
+            vertex.neighbours.clear();
+            vertex.edgeColors.clear();
+            vertex.searchState.reset(finishes.get(0).position);
+        }
+    }
+
     public void draw() {
         if (DRAW_VERTICES) {
             for (Vertex vertex : vertices) {
