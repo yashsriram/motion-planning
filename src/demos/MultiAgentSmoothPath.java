@@ -4,9 +4,10 @@ import camera.QueasyCam;
 import fixed.SphericalObstacle;
 import math.Vec3;
 import processing.core.PApplet;
-import robot.acting.SphericalAgent;
+import robot.acting.MultiSphericalAgentSystem;
 import robot.input.SphericalAgentDescription;
 import robot.planning.multiagentgraph.MultiAgentGraph;
+import robot.sensing.ConfigurationSpace;
 import robot.sensing.PlainConfigurationSpace;
 
 import java.util.ArrayList;
@@ -19,9 +20,8 @@ public class MultiAgentSmoothPath extends PApplet {
     final Vec3 minCorner = Vec3.of(0, -SIDE, -SIDE);
     final Vec3 maxCorner = Vec3.of(0, SIDE, SIDE);
 
-    SphericalAgent sphericalAgent;
+    MultiSphericalAgentSystem multiSphericalAgentSystem;
     List<SphericalObstacle> sphericalObstacles = new ArrayList<>();
-    PlainConfigurationSpace configurationSpace;
     MultiAgentGraph multiAgentGraph;
 
     QueasyCam cam;
@@ -53,28 +53,25 @@ public class MultiAgentSmoothPath extends PApplet {
                 Vec3.of(0, SIDE * -0.9f, SIDE * 0.9f),
                 SIDE * (0.5f / 20)
         ));
-        configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescriptions.get(0), sphericalObstacles);
-        sphericalAgent = new SphericalAgent(this, sphericalAgentDescriptions.get(0), configurationSpace, minCorner, maxCorner, 20f, Vec3.of(1));
-        multiAgentGraph = new MultiAgentGraph(this, sphericalAgentDescriptions);
-        multiAgentGraph.generateVertices(sphericalAgent.samplePoints(10000), configurationSpace);
-        multiAgentGraph.generateAdjacencies(10, configurationSpace);
+        ConfigurationSpace configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescriptions.get(0), sphericalObstacles);
+        multiSphericalAgentSystem = new MultiSphericalAgentSystem(this, sphericalAgentDescriptions, configurationSpace, minCorner, maxCorner);
     }
 
     public void draw() {
         if (keyPressed) {
             if (keyCode == RIGHT) {
-                sphericalAgent.stepForward();
+                multiSphericalAgentSystem.stepForward();
             }
             if (keyCode == LEFT) {
-                sphericalAgent.stepBackward();
+                multiSphericalAgentSystem.stepBackward();
             }
         }
         long start = millis();
         // update
         if (SMOOTH_PATH) {
-            sphericalAgent.smoothUpdate(0.1f);
+            multiSphericalAgentSystem.smoothUpdate(0.1f);
         } else {
-            sphericalAgent.update(0.1f);
+            multiSphericalAgentSystem.update(0.1f);
         }
         long update = millis();
         // draw
@@ -85,12 +82,8 @@ public class MultiAgentSmoothPath extends PApplet {
                 sphericalObstacle.draw();
             }
         }
-        // agent
-        sphericalAgent.draw();
-        // configuration space
-        configurationSpace.draw();
-        // graph
-        multiAgentGraph.draw();
+        // multiagent system
+        multiSphericalAgentSystem.draw();
         long draw = millis();
 
         surface.setTitle("Processing - FPS: " + Math.round(frameRate) + " Update: " + (update - start) + "ms Draw " + (draw - update) + "ms" + " search: " + SEARCH_ALGORITHM + " smooth-path: " + SMOOTH_PATH);
@@ -110,27 +103,27 @@ public class MultiAgentSmoothPath extends PApplet {
             MultiAgentGraph.DRAW_EDGES = !MultiAgentGraph.DRAW_EDGES;
         }
         if (key == 'p') {
-            sphericalAgent.isPaused = !sphericalAgent.isPaused;
+            multiSphericalAgentSystem.togglePause();
         }
         if (key == '1') {
-            sphericalAgent.setPath(multiAgentGraph.dfs(0));
+            multiSphericalAgentSystem.dfs();
             SEARCH_ALGORITHM = "DFS";
         }
         if (key == '2') {
-            sphericalAgent.setPath(multiAgentGraph.bfs(0));
+            multiSphericalAgentSystem.bfs();
             SEARCH_ALGORITHM = "BFS";
         }
         if (key == '3') {
-            sphericalAgent.setPath(multiAgentGraph.ucs(0));
+            multiSphericalAgentSystem.ucs();
             SEARCH_ALGORITHM = "UCS";
         }
         if (key == '4') {
-            sphericalAgent.setPath(multiAgentGraph.aStar(0));
+            multiSphericalAgentSystem.aStar();
             SEARCH_ALGORITHM = "A*";
         }
         if (key == '5') {
             float weight = 1.5f;
-            sphericalAgent.setPath(multiAgentGraph.weightedAStar(weight, 0));
+            multiSphericalAgentSystem.weightedAStar(weight);
             SEARCH_ALGORITHM = weight + "A*";
         }
     }
