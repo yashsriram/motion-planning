@@ -1,13 +1,13 @@
 package demos;
 
 import camera.QueasyCam;
+import fixed.SphericalObstacle;
 import math.Vec3;
+import processing.core.PApplet;
 import robot.acting.SphericalAgent;
 import robot.input.SphericalAgentDescription;
-import fixed.SphericalObstacle;
-import processing.core.PApplet;
+import robot.planning.multiagentgraph.MultiAgentGraph;
 import robot.sensing.PlainConfigurationSpace;
-import robot.planning.graph.Graph;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +24,7 @@ public class SmoothPath extends PApplet {
     SphericalAgentDescription sphericalAgentDescription;
     SphericalAgent sphericalAgent;
     List<SphericalObstacle> sphericalObstacles = new ArrayList<>();
-    PlainConfigurationSpace configurationSpace;
-    Graph graph;
+    MultiAgentGraph graph;
 
     QueasyCam cam;
 
@@ -55,9 +54,9 @@ public class SmoothPath extends PApplet {
                 finishPosition,
                 SIDE * (0.5f / 20)
         );
-        configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
+        PlainConfigurationSpace configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
         sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, configurationSpace, minCorner, maxCorner, 20f, Vec3.of(1));
-        graph = new Graph(this, startPosition, finishPosition);
+        graph = new MultiAgentGraph(this, startPosition, finishPosition);
         graph.generateVertices(sphericalAgent.samplePoints(10000), configurationSpace);
         graph.generateAdjacencies(10, configurationSpace);
     }
@@ -89,8 +88,6 @@ public class SmoothPath extends PApplet {
         }
         // agent
         sphericalAgent.draw();
-        // configuration space
-        configurationSpace.draw();
         // graph
         graph.draw();
         long draw = millis();
@@ -106,10 +103,10 @@ public class SmoothPath extends PApplet {
             DRAW_OBSTACLES = !DRAW_OBSTACLES;
         }
         if (key == 'k') {
-            Graph.DRAW_VERTICES = !Graph.DRAW_VERTICES;
+            MultiAgentGraph.DRAW_VERTICES = !MultiAgentGraph.DRAW_VERTICES;
         }
         if (key == 'j') {
-            Graph.DRAW_EDGES = !Graph.DRAW_EDGES;
+            MultiAgentGraph.DRAW_EDGES = !MultiAgentGraph.DRAW_EDGES;
         }
         if (key == 'p') {
             sphericalAgent.isPaused = !sphericalAgent.isPaused;
