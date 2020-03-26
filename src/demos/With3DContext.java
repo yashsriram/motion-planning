@@ -8,8 +8,8 @@ import fixed.*;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PShape;
+import robot.planning.multiagentgraph.MultiAgentGraph;
 import robot.sensing.PlainConfigurationSpace;
-import robot.planning.graph.Graph;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +29,7 @@ public class With3DContext extends PApplet {
     Ground ground;
     SphericalAgent sphericalAgent;
     List<SphericalObstacle> sphericalObstacles = new ArrayList<>();
-    PlainConfigurationSpace configurationSpace;
-    Graph graph;
+    MultiAgentGraph graph;
     PShape agentShape;
     List<PShape> obstacleShapes = new ArrayList<>();
 
@@ -113,7 +112,7 @@ public class With3DContext extends PApplet {
                 finishPosition,
                 SIDE * 0.08f
         );
-        configurationSpace = new PlainConfigurationSpace(
+        PlainConfigurationSpace configurationSpace = new PlainConfigurationSpace(
                 this,
                 sphericalAgentDescription,
                 sphericalObstacles
@@ -132,8 +131,8 @@ public class With3DContext extends PApplet {
                 Vec3.of(0, 0, 1), Vec3.of(1, 0, 0),
                 2 * SIDE, 2 * SIDE,
                 loadImage("ground6.png"));
-        Graph.END_POINT_SIZE = 5f;
-        graph = new Graph(this, startPosition, finishPosition);
+        MultiAgentGraph.END_POINT_SIZE = 5f;
+        graph = new MultiAgentGraph(this, startPosition, finishPosition);
         graph.generateVertices(sphericalAgent.samplePoints(10000), configurationSpace);
         graph.generateAdjacencies(10, configurationSpace);
     }
@@ -170,8 +169,6 @@ public class With3DContext extends PApplet {
         sphericalAgent.draw(agentShape, 20 / 7.5f);
         // ground
         ground.draw();
-        // configuration space
-        configurationSpace.draw();
         // graph
         graph.draw();
         long draw = millis();
@@ -187,10 +184,10 @@ public class With3DContext extends PApplet {
             DRAW_OBSTACLES = !DRAW_OBSTACLES;
         }
         if (key == 'k') {
-            Graph.DRAW_VERTICES = !Graph.DRAW_VERTICES;
+            MultiAgentGraph.DRAW_VERTICES = !MultiAgentGraph.DRAW_VERTICES;
         }
         if (key == 'j') {
-            Graph.DRAW_EDGES = !Graph.DRAW_EDGES;
+            MultiAgentGraph.DRAW_EDGES = !MultiAgentGraph.DRAW_EDGES;
         }
         if (key == 'p') {
             sphericalAgent.isPaused = !sphericalAgent.isPaused;

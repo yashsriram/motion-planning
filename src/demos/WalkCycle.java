@@ -10,7 +10,7 @@ import processing.core.PConstants;
 import processing.core.PShape;
 import robot.acting.SphericalAgent;
 import robot.input.SphericalAgentDescription;
-import robot.planning.graph.Graph;
+import robot.planning.multiagentgraph.MultiAgentGraph;
 import robot.sensing.PlainConfigurationSpace;
 
 import java.util.ArrayList;
@@ -31,8 +31,7 @@ public class WalkCycle extends PApplet {
     Ground ground;
     SphericalAgent sphericalAgent;
     List<SphericalObstacle> sphericalObstacles = new ArrayList<>();
-    PlainConfigurationSpace configurationSpace;
-    Graph graph;
+    MultiAgentGraph graph;
     List<PShape> agentWalkCycleShapes = new ArrayList<>();
     List<PShape> obstacleShapes = new ArrayList<>();
     QueasyCam cam;
@@ -112,11 +111,11 @@ public class WalkCycle extends PApplet {
                 finishPosition,
                 SIDE * 0.08f
         );
-        configurationSpace = new PlainConfigurationSpace(
+        PlainConfigurationSpace configurationSpace = new PlainConfigurationSpace(
                 this,
                 sphericalAgentDescription,
                 sphericalObstacles
-                );
+        );
         SphericalAgent.MILESTONE_REACHED_RADIUS = 6f;
         SphericalAgent.NEXT_MILESTONE_HINT_SIZE = 18f;
         sphericalAgent = new SphericalAgent(
@@ -132,8 +131,8 @@ public class WalkCycle extends PApplet {
                 Vec3.of(0, 0, 1), Vec3.of(1, 0, 0),
                 2 * SIDE, 2 * SIDE,
                 loadImage("ground6.png"));
-        Graph.END_POINT_SIZE = 20f;
-        graph = new Graph(this, startPosition, finishPosition);
+        MultiAgentGraph.END_POINT_SIZE = 20f;
+        graph = new MultiAgentGraph(this, startPosition, finishPosition);
         graph.generateVertices(sphericalAgent.samplePoints(10000), configurationSpace);
         graph.generateAdjacencies(50, configurationSpace);
 
@@ -169,8 +168,6 @@ public class WalkCycle extends PApplet {
         sphericalAgent.draw(agentWalkCycleShapes, 5f);
         // ground
         ground.draw();
-        // configuration space
-        configurationSpace.draw();
         // graph
         graph.draw();
         long draw = millis();
@@ -192,10 +189,10 @@ public class WalkCycle extends PApplet {
             DRAW_OBSTACLES = !DRAW_OBSTACLES;
         }
         if (key == 'k') {
-            Graph.DRAW_VERTICES = !Graph.DRAW_VERTICES;
+            MultiAgentGraph.DRAW_VERTICES = !MultiAgentGraph.DRAW_VERTICES;
         }
         if (key == 'j') {
-            Graph.DRAW_EDGES = !Graph.DRAW_EDGES;
+            MultiAgentGraph.DRAW_EDGES = !MultiAgentGraph.DRAW_EDGES;
         }
         if (key == 'p') {
             sphericalAgent.isPaused = !sphericalAgent.isPaused;
