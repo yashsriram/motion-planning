@@ -6,8 +6,8 @@ import robot.acting.LineSegment2DAgent;
 import robot.input.LineSegment2DAgentDescription;
 import fixed.SphericalObstacle;
 import processing.core.PApplet;
+import robot.planning.multiagentgraph.MultiAgentGraph;
 import robot.sensing.LineSegment2DConfigurationSpace;
-import robot.planning.graph.Graph;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ public class With2DRotation1 extends PApplet {
     LineSegment2DAgent lineSegmentAgent;
     List<SphericalObstacle> sphericalObstacles = new ArrayList<>();
     LineSegment2DConfigurationSpace configurationSpace;
-    Graph graph;
+    MultiAgentGraph graph;
 
     QueasyCam cam;
 
@@ -70,8 +70,8 @@ public class With2DRotation1 extends PApplet {
         );
         configurationSpace = new LineSegment2DConfigurationSpace(this, lineSegment2DAgentDescription, sphericalObstacles, orientationScale);
         lineSegmentAgent = new LineSegment2DAgent(this, lineSegment2DAgentDescription, configurationSpace, minCorner, maxCorner, 10f, Vec3.of(1));
-        Graph.END_POINT_SIZE = 3f;
-        graph = new Graph(this, startPose, finishPose);
+        MultiAgentGraph.END_POINT_SIZE = 3f;
+        graph = new MultiAgentGraph(this, startPose, finishPose);
         graph.generateVertices(lineSegmentAgent.samplePoints(25000), configurationSpace);
         graph.generateAdjacencies(10, configurationSpace);
     }
@@ -114,9 +114,9 @@ public class With2DRotation1 extends PApplet {
         if (key == 'g') {
             LineSegment2DAgent.DRAW_POSITION_ORIENTATION_SPACE_PATH = !LineSegment2DAgent.DRAW_POSITION_ORIENTATION_SPACE_PATH;
             if (LineSegment2DAgent.DRAW_POSITION_ORIENTATION_SPACE_PATH) {
-                Graph.END_POINT_SIZE = 3f;
+                MultiAgentGraph.END_POINT_SIZE = 3f;
             } else {
-                Graph.END_POINT_SIZE = 0f;
+                MultiAgentGraph.END_POINT_SIZE = 0f;
             }
         }
         if (key == 'x') {
@@ -126,10 +126,10 @@ public class With2DRotation1 extends PApplet {
             DRAW_OBSTACLES = !DRAW_OBSTACLES;
         }
         if (key == 'k') {
-            Graph.DRAW_VERTICES = !Graph.DRAW_VERTICES;
+            MultiAgentGraph.DRAW_VERTICES = !MultiAgentGraph.DRAW_VERTICES;
         }
         if (key == 'j') {
-            Graph.DRAW_EDGES = !Graph.DRAW_EDGES;
+            MultiAgentGraph.DRAW_EDGES = !MultiAgentGraph.DRAW_EDGES;
         }
         if (key == 'p') {
             lineSegmentAgent.isPaused = !lineSegmentAgent.isPaused;
