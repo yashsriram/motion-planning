@@ -4,7 +4,7 @@ import camera.QueasyCam;
 import fixed.SphericalObstacle;
 import math.Vec3;
 import processing.core.PApplet;
-import robot.acting.Boid;
+import robot.acting.BoidAgent;
 import robot.acting.SphericalAgent;
 import robot.input.SphericalAgentDescription;
 import robot.planning.rrt.RapidlyExploringRandomTree;
@@ -29,7 +29,7 @@ public class Crowd extends PApplet {
     PlainConfigurationSpace configurationSpace;
     RapidlyExploringRandomTree rrt;
 
-    List<Boid> flock = new ArrayList<>();
+    List<BoidAgent> flock = new ArrayList<>();
 
     QueasyCam cam;
 
@@ -66,7 +66,7 @@ public class Crowd extends PApplet {
         rrt.growTree(sphericalAgent.samplePoints(100), configurationSpace);
 
         for(int i = 0 ; i < 50; i++){
-            flock.add(new Boid(this, 5,minCorner, maxCorner, Vec3.of(0, SIDE * (random(-10,10) / 10), SIDE * (random(-10,10) / 10)), 20, sphericalObstacles));
+            flock.add(new BoidAgent(this, 5,minCorner, maxCorner, Vec3.of(0, SIDE * (random(-10,10) / 10), SIDE * (random(-10,10) / 10)), 20, sphericalObstacles));
         }
 
     }
@@ -97,9 +97,9 @@ public class Crowd extends PApplet {
         rrt.draw();
         // agent
         sphericalAgent.draw();
-        for(Boid boid : flock){
-            boid.draw();
-            boid.update(flock, 0.01f, sphericalAgent.getCenter());
+        for(BoidAgent boidAgent : flock){
+            boidAgent.draw();
+            boidAgent.update(flock, 0.01f, sphericalAgent.getCenter());
         }
 
         surface.setTitle("Processing - FPS: " + Math.round(frameRate));

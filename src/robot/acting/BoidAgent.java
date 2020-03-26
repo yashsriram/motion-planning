@@ -7,7 +7,7 @@ import processing.core.PConstants;
 
 import java.util.List;
 
-public class Boid {
+public class BoidAgent {
     final PApplet parent;
     Vec3 velocity ;
     Vec3 acceleration ;
@@ -19,7 +19,7 @@ public class Boid {
     public float impactRadius ;
     List<SphericalObstacle> obstacles ;
 
-    public Boid(PApplet parent, float radius, Vec3 minCorner, Vec3 maxCorner, Vec3 center, float impactRadius, List<SphericalObstacle> obstacles) {
+    public BoidAgent(PApplet parent, float radius, Vec3 minCorner, Vec3 maxCorner, Vec3 center, float impactRadius, List<SphericalObstacle> obstacles) {
         this.parent = parent;
         this.radius = radius;
         this.minCorner = minCorner;
@@ -32,21 +32,21 @@ public class Boid {
         this.acceleration = Vec3.zero();
     }
 
-    public void update(List<Boid> flock, float dt, Vec3 goal){
+    public void update(List<BoidAgent> flock, float dt, Vec3 goal){
         Vec3 path = goal.minus(this.center);
         Vec3 seperationforce = Vec3.zero() ;
         Vec3 centroid = Vec3.zero() ;
         Vec3 alignment = Vec3.zero() ;
         int neighbors = 0 ;
-        for(Boid boid : flock){
-            Vec3 force = this.center.minus(boid.center);
+        for(BoidAgent boidAgent : flock){
+            Vec3 force = this.center.minus(boidAgent.center);
             float distance = force.norm() ;
             if( distance < this.impactRadius && distance > 0){
                 neighbors += 1 ;
                 force.normalizeInPlace() ;
-                seperationforce.plusInPlace(force.scaleInPlace(1000f*(this.impactRadius-distance)));
-                centroid.plusInPlace((this.center.plus(boid.center)).normalizeInPlace().scaleInPlace(2f));
-                alignment.plusInPlace((boid.velocity.minus(this.velocity)).normalizeInPlace().scaleInPlace(5f));
+                seperationforce.plusInPlace(force.scaleInPlace(2000f*(this.impactRadius-distance)));
+                centroid.plusInPlace((this.center.plus(boidAgent.center)).normalizeInPlace().scaleInPlace(10.5f));
+                alignment.plusInPlace((boidAgent.velocity.minus(this.velocity)).normalizeInPlace().scaleInPlace(15f));
             }
         }
 
@@ -60,9 +60,6 @@ public class Boid {
             if(distance.norm() < obstacle.radius+this.radius){
                 distance.normalizeInPlace();
                 this.center = distance.scaleInPlace(-1*(obstacle.radius+this.radius));
-                distance = obstacle.center.minus(this.center);
-                distance.normalizeInPlace();
-                this.velocity.minusInPlace(this.velocity.plus(distance.scaleInPlace(this.velocity.dot(distance))).scaleInPlace(1.5f));
             }
         }
     }
