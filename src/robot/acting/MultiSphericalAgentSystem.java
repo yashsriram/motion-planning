@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MultiSphericalAgentSystem {
+    public static float AGENT_SPEED = 20f;
+    public static float MAX_EDGE_LEN = 10f;
+    public static int NUM_VERTEX_SAMPLES = 10000;
     final PApplet parent;
     final ConfigurationSpace configurationSpace;
     final MultiAgentGraph multiAgentGraph;
@@ -17,21 +20,23 @@ public class MultiSphericalAgentSystem {
 
     public MultiSphericalAgentSystem(PApplet parent, List<SphericalAgentDescription> sphericalAgentDescriptions, ConfigurationSpace configurationSpace, Vec3 minCorner, Vec3 maxCorner) {
         this.parent = parent;
+        // At least one spherical agent is required
+        assert (sphericalAgentDescriptions.size() > 0);
         for (SphericalAgentDescription sphericalAgentDescription : sphericalAgentDescriptions) {
             sphericalAgents.add(
                     new SphericalAgent(parent,
                             sphericalAgentDescription,
                             configurationSpace,
                             minCorner, maxCorner,
-                            20f,
+                            AGENT_SPEED,
                             Vec3.of(parent.random(1), parent.random(1), parent.random(1))
                     )
             );
         }
         this.configurationSpace = configurationSpace;
         this.multiAgentGraph = new MultiAgentGraph(parent, sphericalAgentDescriptions);
-        this.multiAgentGraph.generateVertices(sphericalAgents.get(0).samplePoints(10000), configurationSpace);
-        this.multiAgentGraph.generateAdjacencies(10, configurationSpace);
+        this.multiAgentGraph.generateVertices(sphericalAgents.get(0).samplePoints(NUM_VERTEX_SAMPLES), configurationSpace);
+        this.multiAgentGraph.generateAdjacencies(MAX_EDGE_LEN, configurationSpace);
     }
 
     public void update(float dt) {

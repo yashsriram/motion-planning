@@ -20,10 +20,8 @@ public class MultiAgentSmoothPath extends PApplet {
     final Vec3 minCorner = Vec3.of(0, -SIDE, -SIDE);
     final Vec3 maxCorner = Vec3.of(0, SIDE, SIDE);
 
-    MultiSphericalAgentSystem multiSphericalAgentSystem;
     List<SphericalObstacle> sphericalObstacles = new ArrayList<>();
-    MultiAgentGraph multiAgentGraph;
-
+    MultiSphericalAgentSystem multiSphericalAgentSystem;
     QueasyCam cam;
 
     static boolean DRAW_OBSTACLES = true;
