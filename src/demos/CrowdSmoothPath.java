@@ -13,7 +13,7 @@ import robot.sensing.PlainConfigurationSpace;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MultiAgentSmoothPath extends PApplet {
+public class CrowdSmoothPath extends PApplet {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 800;
     public static final int SIDE = 100;
@@ -51,19 +51,16 @@ public class MultiAgentSmoothPath extends PApplet {
                 Vec3.of(0, SIDE * -0.9f, SIDE * 0.9f),
                 SIDE * (0.5f / 20)
         ));
+        sphericalAgentDescriptions.add(new SphericalAgentDescription(
+                Vec3.of(0, SIDE * -0.9f, SIDE * 0.9f),
+                Vec3.of(0, SIDE * 0.9f, SIDE * -0.9f),
+                SIDE * (0.5f / 20)
+        ));
         ConfigurationSpace configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescriptions.get(0), sphericalObstacles);
         multiSphericalAgentSystem = new MultiSphericalAgentSystem(this, sphericalAgentDescriptions, configurationSpace, minCorner, maxCorner);
     }
 
     public void draw() {
-        if (keyPressed) {
-            if (keyCode == RIGHT) {
-                multiSphericalAgentSystem.stepForward();
-            }
-            if (keyCode == LEFT) {
-                multiSphericalAgentSystem.stepBackward();
-            }
-        }
         long start = millis();
         // update
         if (SMOOTH_PATH) {
@@ -88,6 +85,12 @@ public class MultiAgentSmoothPath extends PApplet {
     }
 
     public void keyPressed() {
+        if (keyCode == RIGHT) {
+            multiSphericalAgentSystem.stepForward();
+        }
+        if (keyCode == LEFT) {
+            multiSphericalAgentSystem.stepBackward();
+        }
         if (key == 'x') {
             SMOOTH_PATH = !SMOOTH_PATH;
         }
@@ -127,7 +130,7 @@ public class MultiAgentSmoothPath extends PApplet {
     }
 
     static public void main(String[] passedArgs) {
-        String[] appletArgs = new String[]{"demos.MultiAgentSmoothPath"};
+        String[] appletArgs = new String[]{"demos.CrowdSmoothPath"};
         if (passedArgs != null) {
             PApplet.main(concat(appletArgs, passedArgs));
         } else {

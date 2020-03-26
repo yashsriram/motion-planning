@@ -14,28 +14,28 @@ class Vertex {
     final List<Vec3> edgeColors = new ArrayList<>();
 
     class SearchState {
-        float heuristicDistanceToFinish = 0;
         boolean isFinish = false;
+        float heuristicDistanceToFinish = 0;
         boolean isExplored = false;
         float distanceFromStart = 0;
         List<Vec3> pathFromStart = new ArrayList<>();
         Vec3 color;
 
         public SearchState() {
-            this.color = Vertex.this.isOutsideObstacle ? Vec3.of(1) : Vec3.of(1, 0, 1);
+            this.color = isOutsideObstacle ? Vec3.of(1) : Vec3.of(1, 0, 1);
         }
 
         void reset(Vec3 finishPosition) {
-            isFinish = finishPosition.equals(Vertex.this.position);
-            heuristicDistanceToFinish = Vertex.this.position.minus(finishPosition).norm();
+            isFinish = finishPosition.equals(position);
+            heuristicDistanceToFinish = position.minus(finishPosition).norm();
+            isExplored = false;
+            distanceFromStart = 0;
+            pathFromStart.clear();
             if (isOutsideObstacle) {
                 color.set(1, 1, 1);
             } else {
                 color.set(1, 0, 1);
             }
-            isExplored = false;
-            distanceFromStart = 0;
-            pathFromStart.clear();
         }
 
         void addToFringeFrom(Vertex parent) {
