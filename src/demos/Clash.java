@@ -93,7 +93,7 @@ public class Clash extends PApplet {
         rrts.get(0).growTree(agents.get(0).samplePoints(100), configurationSpaces.get(0));
         rrts.get(0).growTree(agents.get(1).samplePoints(100), configurationSpaces.get(1));
 
-        for(int i = 0 ; i < 100; i++){
+        for(int i = 0 ; i < 50; i++){
             flock.add(new Clan(this, 5,minCorner, maxCorner, Vec3.of(0, SIDE * (random(-10,10) / 10), SIDE * (random(-10,10) / 10)), impactRadius, sphericalObstacles));
         }
     }
@@ -190,15 +190,6 @@ public class Clash extends PApplet {
                 }
             }
         }
-//        int i = 0 ;
-//        while (i != flock.size()){
-//            if(change[i]){
-//                flock.remove(i);
-//            }
-//            else{
-//                i += 1 ;
-//            }
-//        }
     }
 
     public void keyPressed() {
