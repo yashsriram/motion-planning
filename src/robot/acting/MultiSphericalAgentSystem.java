@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MultiSphericalAgentSystem {
+    public static boolean COLOR_SPLIT = false;
     public static float AGENT_SPEED = 20f;
     public static float MAX_EDGE_LEN = 10f;
     public static int NUM_VERTEX_SAMPLES = 10000;
@@ -27,16 +28,30 @@ public class MultiSphericalAgentSystem {
         this.parent = parent;
         // At least one spherical agent is required
         assert (sphericalAgentDescriptions.size() > 0);
-        for (SphericalAgentDescription sphericalAgentDescription : sphericalAgentDescriptions) {
-            sphericalAgents.add(
-                    new SphericalAgent(parent,
-                            sphericalAgentDescription,
-                            configurationSpace,
-                            minCorner, maxCorner,
-                            AGENT_SPEED,
-                            Vec3.of(parent.random(1), parent.random(1), parent.random(1))
-                    )
-            );
+        if (COLOR_SPLIT) {
+            for (int i = 0; i < sphericalAgentDescriptions.size(); ++i) {
+                SphericalAgentDescription description = sphericalAgentDescriptions.get(i);
+                sphericalAgents.add(
+                        new SphericalAgent(parent,
+                                description,
+                                configurationSpace,
+                                minCorner, maxCorner,
+                                AGENT_SPEED,
+                                i < sphericalAgentDescriptions.size() / 2 ? Vec3.of(1, 1, 0) : Vec3.of(0, 1, 1))
+                );
+            }
+        } else {
+            for (SphericalAgentDescription sphericalAgentDescription : sphericalAgentDescriptions) {
+                sphericalAgents.add(
+                        new SphericalAgent(parent,
+                                sphericalAgentDescription,
+                                configurationSpace,
+                                minCorner, maxCorner,
+                                AGENT_SPEED,
+                                Vec3.of(parent.random(1), parent.random(1), parent.random(1))
+                        )
+                );
+            }
         }
         this.configurationSpace = configurationSpace;
         this.multiAgentGraph = new MultiAgentGraph(parent, sphericalAgentDescriptions);
@@ -200,6 +215,9 @@ public class MultiSphericalAgentSystem {
             SphericalAgent agent = sphericalAgents.get(i);
             Vec3 isolatedVelocity = isolatedVelocities.get(i);
             Vec3 ttcForce = totalTTCForces.get(i);
+            if (ttcForce.norm() > 500) {
+                ttcForce = ttcForce.normalizeInPlace().scale(500);
+            }
             Vec3 ttcVelocity = ttcForce.scale(dt);
             Vec3 displacement = isolatedVelocity.plusInPlace(ttcVelocity).scale(dt);
             agent.ttcUpdate(displacement);

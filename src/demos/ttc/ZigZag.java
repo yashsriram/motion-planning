@@ -65,6 +65,7 @@ public class ZigZag extends PApplet {
         placeAgents(topRight, bottomLeft);
 
         ConfigurationSpace configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescriptions.get(0), sphericalObstacles);
+        MultiSphericalAgentSystem.COLOR_SPLIT = true;
         MultiSphericalAgentSystem.TTC_K = 10f;
         MultiSphericalAgentSystem.TTC_T0 = 1f;
         MultiSphericalAgentSystem.AGENT_SPEED = 20f;
