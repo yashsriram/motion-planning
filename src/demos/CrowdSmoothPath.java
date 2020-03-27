@@ -42,65 +42,41 @@ public class CrowdSmoothPath extends PApplet {
 
         cam = new QueasyCam(this);
         float radiusFactor = 0.04f;
-        float radius = SIDE * radiusFactor;
+        float obstacleRadius = SIDE * radiusFactor;
         int numRows = 4;
-        for (int i = 0; i < 15; i++) {
+        int rowLength = 15;
+        float a = 30;
+        float b = 30;
+        for (int i = 0; i < rowLength; i++) {
             for (int j = 0; j < numRows; j++) {
-                float zCoordinate = (SIDE - 2 * radius * i) * (j % 2 == 1 ? -1 : 1);
+                float zCoordinate = (SIDE - 2 * obstacleRadius * i) * (j % 2 == 1 ? -1 : 1);
                 sphericalObstacles.add(new SphericalObstacle(
                         this,
-                        Vec3.of(0, -SIDE + 30 * j + 30, zCoordinate),
-                        radius,
+                        Vec3.of(0, -SIDE + a * j + b, zCoordinate),
+                        obstacleRadius,
                         Vec3.of(1, 0, 1)
                 ));
             }
         }
         List<SphericalAgentDescription> sphericalAgentDescriptions = new ArrayList<>();
-        sphericalAgentDescriptions.add(new SphericalAgentDescription(
-                Vec3.of(0, SIDE * 0.9f, SIDE * -0.9f),
-                Vec3.of(0, SIDE * -0.9f, SIDE * 0.9f),
-                SIDE * (0.5f / 20)
-        ));
-        sphericalAgentDescriptions.add(new SphericalAgentDescription(
-                Vec3.of(0, SIDE * 0.9f, SIDE * -0.95f),
-                Vec3.of(0, SIDE * -0.9f, SIDE * 0.9f),
-                SIDE * (0.5f / 20)
-        ));
-        sphericalAgentDescriptions.add(new SphericalAgentDescription(
-                Vec3.of(0, SIDE * 0.9f, SIDE * -0.85f),
-                Vec3.of(0, SIDE * -0.9f, SIDE * 0.9f),
-                SIDE * (0.5f / 20)
-        ));
-        sphericalAgentDescriptions.add(new SphericalAgentDescription(
-                Vec3.of(0, SIDE * 0.8f, SIDE * -0.85f),
-                Vec3.of(0, SIDE * -0.9f, SIDE * 0.9f),
-                SIDE * (0.5f / 20)
-        ));
-        sphericalAgentDescriptions.add(new SphericalAgentDescription(
-                Vec3.of(0, SIDE * 0.8f, SIDE * -0.9f),
-                Vec3.of(0, SIDE * -0.9f, SIDE * 0.9f),
-                SIDE * (0.5f / 20)
-        ));
-        sphericalAgentDescriptions.add(new SphericalAgentDescription(
-                Vec3.of(0, SIDE * 0.8f, SIDE * -0.95f),
-                Vec3.of(0, SIDE * -0.9f, SIDE * 0.9f),
-                SIDE * (0.5f / 20)
-        ));
-        sphericalAgentDescriptions.add(new SphericalAgentDescription(
-                Vec3.of(0, SIDE * 0.7f, SIDE * -0.85f),
-                Vec3.of(0, SIDE * -0.9f, SIDE * 0.9f),
-                SIDE * (0.5f / 20)
-        ));
-        sphericalAgentDescriptions.add(new SphericalAgentDescription(
-                Vec3.of(0, SIDE * 0.7f, SIDE * -0.9f),
-                Vec3.of(0, SIDE * -0.9f, SIDE * 0.9f),
-                SIDE * (0.5f / 20)
-        ));
-        sphericalAgentDescriptions.add(new SphericalAgentDescription(
-                Vec3.of(0, SIDE * 0.7f, SIDE * -0.95f),
-                Vec3.of(0, SIDE * -0.9f, SIDE * 0.9f),
-                SIDE * (0.5f / 20)
-        ));
+
+        float agentRadius = SIDE * 0.025f;
+        float slack = 8;
+        Vec3 center = Vec3.of(0, SIDE * 0.8f, SIDE * -0.8f);
+        int numAgentsRadially = 2;
+        int numCircleDivisions = 8;
+        Vec3 finishPosition = Vec3.of(0, SIDE * -0.9f, SIDE * 0.9f);
+        for (int i = 0; i < numCircleDivisions; i++) {
+            float theta = 2 * PI / numCircleDivisions * i;
+            for (int j = 0; j < numAgentsRadially; j++) {
+                float radialDistance = j * 2 * agentRadius + slack;
+                sphericalAgentDescriptions.add(new SphericalAgentDescription(
+                        center.plus(Vec3.of(0, (float) Math.sin(theta), (float) Math.cos(theta)).scaleInPlace(radialDistance)),
+                        finishPosition,
+                        agentRadius
+                ));
+            }
+        }
 
         ConfigurationSpace configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescriptions.get(0), sphericalObstacles);
         multiSphericalAgentSystem = new MultiSphericalAgentSystem(this, sphericalAgentDescriptions, configurationSpace, minCorner, maxCorner);
