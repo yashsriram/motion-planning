@@ -73,7 +73,7 @@ public class SphericalAgent {
         }
     }
 
-    public void boidUpdate(List<SphericalAgent> flock, List<SphericalObstacle> obstacles, float impactRadius, float dt) {
+    public void boidUpdate(List<SphericalAgent> agents, List<SphericalObstacle> obstacles, float impactRadius, float dt) {
         if (isPaused) {
             return;
         }
@@ -91,7 +91,7 @@ public class SphericalAgent {
                 }
             }
 
-            Vec3 boidVelocity = boidForce(flock, obstacles, impactRadius);
+            Vec3 boidVelocity = boidForce(agents, obstacles, impactRadius);
             Vec3 velocityDir =
                     path.get(currentMilestone + 1)
                             .minus(center)
@@ -102,8 +102,8 @@ public class SphericalAgent {
                 currentMilestone += 1;
                 return;
             }
-            // move towards next milestone
 
+            // move towards next milestone
             velocityDir.plusInPlace(boidVelocity);
             Vec3 displacement = velocityDir.scaleInPlace(speed * dt);
             center.plusInPlace(displacement);
@@ -111,11 +111,11 @@ public class SphericalAgent {
         }
     }
 
-    private Vec3 boidForce(List<SphericalAgent> flock, List<SphericalObstacle> obstacles, float impactRadius) {
+    private Vec3 boidForce(List<SphericalAgent> agents, List<SphericalObstacle> obstacles, float impactRadius) {
         Vec3 separationForce = Vec3.zero();
         Vec3 centroid = Vec3.zero();
         Vec3 alignment = Vec3.zero();
-        for (SphericalAgent boid : flock) {
+        for (SphericalAgent boid : agents) {
             Vec3 force = this.center.minus(boid.center);
             float distance = force.norm();
             if (distance < impactRadius && distance > 0) {
@@ -143,6 +143,37 @@ public class SphericalAgent {
 
 
         return finalForce;
+    }
+
+    public Vec3 getIsolatedVelocity() {
+        if (isPaused) {
+            return Vec3.of(0);
+        }
+        if (currentMilestone < path.size() - 1) {
+            // reached next milestone
+            if (path.get(currentMilestone + 1).minus(center).norm() < MILESTONE_REACHED_RADIUS) {
+                currentMilestone++;
+                return Vec3.of(0);
+            }
+            // next next milestone lookup
+            if (currentMilestone < path.size() - 2) {
+                boolean blocked = configurationSpace.doesEdgeIntersectSomeObstacle(path.get(currentMilestone + 2), center);
+                if (!blocked) {
+                    currentMilestone++;
+                }
+            }
+
+            Vec3 velocityDir = path.get(currentMilestone + 1)
+                    .minus(center)
+                    .normalizeInPlace();
+            return velocityDir.scaleInPlace(speed);
+        }
+        return Vec3.of(0);
+    }
+
+    public void ttcUpdate(Vec3 displacement) {
+        center.plusInPlace(displacement);
+        distanceCovered += displacement.norm();
     }
 
     public void smoothUpdate(float dt) {

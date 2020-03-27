@@ -15,6 +15,9 @@ public class MultiSphericalAgentSystem {
     public static float AGENT_SPEED = 20f;
     public static float MAX_EDGE_LEN = 10f;
     public static int NUM_VERTEX_SAMPLES = 10000;
+    public static float TTC_K = 10;
+    public static float TTC_T0 = 1;
+
     final PApplet parent;
     final ConfigurationSpace configurationSpace;
     final MultiAgentGraph multiAgentGraph;
@@ -53,9 +56,88 @@ public class MultiSphericalAgentSystem {
         }
     }
 
-    public void updateBoid(List<SphericalObstacle> obstacles, float impactRadius, float dt){
-        for(SphericalAgent agent : sphericalAgents){
+    public void updateBoid(List<SphericalObstacle> obstacles, float impactRadius, float dt) {
+        for (SphericalAgent agent : sphericalAgents) {
             agent.boidUpdate(sphericalAgents, obstacles, impactRadius, dt);
+        }
+    }
+
+    public void updateTTC(List<SphericalObstacle> sphericalObstacles, float dt) {
+        // Get isolated velocities
+        List<Vec3> isolatedVelocities = new ArrayList<>();
+        for (SphericalAgent agent : sphericalAgents) {
+            isolatedVelocities.add(agent.getIsolatedVelocity());
+        }
+        // Compute ttc forces
+        List<Vec3> totalTTCForces = new ArrayList<>();
+        for (int i = 0; i < sphericalAgents.size(); i++) {
+            totalTTCForces.add(Vec3.of(0));
+        }
+        for (int i = 0; i < sphericalAgents.size() - 1; i++) {
+            SphericalAgent agentI = sphericalAgents.get(i);
+            Vec3 agentIVel = isolatedVelocities.get(i);
+            for (int j = i + 1; j < sphericalAgents.size(); j++) {
+                // for all i != j
+                SphericalAgent agentJ = sphericalAgents.get(j);
+                Vec3 agentJVel = isolatedVelocities.get(j);
+                Vec3 xji = agentJ.center.minus(agentI.center);
+                if (xji.norm() < 1e-6) {
+                    PApplet.println("too close");
+                    System.exit(-1);
+                }
+                Vec3 vji = agentJVel.minus(agentIVel);
+                // Collision detection
+                final float a = vji.dot(vji);
+                if (a < 1e-6) {
+                    // Almost relatively stationary
+                    continue;
+                }
+                final float b = xji.dot(vji);
+                final float c = xji.dot(xji) - (agentI.description.radius + agentJ.description.radius) * (agentI.description.radius + agentJ.description.radius);
+                float desc = b * b - a * c;
+                if (desc < 0) {
+                    // No collision
+                    continue;
+                }
+                double t1 = (-b - Math.sqrt(desc)) / a;
+                double t2 = (-b + Math.sqrt(desc)) / a;
+                if (t1 < 0 && t2 < 0) {
+                    // (-, -)
+                    // No collision
+                    continue;
+                }
+                double timeToCollision = -1;
+                if ((t1 > 0 && t2 < 0) || (t2 > 0 && t1 < 0)) {
+                    // (+, -) (-, +) case
+                    // collision occurs
+                    timeToCollision = Math.max(t1, t2);
+                } else {
+                    // (+, +) case
+                    // collision occurs
+                    timeToCollision = Math.min(t1, t2);
+                }
+                // Calculate ttcForce
+                double firstTerm = (TTC_K * Math.exp(-timeToCollision / TTC_T0)) / (timeToCollision * timeToCollision * a);
+                double secondTerm = (2 / timeToCollision + 1 / TTC_T0);
+                Vec3 thirdTerm = xji.scale(a).minus(vji.scale(b)).scaleInPlace(1 / (float) Math.sqrt(desc));
+                Vec3 fourthTerm = vji;
+                Vec3 ttcForce = thirdTerm.minus(fourthTerm).scaleInPlace((float) (-1 * firstTerm * secondTerm));
+                // Newtons 3rd law
+                Vec3 agentI_Force = ttcForce;
+                Vec3 agentJ_Force = ttcForce.scale(-1);
+                // Adding to existing ttc forces
+                totalTTCForces.set(i, totalTTCForces.get(i).plusInPlace(agentI_Force));
+                totalTTCForces.set(j, totalTTCForces.get(j).plusInPlace(agentJ_Force));
+            }
+        }
+
+        for (int i = 0; i < sphericalAgents.size(); i++) {
+            SphericalAgent agent = sphericalAgents.get(i);
+            Vec3 isolatedVelocity = isolatedVelocities.get(i);
+            Vec3 ttcForce = totalTTCForces.get(i);
+            Vec3 ttcVelocity = ttcForce.scale(dt);
+            Vec3 displacement = isolatedVelocity.plusInPlace(ttcVelocity).scale(dt);
+            agent.ttcUpdate(displacement);
         }
     }
 
@@ -129,4 +211,5 @@ public class MultiSphericalAgentSystem {
             agent.setPath(multiAgentGraph.weightedAStar(epsilon, i));
         }
     }
+
 }
