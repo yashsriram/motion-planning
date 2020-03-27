@@ -27,7 +27,6 @@ public class ZigZag extends PApplet {
 
     static boolean DRAW_OBSTACLES = true;
     static String SEARCH_ALGORITHM = "";
-    static boolean SMOOTH_PATH = false;
 
     public void settings() {
         size(WIDTH, HEIGHT, P3D);
@@ -79,7 +78,8 @@ public class ZigZag extends PApplet {
 
         ConfigurationSpace configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescriptions.get(0), sphericalObstacles);
         multiSphericalAgentSystem = new MultiSphericalAgentSystem(this, sphericalAgentDescriptions, configurationSpace, minCorner, maxCorner);
-        SphericalAgent.DRAW_FUTURE_STATE = true;
+        MultiSphericalAgentSystem.AGENT_SPEED = 10f;
+        SphericalAgent.DRAW_FUTURE_STATE = false;
         SphericalAgent.DRAW_PATH = true;
         SphericalAgent.DRAW_FUTURE_STATE = false;
         SphericalAgent.DRAW_PATH = false;
@@ -94,11 +94,7 @@ public class ZigZag extends PApplet {
     public void draw() {
         long start = millis();
         // update
-        if (SMOOTH_PATH) {
-            multiSphericalAgentSystem.smoothUpdate(0.1f);
-        } else {
-            multiSphericalAgentSystem.updateBoid(sphericalObstacles, 0.1f);
-        }
+        multiSphericalAgentSystem.updateBoid(sphericalObstacles, 0.1f);
         long update = millis();
         // draw
         background(0);
@@ -112,7 +108,7 @@ public class ZigZag extends PApplet {
         multiSphericalAgentSystem.draw();
         long draw = millis();
 
-        surface.setTitle("Processing - FPS: " + Math.round(frameRate) + " Update: " + (update - start) + "ms Draw " + (draw - update) + "ms" + " search: " + SEARCH_ALGORITHM + " smooth-path: " + SMOOTH_PATH);
+        surface.setTitle("Processing - FPS: " + Math.round(frameRate) + " Update: " + (update - start) + "ms Draw " + (draw - update) + "ms" + " search: " + SEARCH_ALGORITHM);
     }
 
     public void keyPressed() {
@@ -121,9 +117,6 @@ public class ZigZag extends PApplet {
         }
         if (keyCode == LEFT) {
             multiSphericalAgentSystem.stepBackward();
-        }
-        if (key == 'x') {
-            SMOOTH_PATH = !SMOOTH_PATH;
         }
         if (key == 'h') {
             DRAW_OBSTACLES = !DRAW_OBSTACLES;
