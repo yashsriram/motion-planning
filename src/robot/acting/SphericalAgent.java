@@ -14,6 +14,8 @@ public class SphericalAgent {
     public static float NEXT_MILESTONE_HINT_SIZE = 2f;
     public static float MILESTONE_REACHED_RADIUS = 2f;
     public static float SPRITE_CHANGE_DISTANCE_SCALE = 20f;
+    public static boolean DRAW_PATH = true;
+    public static boolean DRAW_FUTURE_STATE = true;
 
     final PApplet parent;
     final SphericalAgentDescription description;
@@ -95,9 +97,9 @@ public class SphericalAgent {
                             .minus(center)
                             .normalizeInPlace();
             Vec3 repelDir = boidVelocity.normalize();
-            if(boidVelocity.norm()!= 0 && repelDir.cross(velocityDir).norm()==0){
+            if (boidVelocity.norm() != 0 && repelDir.cross(velocityDir).norm() == 0) {
                 System.out.println(currentMilestone);
-                currentMilestone+=1 ;
+                currentMilestone += 1;
                 return;
             }
             // move towards next milestone
@@ -109,8 +111,8 @@ public class SphericalAgent {
         }
     }
 
-    public Vec3 boidForce(List<SphericalAgent> flock, List<SphericalObstacle> obstacles, float impactRadius) {
-        Vec3 seperationforce = Vec3.zero();
+    private Vec3 boidForce(List<SphericalAgent> flock, List<SphericalObstacle> obstacles, float impactRadius) {
+        Vec3 separationForce = Vec3.zero();
         Vec3 centroid = Vec3.zero();
         Vec3 alignment = Vec3.zero();
         for (SphericalAgent boid : flock) {
@@ -118,7 +120,7 @@ public class SphericalAgent {
             float distance = force.norm();
             if (distance < impactRadius && distance > 0) {
                 force.normalizeInPlace();
-                seperationforce.plusInPlace(force.scaleInPlace(0.5f * (impactRadius - distance)));
+                separationForce.plusInPlace(force.scaleInPlace(0.5f * (impactRadius - distance)));
                 centroid.plusInPlace((this.center.plus(boid.center)).normalizeInPlace().scaleInPlace(0.05f));
                 Vec3 mydir = path.get(currentMilestone).minus(center).normalizeInPlace();
                 Vec3 udir = boid.path.get(boid.currentMilestone).minus(boid.center).normalizeInPlace();
@@ -126,12 +128,12 @@ public class SphericalAgent {
             }
         }
 
-        Vec3 finalForce = seperationforce.plus(centroid.plus(alignment));
-        Vec3 obstacleAvoidanceForce = Vec3.zero() ;
-        for(SphericalObstacle  obstacle: obstacles){
+        Vec3 finalForce = separationForce.plus(centroid.plus(alignment));
+        Vec3 obstacleAvoidanceForce = Vec3.zero();
+        for (SphericalObstacle obstacle : obstacles) {
             Vec3 force = this.center.minus(obstacle.center);
             float distance = force.norm();
-            if (distance  < this.description.radius + obstacle.radius) {
+            if (distance < this.description.radius + obstacle.radius) {
                 force.normalizeInPlace();
                 obstacleAvoidanceForce.plusInPlace(force.scale(1f));
             }
@@ -172,42 +174,47 @@ public class SphericalAgent {
     }
 
     public void draw() {
-        // path
-        parent.stroke(color.x, color.y, color.z);
-        for (int i = 0; i < path.size() - 1; i++) {
-            Vec3 v1 = path.get(i);
-            Vec3 v2 = path.get(i + 1);
-            parent.line(v1.x, v1.y, v1.z, v2.x, v2.y, v2.z);
+        if (DRAW_PATH) {
+            // path
+            parent.stroke(color.x, color.y, color.z);
+            for (int i = 0; i < path.size() - 1; i++) {
+                Vec3 v1 = path.get(i);
+                Vec3 v2 = path.get(i + 1);
+                parent.line(v1.x, v1.y, v1.z, v2.x, v2.y, v2.z);
+            }
+            parent.noStroke();
         }
-        parent.noStroke();
         // agent
         parent.pushMatrix();
         parent.fill(color.x, color.y, color.z);
         parent.translate(center.x, center.y, center.z);
         parent.sphere(description.radius);
         parent.popMatrix();
-        // next milestone
-        if (currentMilestone < path.size() - 1) {
-            Vec3 nextMilestonePosition = path.get(currentMilestone + 1);
-            parent.pushMatrix();
-            parent.fill(1, 0, 0);
-            parent.translate(nextMilestonePosition.x, nextMilestonePosition.y, nextMilestonePosition.z);
-            parent.sphere(description.radius);
-            parent.popMatrix();
+        if (DRAW_FUTURE_STATE) {
+            // next milestone
+            if (currentMilestone < path.size() - 1) {
+                Vec3 nextMilestonePosition = path.get(currentMilestone + 1);
+                parent.pushMatrix();
+                parent.fill(1, 0, 0);
+                parent.translate(nextMilestonePosition.x, nextMilestonePosition.y, nextMilestonePosition.z);
+                parent.sphere(description.radius);
+                parent.popMatrix();
+            }
         }
     }
 
     public void draw(PShape shape, float normalizedSize) {
-        // path
-        parent.stroke(color.x, color.y, color.z);
-        for (int i = 0; i < path.size() - 1; i++) {
-            Vec3 v1 = path.get(i);
-            Vec3 v2 = path.get(i + 1);
-            parent.line(v1.x, v1.y, v1.z, v2.x, v2.y, v2.z);
+        if (DRAW_PATH) {
+            // path
+            parent.stroke(color.x, color.y, color.z);
+            for (int i = 0; i < path.size() - 1; i++) {
+                Vec3 v1 = path.get(i);
+                Vec3 v2 = path.get(i + 1);
+                parent.line(v1.x, v1.y, v1.z, v2.x, v2.y, v2.z);
+            }
         }
-        parent.noStroke();
-
         // agent
+        parent.noStroke();
         parent.pushMatrix();
         parent.translate(center.x, center.y, center.z);
 //        parent.stroke(color.x, color.y, color.z);
@@ -220,30 +227,32 @@ public class SphericalAgent {
         parent.scale(2 * description.radius / normalizedSize);
         parent.shape(shape);
         parent.popMatrix();
-
-        // next milestone
-        if (currentMilestone < path.size() - 1) {
-            Vec3 nextMilestonePosition = path.get(currentMilestone + 1);
-            parent.pushMatrix();
-            parent.fill(1, 0, 0);
-            parent.noStroke();
-            parent.translate(nextMilestonePosition.x, nextMilestonePosition.y, nextMilestonePosition.z);
-            parent.sphere(NEXT_MILESTONE_HINT_SIZE);
-            parent.popMatrix();
+        if (DRAW_FUTURE_STATE) {
+            // next milestone
+            if (currentMilestone < path.size() - 1) {
+                Vec3 nextMilestonePosition = path.get(currentMilestone + 1);
+                parent.pushMatrix();
+                parent.fill(1, 0, 0);
+                parent.noStroke();
+                parent.translate(nextMilestonePosition.x, nextMilestonePosition.y, nextMilestonePosition.z);
+                parent.sphere(NEXT_MILESTONE_HINT_SIZE);
+                parent.popMatrix();
+            }
         }
     }
 
     public void draw(List<PShape> shapes, float normalizedSize) {
-        // path
-        parent.stroke(color.x, color.y, color.z);
-        for (int i = 0; i < path.size() - 1; i++) {
-            Vec3 v1 = path.get(i);
-            Vec3 v2 = path.get(i + 1);
-            parent.line(v1.x, v1.y, v1.z, v2.x, v2.y, v2.z);
+        if (DRAW_PATH) {
+            // path
+            parent.stroke(color.x, color.y, color.z);
+            for (int i = 0; i < path.size() - 1; i++) {
+                Vec3 v1 = path.get(i);
+                Vec3 v2 = path.get(i + 1);
+                parent.line(v1.x, v1.y, v1.z, v2.x, v2.y, v2.z);
+            }
         }
-        parent.noStroke();
-
         // agent
+        parent.noStroke();
         parent.pushMatrix();
         parent.translate(center.x, center.y, center.z);
 //        parent.stroke(color.x, color.y, color.z);
@@ -256,16 +265,17 @@ public class SphericalAgent {
         parent.scale(2 * description.radius / normalizedSize);
         parent.shape(shapes.get((int) ((distanceCovered / SPRITE_CHANGE_DISTANCE_SCALE) % shapes.size())));
         parent.popMatrix();
-
-        // next milestone
-        if (currentMilestone < path.size() - 1) {
-            Vec3 nextMilestonePosition = path.get(currentMilestone + 1);
-            parent.pushMatrix();
-            parent.fill(1, 0, 0);
-            parent.noStroke();
-            parent.translate(nextMilestonePosition.x, nextMilestonePosition.y, nextMilestonePosition.z);
-            parent.sphere(NEXT_MILESTONE_HINT_SIZE);
-            parent.popMatrix();
+        if (DRAW_FUTURE_STATE) {
+            // next milestone
+            if (currentMilestone < path.size() - 1) {
+                Vec3 nextMilestonePosition = path.get(currentMilestone + 1);
+                parent.pushMatrix();
+                parent.fill(1, 0, 0);
+                parent.noStroke();
+                parent.translate(nextMilestonePosition.x, nextMilestonePosition.y, nextMilestonePosition.z);
+                parent.sphere(NEXT_MILESTONE_HINT_SIZE);
+                parent.popMatrix();
+            }
         }
     }
 

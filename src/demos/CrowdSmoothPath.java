@@ -5,6 +5,7 @@ import fixed.SphericalObstacle;
 import math.Vec3;
 import processing.core.PApplet;
 import robot.acting.MultiSphericalAgentSystem;
+import robot.acting.SphericalAgent;
 import robot.input.SphericalAgentDescription;
 import robot.planning.multiagentgraph.MultiAgentGraph;
 import robot.sensing.ConfigurationSpace;
@@ -24,7 +25,7 @@ public class CrowdSmoothPath extends PApplet {
     MultiSphericalAgentSystem multiSphericalAgentSystem;
     QueasyCam cam;
 
-    static float impactRadius = 10 ;
+    static float impactRadius = 10;
     static boolean DRAW_OBSTACLES = true;
     static String SEARCH_ALGORITHM = "";
     static boolean SMOOTH_PATH = false;
@@ -40,12 +41,20 @@ public class CrowdSmoothPath extends PApplet {
         noStroke();
 
         cam = new QueasyCam(this);
-        sphericalObstacles.add(new SphericalObstacle(
-                this,
-                Vec3.of(0, 0, 0),
-                SIDE * (2f / 20),
-                Vec3.of(1, 0, 1)
-        ));
+        float radiusFactor = 0.04f;
+        float radius = SIDE * radiusFactor;
+        int numRows = 4;
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < numRows; j++) {
+                float zCoordinate = (SIDE - 2 * radius * i) * (j % 2 == 1 ? -1 : 1);
+                sphericalObstacles.add(new SphericalObstacle(
+                        this,
+                        Vec3.of(0, -SIDE + 30 * j + 30, zCoordinate),
+                        radius,
+                        Vec3.of(1, 0, 1)
+                ));
+            }
+        }
         List<SphericalAgentDescription> sphericalAgentDescriptions = new ArrayList<>();
         sphericalAgentDescriptions.add(new SphericalAgentDescription(
                 Vec3.of(0, SIDE * 0.9f, SIDE * -0.9f),
@@ -77,7 +86,6 @@ public class CrowdSmoothPath extends PApplet {
                 Vec3.of(0, SIDE * -0.9f, SIDE * 0.9f),
                 SIDE * (0.5f / 20)
         ));
-
         sphericalAgentDescriptions.add(new SphericalAgentDescription(
                 Vec3.of(0, SIDE * 0.7f, SIDE * -0.85f),
                 Vec3.of(0, SIDE * -0.9f, SIDE * 0.9f),
@@ -96,6 +104,8 @@ public class CrowdSmoothPath extends PApplet {
 
         ConfigurationSpace configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescriptions.get(0), sphericalObstacles);
         multiSphericalAgentSystem = new MultiSphericalAgentSystem(this, sphericalAgentDescriptions, configurationSpace, minCorner, maxCorner);
+        SphericalAgent.DRAW_FUTURE_STATE = false;
+        SphericalAgent.DRAW_PATH = false;
     }
 
     public void draw() {
@@ -104,7 +114,7 @@ public class CrowdSmoothPath extends PApplet {
         if (SMOOTH_PATH) {
             multiSphericalAgentSystem.smoothUpdate(0.1f);
         } else {
-            multiSphericalAgentSystem.updateBoid(sphericalObstacles,impactRadius,0.1f);
+            multiSphericalAgentSystem.updateBoid(sphericalObstacles, impactRadius, 0.1f);
         }
         long update = millis();
         // draw

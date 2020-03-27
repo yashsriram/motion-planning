@@ -77,7 +77,6 @@ public class MultiSphericalAgentSystem {
         multiAgentGraph.draw();
     }
 
-
     public void stepForward() {
         for (SphericalAgent agent : sphericalAgents) {
             agent.stepForward();
