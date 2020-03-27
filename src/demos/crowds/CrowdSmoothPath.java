@@ -1,4 +1,4 @@
-package demos;
+package demos.crowds;
 
 import camera.QueasyCam;
 import fixed.SphericalObstacle;
@@ -154,7 +154,7 @@ public class CrowdSmoothPath extends PApplet {
     }
 
     static public void main(String[] passedArgs) {
-        String[] appletArgs = new String[]{"demos.CrowdSmoothPath"};
+        String[] appletArgs = new String[]{"demos.crowds.CrowdSmoothPath"};
         if (passedArgs != null) {
             PApplet.main(concat(appletArgs, passedArgs));
         } else {
