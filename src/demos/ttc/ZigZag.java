@@ -14,7 +14,7 @@ import robot.sensing.PlainConfigurationSpace;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Basic extends PApplet {
+public class ZigZag extends PApplet {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 800;
     public static final int SIDE = 100;
@@ -23,6 +23,7 @@ public class Basic extends PApplet {
 
     List<SphericalObstacle> sphericalObstacles = new ArrayList<>();
     MultiSphericalAgentSystem multiSphericalAgentSystem;
+    List<SphericalAgentDescription> sphericalAgentDescriptions = new ArrayList<>();
     QueasyCam cam;
 
     static boolean DRAW_OBSTACLES = true;
@@ -40,33 +41,57 @@ public class Basic extends PApplet {
         noStroke();
 
         cam = new QueasyCam(this);
+        float radiusFactor = 0.02f;
+        float obstacleRadius = SIDE * radiusFactor;
+        int numRows = 4;
+        int rowLength = 15;
+        float a = 30;
+        float b = 50;
+        for (int i = 0; i < rowLength; i++) {
+            for (int j = 0; j < numRows; j++) {
+                float zCoordinate = (SIDE - 2 * obstacleRadius * i) * (j % 2 == 1 ? -1 : 1);
+                sphericalObstacles.add(new SphericalObstacle(
+                        this,
+                        Vec3.of(0, -SIDE + a * j + b, zCoordinate),
+                        obstacleRadius,
+                        Vec3.of(1, 0, 1)
+                ));
+            }
+        }
 
-        List<SphericalAgentDescription> sphericalAgentDescriptions = new ArrayList<>();
-        sphericalAgentDescriptions.add(new SphericalAgentDescription(
-                Vec3.of(0, SIDE * 0.9f, -SIDE * 0.9f),
-                Vec3.of(0, -SIDE * 0.9f, SIDE * 0.9f),
-                10
-        ));
-        sphericalAgentDescriptions.add(new SphericalAgentDescription(
-                Vec3.of(0, -SIDE * 0.9f, SIDE * 0.9f),
-                Vec3.of(0, SIDE * 0.9f, -SIDE * 0.9f),
-                5
-        ));
+        Vec3 bottomLeft = Vec3.of(0, SIDE * 0.8f, SIDE * -0.9f);
+        Vec3 topRight = Vec3.of(0, SIDE * -0.9f, SIDE * 0.8f);
+        placeAgents(bottomLeft, topRight);
+        placeAgents(topRight, bottomLeft);
 
         ConfigurationSpace configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescriptions.get(0), sphericalObstacles);
+        MultiSphericalAgentSystem.TTC_K = 10f;
+        MultiSphericalAgentSystem.TTC_T0 = 1f;
+        MultiSphericalAgentSystem.AGENT_SPEED = 20f;
         multiSphericalAgentSystem = new MultiSphericalAgentSystem(this, sphericalAgentDescriptions, configurationSpace, minCorner, maxCorner);
         SphericalAgent.DRAW_FUTURE_STATE = false;
-        SphericalAgent.DRAW_PATH = true;
+        SphericalAgent.DRAW_PATH = false;
+        MultiAgentGraph.DRAW_VERTICES = false;
+    }
+
+    private void placeAgents(Vec3 start, Vec3 finish) {
+        float agentRadius = SIDE * 0.025f;
+        int gridSize = 4;
+        for (int i = 0; i < gridSize; i++) {
+            for (int j = 0; j < gridSize; j++) {
+                sphericalAgentDescriptions.add(new SphericalAgentDescription(
+                        start.plus(Vec3.of(0, 3f * agentRadius * j, 3f * agentRadius * i)),
+                        finish,
+                        agentRadius
+                ));
+            }
+        }
     }
 
     public void draw() {
         long start = millis();
         // update
-        if (SMOOTH_PATH) {
-            multiSphericalAgentSystem.smoothUpdate(0.1f);
-        } else {
-            multiSphericalAgentSystem.updateTTC(sphericalObstacles, 0.1f);
-        }
+        multiSphericalAgentSystem.updateTTC(sphericalObstacles, 0.1f);
         long update = millis();
         // draw
         background(0);
@@ -135,7 +160,7 @@ public class Basic extends PApplet {
     }
 
     static public void main(String[] passedArgs) {
-        String[] appletArgs = new String[]{"demos.ttc.Basic"};
+        String[] appletArgs = new String[]{"demos.ttc.ZigZag"};
         if (passedArgs != null) {
             PApplet.main(concat(appletArgs, passedArgs));
         } else {
