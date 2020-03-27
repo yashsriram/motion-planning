@@ -1,4 +1,4 @@
-package demos;
+package demos.boids;
 
 import camera.QueasyCam;
 import fixed.Ground;
@@ -12,7 +12,6 @@ import robot.acting.MultiSphericalAgentSystem;
 import robot.acting.SphericalAgent;
 import robot.input.SphericalAgentDescription;
 import robot.planning.multiagentgraph.MultiAgentGraph;
-import robot.sensing.ConfigurationSpace;
 import robot.sensing.PlainConfigurationSpace;
 
 import java.util.ArrayList;
@@ -24,18 +23,14 @@ public class MultiWalker extends PApplet {
     public static final int SIDE = 1000;
 
     final Vec3 OFFSET = Vec3.of(100, 100, 0);
-    final Vec3 startPosition = Vec3.of(SIDE * -0.9f, 0, SIDE * -0.9f).plusInPlace(OFFSET);
-    final Vec3 startPosition1 = Vec3.of(SIDE * -0.8f, 0, SIDE * 0.8f).plusInPlace(OFFSET);
     final Vec3 finishPosition = Vec3.of(SIDE * 0.9f, 0, SIDE * 0.9f).plusInPlace(OFFSET);
     final Vec3 minCorner = Vec3.of(-SIDE, 0, -SIDE).plusInPlace(OFFSET);
     final Vec3 maxCorner = Vec3.of(SIDE, 0, SIDE).plusInPlace(OFFSET);
 
-    SphericalAgentDescription sphericalAgentDescription, sphericalAgentDescription1;
+    MultiSphericalAgentSystem multiSphericalAgentSystem;
     List<SphericalAgentDescription> sphericalAgentDescriptions;
     Ground ground;
-    SphericalAgent sphericalAgent, sphericalAgent1;
     List<SphericalObstacle> sphericalObstacles = new ArrayList<>();
-    MultiAgentGraph graph;
     List<PShape> agentWalkCycleShapes = new ArrayList<>();
     List<PShape> obstacleShapes = new ArrayList<>();
     QueasyCam cam;
@@ -88,7 +83,7 @@ public class MultiWalker extends PApplet {
             shape.rotateX(PConstants.PI);
             obstacleShapes.add(shape);
         }
-        int gridSize = 0;
+        int gridSize = 5;
         float randomnessSize = 20;
         for (int i = 0; i < gridSize; i++) {
             for (int j = 0; j < gridSize; j++) {
@@ -111,51 +106,52 @@ public class MultiWalker extends PApplet {
                 ));
             }
         }
-        sphericalAgentDescription = new SphericalAgentDescription(
-                startPosition,
+        sphericalAgentDescriptions.add(new SphericalAgentDescription(
+                Vec3.of(SIDE * -0.9f, 0, SIDE * -0.9f).plusInPlace(OFFSET),
                 finishPosition,
                 SIDE * 0.08f
-        );
-        sphericalAgentDescription1 = new SphericalAgentDescription(
-                startPosition1,
+        ));
+        sphericalAgentDescriptions.add(new SphericalAgentDescription(
+                Vec3.of(SIDE * -0.8f, 0, SIDE * -0.8f).plusInPlace(OFFSET),
                 finishPosition,
                 SIDE * 0.08f
-        );
+        ));
+        sphericalAgentDescriptions.add(new SphericalAgentDescription(
+                Vec3.of(SIDE * -0.6f, 0, SIDE * -0.8f).plusInPlace(OFFSET),
+                finishPosition,
+                SIDE * 0.08f
+        ));
+        sphericalAgentDescriptions.add(new SphericalAgentDescription(
+                Vec3.of(SIDE * -0.95f, 0, SIDE * -0.95f).plusInPlace(OFFSET),
+                finishPosition,
+                SIDE * 0.08f
+        ));
+        sphericalAgentDescriptions.add(new SphericalAgentDescription(
+                Vec3.of(SIDE * -0.7f, 0, SIDE * -0.7f).plusInPlace(OFFSET),
+                finishPosition,
+                SIDE * 0.08f
+        ));
         PlainConfigurationSpace configurationSpace = new PlainConfigurationSpace(
                 this,
-                sphericalAgentDescription,
+                sphericalAgentDescriptions.get(0),
                 sphericalObstacles
         );
-        SphericalAgent.MILESTONE_REACHED_RADIUS = 6f;
+        SphericalAgent.MILESTONE_REACHED_RADIUS = 20f;
         SphericalAgent.NEXT_MILESTONE_HINT_SIZE = 18f;
-        sphericalAgent = new SphericalAgent(
-                this,
-                sphericalAgentDescription,
-                configurationSpace,
-                minCorner, maxCorner,
-                60f,
-                Vec3.of(1)
-        );
-        sphericalAgent1 = new SphericalAgent(
-                this,
-                sphericalAgentDescription1,
-                configurationSpace,
-                minCorner, maxCorner,
-                60f,
-                Vec3.of(1)
-        );
         ground = new Ground(this,
-                OFFSET.plus(Vec3.of(0, sphericalAgentDescription.radius, 0)),
+                OFFSET.plus(Vec3.of(0, SIDE * 0.08f, 0)),
                 Vec3.of(0, 0, 1), Vec3.of(1, 0, 0),
                 2 * SIDE, 2 * SIDE,
                 loadImage("ground6.png"));
         MultiAgentGraph.END_POINT_SIZE = 20f;
-        sphericalAgentDescriptions.add(sphericalAgentDescription);
-        sphericalAgentDescriptions.add(sphericalAgentDescription1);
-
-        graph = new MultiAgentGraph(this, sphericalAgentDescriptions);
-        graph.generateVertices(sphericalAgent.samplePoints(10000), configurationSpace);
-        graph.generateAdjacencies(50, configurationSpace);
+        MultiSphericalAgentSystem.MAX_EDGE_LEN = 50 ;
+        multiSphericalAgentSystem = new MultiSphericalAgentSystem(this,sphericalAgentDescriptions,configurationSpace, minCorner, maxCorner);
+        // tuning parameters
+        SphericalAgent.IMPACT_RADIUS = 100f;
+        SphericalAgent.SEPERATION_FORCE_BOID = 1f;
+        SphericalAgent.SEPERATION_FORCE_OBSTACLE = 1.5f;
+        SphericalAgent.ALIGNMENT_FORCE = 0.02f;
+        SphericalAgent.CENTROID_FORCE = 0.02f;
 
         for (int i = 0; i < 8; i++) {
             PShape agentShape = loadShape("data/robot/" + (i + 1) + ".obj");
@@ -169,10 +165,10 @@ public class MultiWalker extends PApplet {
         long start = millis();
         // update
         if (SMOOTH_PATH) {
-            sphericalAgent.smoothUpdate(0.1f);
+            multiSphericalAgentSystem.smoothUpdate(0.3f);
         } else {
-            sphericalAgent.update(0.1f);
-            sphericalAgent1.update(0.1f);
+            multiSphericalAgentSystem.updateBoid(sphericalObstacles, 0.3f);
+//            sphericalAgent1.update(0.1f);
         }
         long update = millis();
         // draw
@@ -187,23 +183,35 @@ public class MultiWalker extends PApplet {
             }
         }
         // agent
-        sphericalAgent.draw(agentWalkCycleShapes, 5f);
-        sphericalAgent1.draw(agentWalkCycleShapes, 5f);
+        multiSphericalAgentSystem.draw(agentWalkCycleShapes, 5f);
+        checkFinish(multiSphericalAgentSystem);
         // ground
         ground.draw();
         // graph
-        graph.draw();
+//        graph.draw();
         long draw = millis();
 
         surface.setTitle("Processing - FPS: " + Math.round(frameRate) + " Update: " + (update - start) + "ms Draw " + (draw - update) + "ms" + " search: " + SEARCH_ALGORITHM + " smooth-path: " + SMOOTH_PATH);
     }
 
+    private void checkFinish(MultiSphericalAgentSystem multiSphericalAgentSystem) {
+        int i = 0 ;
+        while (i < multiSphericalAgentSystem.sphericalAgents.size()){
+            SphericalAgent agent =  multiSphericalAgentSystem.sphericalAgents.get(i) ;
+            if(agent.hasReachedEnd()){
+               multiSphericalAgentSystem.sphericalAgents.remove(i);
+            }else {
+                i++ ;
+            }
+        }
+    }
+
     public void keyPressed() {
         if (keyCode == RIGHT) {
-            sphericalAgent.stepForward();
+            multiSphericalAgentSystem.stepForward();
         }
         if (keyCode == LEFT) {
-            sphericalAgent.stepBackward();
+            multiSphericalAgentSystem.stepBackward();
         }
         if (key == 'x') {
             SMOOTH_PATH = !SMOOTH_PATH;
@@ -218,34 +226,33 @@ public class MultiWalker extends PApplet {
             MultiAgentGraph.DRAW_EDGES = !MultiAgentGraph.DRAW_EDGES;
         }
         if (key == 'p') {
-            sphericalAgent.isPaused = !sphericalAgent.isPaused;
+            multiSphericalAgentSystem.togglePause();
         }
         if (key == '1') {
-            sphericalAgent.setPath(graph.dfs());
+            multiSphericalAgentSystem.dfs();
             SEARCH_ALGORITHM = "DFS";
         }
         if (key == '2') {
-            sphericalAgent.setPath(graph.bfs());
+            multiSphericalAgentSystem.bfs();
             SEARCH_ALGORITHM = "BFS";
         }
         if (key == '3') {
-            sphericalAgent.setPath(graph.ucs());
+            multiSphericalAgentSystem.ucs();
             SEARCH_ALGORITHM = "UCS";
         }
         if (key == '4') {
-            sphericalAgent.setPath(graph.aStar(0));
-            sphericalAgent1.setPath(graph.aStar(1));
+            multiSphericalAgentSystem.aStar();
             SEARCH_ALGORITHM = "A*";
         }
         if (key == '5') {
             float weight = 1.5f;
-            sphericalAgent.setPath(graph.weightedAStar(weight));
+            multiSphericalAgentSystem.weightedAStar(weight);
             SEARCH_ALGORITHM = weight + "A*";
         }
     }
 
     static public void main(String[] passedArgs) {
-        String[] appletArgs = new String[]{"demos.MultiWalker"};
+        String[] appletArgs = new String[]{"demos.boids.MultiWalker"};
         if (passedArgs != null) {
             PApplet.main(concat(appletArgs, passedArgs));
         } else {

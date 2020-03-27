@@ -16,6 +16,11 @@ public class SphericalAgent {
     public static float SPRITE_CHANGE_DISTANCE_SCALE = 20f;
     public static boolean DRAW_PATH = true;
     public static boolean DRAW_FUTURE_STATE = true;
+    public static float SEPERATION_FORCE_BOID = 0.5f;
+    public static float SEPERATION_FORCE_OBSTACLE = 1f;
+    public static float ALIGNMENT_FORCE = 0.02f;
+    public static float CENTROID_FORCE = 0.05f;
+    public static float IMPACT_RADIUS = 10f;
 
     final PApplet parent;
     final SphericalAgentDescription description;
@@ -73,7 +78,7 @@ public class SphericalAgent {
         }
     }
 
-    public void boidUpdate(List<SphericalAgent> flock, List<SphericalObstacle> obstacles, float impactRadius, float dt) {
+    public void boidUpdate(List<SphericalAgent> flock, List<SphericalObstacle> obstacles, float dt) {
         if (isPaused) {
             return;
         }
@@ -91,7 +96,7 @@ public class SphericalAgent {
                 }
             }
 
-            Vec3 boidVelocity = boidForce(flock, obstacles, impactRadius);
+            Vec3 boidVelocity = boidForce(flock, obstacles);
             Vec3 velocityDir =
                     path.get(currentMilestone + 1)
                             .minus(center)
@@ -103,31 +108,31 @@ public class SphericalAgent {
                 return;
             }
             // move towards next milestone
-
+            velocityDir.scaleInPlace(speed);
             velocityDir.plusInPlace(boidVelocity);
-            Vec3 displacement = velocityDir.scaleInPlace(speed * dt);
+            Vec3 displacement = velocityDir.scaleInPlace(dt);
             center.plusInPlace(displacement);
             distanceCovered += displacement.norm();
         }
     }
 
-    private Vec3 boidForce(List<SphericalAgent> flock, List<SphericalObstacle> obstacles, float impactRadius) {
+    private Vec3 boidForce(List<SphericalAgent> flock, List<SphericalObstacle> obstacles) {
         Vec3 separationForce = Vec3.zero();
         Vec3 centroid = Vec3.zero();
         Vec3 alignment = Vec3.zero();
         for (SphericalAgent boid : flock) {
             Vec3 force = this.center.minus(boid.center);
             float distance = force.norm();
-            if (distance < impactRadius && distance > 0) {
+            if (distance < IMPACT_RADIUS && distance > 0) {
                 force.normalizeInPlace();
-                separationForce.plusInPlace(force.scaleInPlace(0.5f * (impactRadius - distance)));
-                centroid.plusInPlace((this.center.plus(boid.center)).normalizeInPlace().scaleInPlace(0.05f));
+                separationForce.plusInPlace(force.scaleInPlace(SEPERATION_FORCE_BOID * (IMPACT_RADIUS - distance)));
+                centroid.plusInPlace((this.center.plus(boid.center)).normalizeInPlace().scaleInPlace(CENTROID_FORCE));
                 Vec3 mydir = path.get(currentMilestone).minus(center).normalizeInPlace();
                 Vec3 udir = boid.path.get(boid.currentMilestone).minus(boid.center).normalizeInPlace();
-                alignment.plusInPlace((udir.minus(mydir)).normalizeInPlace().scaleInPlace(0.02f));
+                alignment.plusInPlace((udir.minus(mydir)));
             }
         }
-
+        alignment.normalizeInPlace().scaleInPlace(ALIGNMENT_FORCE);
         Vec3 finalForce = separationForce.plus(centroid.plus(alignment));
         Vec3 obstacleAvoidanceForce = Vec3.zero();
         for (SphericalObstacle obstacle : obstacles) {
@@ -135,7 +140,7 @@ public class SphericalAgent {
             float distance = force.norm();
             if (distance < this.description.radius + obstacle.radius) {
                 force.normalizeInPlace();
-                obstacleAvoidanceForce.plusInPlace(force.scale(1f));
+                obstacleAvoidanceForce.plusInPlace(force.scale(SEPERATION_FORCE_OBSTACLE));
             }
         }
 
@@ -317,4 +322,7 @@ public class SphericalAgent {
         return samples;
     }
 
+    public boolean hasReachedEnd() {
+        return currentMilestone==path.size()-1;
+    }
 }

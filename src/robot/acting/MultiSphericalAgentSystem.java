@@ -18,7 +18,7 @@ public class MultiSphericalAgentSystem {
     final PApplet parent;
     final ConfigurationSpace configurationSpace;
     final MultiAgentGraph multiAgentGraph;
-    final List<SphericalAgent> sphericalAgents = new ArrayList<>();
+    public List<SphericalAgent> sphericalAgents = new ArrayList<>();
 
     public MultiSphericalAgentSystem(PApplet parent, List<SphericalAgentDescription> sphericalAgentDescriptions, ConfigurationSpace configurationSpace, Vec3 minCorner, Vec3 maxCorner) {
         this.parent = parent;
@@ -53,9 +53,9 @@ public class MultiSphericalAgentSystem {
         }
     }
 
-    public void updateBoid(List<SphericalObstacle> obstacles, float impactRadius, float dt){
+    public void updateBoid(List<SphericalObstacle> obstacles, float dt){
         for(SphericalAgent agent : sphericalAgents){
-            agent.boidUpdate(sphericalAgents, obstacles, impactRadius, dt);
+            agent.boidUpdate(sphericalAgents, obstacles, dt);
         }
     }
 
