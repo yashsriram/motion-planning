@@ -1,4 +1,4 @@
-package demos.crowds;
+package demos.boids;
 
 import camera.QueasyCam;
 import fixed.SphericalObstacle;
@@ -14,7 +14,7 @@ import robot.sensing.PlainConfigurationSpace;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CrowdSmoothPath extends PApplet {
+public class ZigZag extends PApplet {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 800;
     public static final int SIDE = 100;
@@ -160,7 +160,7 @@ public class CrowdSmoothPath extends PApplet {
     }
 
     static public void main(String[] passedArgs) {
-        String[] appletArgs = new String[]{"demos.crowds.CrowdSmoothPath"};
+        String[] appletArgs = new String[]{"demos.boids.ZigZag"};
         if (passedArgs != null) {
             PApplet.main(concat(appletArgs, passedArgs));
         } else {
