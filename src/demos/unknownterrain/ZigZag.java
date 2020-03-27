@@ -44,15 +44,18 @@ public class ZigZag extends PApplet {
 
         cam = new QueasyCam(this);
         float radiusFactor = 0.04f;
-        float radius = SIDE * radiusFactor;
+        float obstacleRadius = SIDE * radiusFactor;
         int numRows = 4;
-        for (int i = 0; i < 15; i++) {
+        int rowLength = 15;
+        float a = 30;
+        float b = 30;
+        for (int i = 0; i < rowLength; i++) {
             for (int j = 0; j < numRows; j++) {
-                float zCoordinate = (SIDE - 2 * radius * i) * (j % 2 == 1 ? -1 : 1);
+                float zCoordinate = (SIDE - 2 * obstacleRadius * i) * (j % 2 == 1 ? -1 : 1);
                 sphericalObstacles.add(new SphericalObstacle(
                         this,
-                        Vec3.of(0, -SIDE + 30 * j + 30, zCoordinate),
-                        radius,
+                        Vec3.of(0, -SIDE + a * j + b, zCoordinate),
+                        obstacleRadius,
                         Vec3.of(1, 0, 1)
                 ));
             }
