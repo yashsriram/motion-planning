@@ -58,6 +58,8 @@ milestones, and edges.
     - [ ] (vel dir * speed + (boidsforce * dt)) * * dt
     - [ ] alignment normalize after all
     - [ ] refactor tuning params
+    - [ ] avoid collisions with obstacles
+    - [ ] multi walker, need to be able to reset
 
 ### Crowd/Flocking Simulation (Required) (80 Points)
 Simulate multiple agents sharing the environment as follows:
