@@ -77,10 +77,14 @@ public class HumanChain extends PApplet {
         finishPositions.add(Vec3.of(SIDE * 0.6f, 0, SIDE * 0.8f).plusInPlace(OFFSET));
 
 
-
+        Vec3 center = Vec3.of(SIDE * -0.5f, 0, SIDE * -0.5f);
+        float crowdRadius = SIDE*0.2f ;
         for(int i = 0 ; i < finishPositions.size(); i++){
+            float theta = random(0, 2*PI);
+            float r = (float) (crowdRadius*Math.sqrt(random(0,1)));
+            Vec3 start = center.plus(Vec3.of(r*sin(theta), 0, r*cos(theta)));
             sphericalAgentDescriptions.add(new SphericalAgentDescription(
-                    Vec3.of(SIDE * -0.9f, 0, SIDE * -0.9f).plusInPlace(OFFSET),
+                    start.plusInPlace(OFFSET),
                     finishPositions.get(i),
                     SIDE * 0.08f
             ));
