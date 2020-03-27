@@ -3,14 +3,14 @@ package robot.acting;
 import math.Vec3;
 import processing.core.PApplet;
 import robot.input.SphericalAgentDescription;
-import robot.planning.anytimegraph.AnytimeGraph;
-import robot.planning.anytimegraph.Vertex;
+import robot.planning.replanninggraph.ReplanningGraph;
+import robot.planning.replanninggraph.Vertex;
 import robot.sensing.ConfigurationSpace;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AnytimeSphericalAgent {
+public class ReplanningSphericalAgent {
     public enum Algorithm {
         DFS, BFS, UCS, AStar, WeightedAStar
     }
@@ -26,7 +26,7 @@ public class AnytimeSphericalAgent {
     final Vec3 color;
     final Vec3 minCorner;
     final Vec3 maxCorner;
-    public final AnytimeGraph anytimeGraph;
+    public final ReplanningGraph replanningGraph;
     public Algorithm algorithm;
 
     Vec3 center;
@@ -35,15 +35,15 @@ public class AnytimeSphericalAgent {
     float distanceCovered = 0;
     public boolean isPaused = false;
 
-    public AnytimeSphericalAgent(final PApplet parent,
-                                 final SphericalAgentDescription description,
-                                 final ConfigurationSpace configurationSpace,
-                                 Vec3 minCorner, Vec3 maxCorner,
-                                 float speed,
-                                 Vec3 color,
-                                 int numSamples,
-                                 float maxEdgeLen,
-                                 Algorithm algorithm) {
+    public ReplanningSphericalAgent(final PApplet parent,
+                                    final SphericalAgentDescription description,
+                                    final ConfigurationSpace configurationSpace,
+                                    Vec3 minCorner, Vec3 maxCorner,
+                                    float speed,
+                                    Vec3 color,
+                                    int numSamples,
+                                    float maxEdgeLen,
+                                    Algorithm algorithm) {
         this.parent = parent;
         this.description = description;
         this.configurationSpace = configurationSpace;
@@ -51,12 +51,12 @@ public class AnytimeSphericalAgent {
         this.color = color;
         this.minCorner = minCorner;
         this.maxCorner = maxCorner;
-        this.anytimeGraph = new AnytimeGraph(parent, description.startPosition, description.finishPosition);
-        anytimeGraph.generateGraph(samplePoints(numSamples), maxEdgeLen);
+        this.replanningGraph = new ReplanningGraph(parent, description.startPosition, description.finishPosition);
+        replanningGraph.generateGraph(samplePoints(numSamples), maxEdgeLen);
         this.algorithm = algorithm;
 
         this.center = Vec3.of(description.startPosition);
-        this.path.add(anytimeGraph.start);
+        this.path.add(replanningGraph.start);
     }
 
     public void update(float dt) {
@@ -132,7 +132,7 @@ public class AnytimeSphericalAgent {
 
     public void draw() {
         // graph
-        anytimeGraph.draw();
+        replanningGraph.draw();
         // path
         parent.stroke(color.x, color.y, color.z);
         for (int i = 0; i < path.size() - 1; i++) {
@@ -159,25 +159,25 @@ public class AnytimeSphericalAgent {
     }
 
     private void replan() {
-        boolean obstaclesDetected = anytimeGraph.senseAndUpdate(center, SENSE_RADIUS, configurationSpace);
+        boolean obstaclesDetected = replanningGraph.senseAndUpdate(center, SENSE_RADIUS, configurationSpace);
         if (!obstaclesDetected && path.size() > 1) {
             return;
         }
         switch (algorithm) {
             case DFS:
-                path = anytimeGraph.dfs(path.get(currentMilestone));
+                path = replanningGraph.dfs(path.get(currentMilestone));
                 break;
             case BFS:
-                path = anytimeGraph.bfs(path.get(currentMilestone));
+                path = replanningGraph.bfs(path.get(currentMilestone));
                 break;
             case UCS:
-                path = anytimeGraph.ucs(path.get(currentMilestone));
+                path = replanningGraph.ucs(path.get(currentMilestone));
                 break;
             case AStar:
-                path = anytimeGraph.aStar(path.get(currentMilestone));
+                path = replanningGraph.aStar(path.get(currentMilestone));
                 break;
             case WeightedAStar:
-                path = anytimeGraph.weightedAStar(path.get(currentMilestone), 1.5f);
+                path = replanningGraph.weightedAStar(path.get(currentMilestone), 1.5f);
                 break;
         }
         currentMilestone = 0;

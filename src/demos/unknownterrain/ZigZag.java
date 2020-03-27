@@ -4,9 +4,9 @@ import camera.QueasyCam;
 import fixed.SphericalObstacle;
 import math.Vec3;
 import processing.core.PApplet;
-import robot.acting.AnytimeSphericalAgent;
+import robot.acting.ReplanningSphericalAgent;
 import robot.input.SphericalAgentDescription;
-import robot.planning.anytimegraph.AnytimeGraph;
+import robot.planning.replanninggraph.ReplanningGraph;
 import robot.sensing.PlainConfigurationSpace;
 
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ public class ZigZag extends PApplet {
     final Vec3 startPosition = Vec3.of(0, SIDE * 0.9f, SIDE * -0.9f);
     final Vec3 finishPosition = Vec3.of(0, SIDE * -0.9f, SIDE * 0.9f);
     SphericalAgentDescription sphericalAgentDescription;
-    AnytimeSphericalAgent anytimeSphericalAgent;
+    ReplanningSphericalAgent replanningSphericalAgent;
     List<SphericalObstacle> sphericalObstacles = new ArrayList<>();
     PlainConfigurationSpace configurationSpace;
 
@@ -85,7 +85,7 @@ public class ZigZag extends PApplet {
     }
 
     private void reset() {
-        anytimeSphericalAgent = new AnytimeSphericalAgent(
+        replanningSphericalAgent = new ReplanningSphericalAgent(
                 this,
                 sphericalAgentDescription,
                 configurationSpace,
@@ -94,26 +94,26 @@ public class ZigZag extends PApplet {
                 Vec3.of(1),
                 5000,
                 5,
-                AnytimeSphericalAgent.Algorithm.AStar);
+                ReplanningSphericalAgent.Algorithm.AStar);
         ALGORITHM = "A*";
-        anytimeSphericalAgent.isPaused = true;
+        replanningSphericalAgent.isPaused = true;
     }
 
     public void draw() {
         if (keyPressed) {
             if (keyCode == RIGHT) {
-                anytimeSphericalAgent.stepForward();
+                replanningSphericalAgent.stepForward();
             }
             if (keyCode == LEFT) {
-                anytimeSphericalAgent.stepBackward();
+                replanningSphericalAgent.stepBackward();
             }
         }
         long start = millis();
         // update
         if (SMOOTH_PATH) {
-            anytimeSphericalAgent.smoothUpdate(0.1f);
+            replanningSphericalAgent.smoothUpdate(0.1f);
         } else {
-            anytimeSphericalAgent.update(0.1f);
+            replanningSphericalAgent.update(0.1f);
         }
         long update = millis();
         // draw
@@ -125,7 +125,7 @@ public class ZigZag extends PApplet {
             }
         }
         // agent
-        anytimeSphericalAgent.draw();
+        replanningSphericalAgent.draw();
         // configuration space
         configurationSpace.draw();
         long draw = millis();
@@ -141,35 +141,35 @@ public class ZigZag extends PApplet {
             DRAW_OBSTACLES = !DRAW_OBSTACLES;
         }
         if (key == 'k') {
-            AnytimeGraph.DRAW_VERTICES = !AnytimeGraph.DRAW_VERTICES;
+            ReplanningGraph.DRAW_VERTICES = !ReplanningGraph.DRAW_VERTICES;
         }
         if (key == 'j') {
-            AnytimeGraph.DRAW_EDGES = !AnytimeGraph.DRAW_EDGES;
+            ReplanningGraph.DRAW_EDGES = !ReplanningGraph.DRAW_EDGES;
         }
         if (key == 'p') {
-            anytimeSphericalAgent.isPaused = !anytimeSphericalAgent.isPaused;
+            replanningSphericalAgent.isPaused = !replanningSphericalAgent.isPaused;
         }
         if (key == 'r') {
             reset();
         }
         if (key == '1') {
-            anytimeSphericalAgent.algorithm = AnytimeSphericalAgent.Algorithm.DFS;
+            replanningSphericalAgent.algorithm = ReplanningSphericalAgent.Algorithm.DFS;
             ALGORITHM = "DFS";
         }
         if (key == '2') {
-            anytimeSphericalAgent.algorithm = AnytimeSphericalAgent.Algorithm.BFS;
+            replanningSphericalAgent.algorithm = ReplanningSphericalAgent.Algorithm.BFS;
             ALGORITHM = "BFS";
         }
         if (key == '3') {
-            anytimeSphericalAgent.algorithm = AnytimeSphericalAgent.Algorithm.UCS;
+            replanningSphericalAgent.algorithm = ReplanningSphericalAgent.Algorithm.UCS;
             ALGORITHM = "UCS";
         }
         if (key == '4') {
-            anytimeSphericalAgent.algorithm = AnytimeSphericalAgent.Algorithm.AStar;
+            replanningSphericalAgent.algorithm = ReplanningSphericalAgent.Algorithm.AStar;
             ALGORITHM = "A*";
         }
         if (key == '5') {
-            anytimeSphericalAgent.algorithm = AnytimeSphericalAgent.Algorithm.WeightedAStar;
+            replanningSphericalAgent.algorithm = ReplanningSphericalAgent.Algorithm.WeightedAStar;
             ALGORITHM = "weighted A*";
         }
     }
