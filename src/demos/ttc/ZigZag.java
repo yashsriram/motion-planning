@@ -28,7 +28,6 @@ public class ZigZag extends PApplet {
 
     static boolean DRAW_OBSTACLES = true;
     static String SEARCH_ALGORITHM = "";
-    static boolean SMOOTH_PATH = false;
 
     public void settings() {
         size(WIDTH, HEIGHT, P3D);
@@ -44,7 +43,7 @@ public class ZigZag extends PApplet {
         float radiusFactor = 0.06f;
         float obstacleRadius = SIDE * radiusFactor;
         int numRows = 4;
-        int rowLength = 0;
+        int rowLength = 10;
         float a = 30;
         float b = 50;
         for (int i = 0; i < rowLength; i++) {
@@ -59,16 +58,17 @@ public class ZigZag extends PApplet {
             }
         }
 
-        Vec3 bottomLeft = Vec3.of(0, SIDE * 0.8f, SIDE * -0.9f);
-        Vec3 topRight = Vec3.of(0, SIDE * -0.9f, SIDE * 0.8f);
+        Vec3 bottomLeft = Vec3.of(0, SIDE * 0.7f, SIDE * -0.9f);
+        Vec3 topRight = Vec3.of(0, SIDE * -0.9f, SIDE * 0.7f);
         placeAgents(bottomLeft, topRight);
         placeAgents(topRight, bottomLeft);
 
         ConfigurationSpace configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescriptions.get(0), sphericalObstacles);
+        MultiSphericalAgentSystem.INITIAL_AGENT_SPEED = 10f;
         MultiSphericalAgentSystem.COLOR_SPLIT = true;
-        MultiSphericalAgentSystem.TTC_K = 10f;
+        MultiSphericalAgentSystem.TTC_K = 100f;
         MultiSphericalAgentSystem.TTC_T0 = 1f;
-        MultiSphericalAgentSystem.AGENT_SPEED = 20f;
+        MultiSphericalAgentSystem.TTC_MAX_FORCE = 200;
         multiSphericalAgentSystem = new MultiSphericalAgentSystem(this, sphericalAgentDescriptions, configurationSpace, minCorner, maxCorner);
         SphericalAgent.DRAW_FUTURE_STATE = false;
         SphericalAgent.DRAW_PATH = false;
@@ -76,8 +76,8 @@ public class ZigZag extends PApplet {
     }
 
     private void placeAgents(Vec3 start, Vec3 finish) {
-        float agentRadius = SIDE * 0.025f;
-        int gridSize = 4;
+        float agentRadius = SIDE * 0.03f;
+        int gridSize = 3;
         for (int i = 0; i < gridSize; i++) {
             for (int j = 0; j < gridSize; j++) {
                 sphericalAgentDescriptions.add(new SphericalAgentDescription(
@@ -106,7 +106,7 @@ public class ZigZag extends PApplet {
         multiSphericalAgentSystem.draw();
         long draw = millis();
 
-        surface.setTitle("Processing - FPS: " + Math.round(frameRate) + " Update: " + (update - start) + "ms Draw " + (draw - update) + "ms" + " search: " + SEARCH_ALGORITHM + " smooth-path: " + SMOOTH_PATH);
+        surface.setTitle("Processing - FPS: " + Math.round(frameRate) + " Update: " + (update - start) + "ms Draw " + (draw - update) + "ms" + " search: " + SEARCH_ALGORITHM + " speed " + MultiSphericalAgentSystem.INITIAL_AGENT_SPEED);
     }
 
     public void keyPressed() {
@@ -115,9 +115,6 @@ public class ZigZag extends PApplet {
         }
         if (keyCode == LEFT) {
             multiSphericalAgentSystem.stepBackward();
-        }
-        if (key == 'x') {
-            SMOOTH_PATH = !SMOOTH_PATH;
         }
         if (key == 'h') {
             DRAW_OBSTACLES = !DRAW_OBSTACLES;
