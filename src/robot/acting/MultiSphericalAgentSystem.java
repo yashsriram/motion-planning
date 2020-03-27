@@ -3,6 +3,7 @@ package robot.acting;
 import fixed.SphericalObstacle;
 import math.Vec3;
 import processing.core.PApplet;
+import processing.core.PShape;
 import robot.input.SphericalAgentDescription;
 import robot.planning.multiagentgraph.MultiAgentGraph;
 import robot.sensing.ConfigurationSpace;
@@ -52,9 +53,9 @@ public class MultiSphericalAgentSystem {
         }
     }
 
-    public void updateBoid(List<SphericalObstacle> obstacles, float dt){
+    public void updateBoid(List<SphericalObstacle> obstacles, float impactRadius, float dt){
         for(SphericalAgent agent : sphericalAgents){
-            agent.boidUpdate(sphericalAgents, obstacles, dt);
+            agent.boidUpdate(sphericalAgents, obstacles, impactRadius, dt);
         }
     }
 
@@ -66,6 +67,16 @@ public class MultiSphericalAgentSystem {
         // graph
         multiAgentGraph.draw();
     }
+
+    public void draw(List<PShape> agentWalkCycleShapes, float size) {
+        // agents
+        for (SphericalAgent agent : sphericalAgents) {
+            agent.draw(agentWalkCycleShapes, size);
+        }
+        // graph
+        multiAgentGraph.draw();
+    }
+
 
     public void stepForward() {
         for (SphericalAgent agent : sphericalAgents) {
@@ -119,5 +130,4 @@ public class MultiSphericalAgentSystem {
             agent.setPath(multiAgentGraph.weightedAStar(epsilon, i));
         }
     }
-
 }

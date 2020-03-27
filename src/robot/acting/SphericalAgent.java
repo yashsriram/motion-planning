@@ -71,7 +71,7 @@ public class SphericalAgent {
         }
     }
 
-    public void boidUpdate(List<SphericalAgent> flock, List<SphericalObstacle> obstacles, float dt) {
+    public void boidUpdate(List<SphericalAgent> flock, List<SphericalObstacle> obstacles, float impactRadius, float dt) {
         if (isPaused) {
             return;
         }
@@ -89,7 +89,7 @@ public class SphericalAgent {
                 }
             }
 
-            Vec3 boidVelocity = boidForce(flock, obstacles);
+            Vec3 boidVelocity = boidForce(flock, obstacles, impactRadius);
             Vec3 velocityDir =
                     path.get(currentMilestone + 1)
                             .minus(center)
@@ -109,16 +109,16 @@ public class SphericalAgent {
         }
     }
 
-    public Vec3 boidForce(List<SphericalAgent> flock, List<SphericalObstacle> obstacles) {
+    public Vec3 boidForce(List<SphericalAgent> flock, List<SphericalObstacle> obstacles, float impactRadius) {
         Vec3 seperationforce = Vec3.zero();
         Vec3 centroid = Vec3.zero();
         Vec3 alignment = Vec3.zero();
         for (SphericalAgent boid : flock) {
             Vec3 force = this.center.minus(boid.center);
             float distance = force.norm();
-            if (distance < 10 && distance > 0) {
+            if (distance < impactRadius && distance > 0) {
                 force.normalizeInPlace();
-                seperationforce.plusInPlace(force.scaleInPlace(0.5f * (10 - distance)));
+                seperationforce.plusInPlace(force.scaleInPlace(0.5f * (impactRadius - distance)));
                 centroid.plusInPlace((this.center.plus(boid.center)).normalizeInPlace().scaleInPlace(0.05f));
                 Vec3 mydir = path.get(currentMilestone).minus(center).normalizeInPlace();
                 Vec3 udir = boid.path.get(boid.currentMilestone).minus(boid.center).normalizeInPlace();

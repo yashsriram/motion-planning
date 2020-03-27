@@ -24,6 +24,7 @@ public class CrowdSmoothPath extends PApplet {
     MultiSphericalAgentSystem multiSphericalAgentSystem;
     QueasyCam cam;
 
+    static float impactRadius = 10 ;
     static boolean DRAW_OBSTACLES = true;
     static String SEARCH_ALGORITHM = "";
     static boolean SMOOTH_PATH = false;
@@ -103,7 +104,7 @@ public class CrowdSmoothPath extends PApplet {
         if (SMOOTH_PATH) {
             multiSphericalAgentSystem.smoothUpdate(0.1f);
         } else {
-            multiSphericalAgentSystem.updateBoid(sphericalObstacles,0.1f);
+            multiSphericalAgentSystem.updateBoid(sphericalObstacles,impactRadius,0.1f);
         }
         long update = millis();
         // draw

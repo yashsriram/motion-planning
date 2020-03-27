@@ -8,28 +8,32 @@ import math.Vec3;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PShape;
+import robot.acting.MultiSphericalAgentSystem;
 import robot.acting.SphericalAgent;
 import robot.input.SphericalAgentDescription;
 import robot.planning.multiagentgraph.MultiAgentGraph;
+import robot.sensing.ConfigurationSpace;
 import robot.sensing.PlainConfigurationSpace;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class WalkCycle extends PApplet {
+public class MultiWalker extends PApplet {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 800;
     public static final int SIDE = 1000;
 
     final Vec3 OFFSET = Vec3.of(100, 100, 0);
     final Vec3 startPosition = Vec3.of(SIDE * -0.9f, 0, SIDE * -0.9f).plusInPlace(OFFSET);
+    final Vec3 startPosition1 = Vec3.of(SIDE * -0.8f, 0, SIDE * 0.8f).plusInPlace(OFFSET);
     final Vec3 finishPosition = Vec3.of(SIDE * 0.9f, 0, SIDE * 0.9f).plusInPlace(OFFSET);
     final Vec3 minCorner = Vec3.of(-SIDE, 0, -SIDE).plusInPlace(OFFSET);
     final Vec3 maxCorner = Vec3.of(SIDE, 0, SIDE).plusInPlace(OFFSET);
 
-    SphericalAgentDescription sphericalAgentDescription;
+    SphericalAgentDescription sphericalAgentDescription, sphericalAgentDescription1;
+    List<SphericalAgentDescription> sphericalAgentDescriptions;
     Ground ground;
-    SphericalAgent sphericalAgent;
+    SphericalAgent sphericalAgent, sphericalAgent1;
     List<SphericalObstacle> sphericalObstacles = new ArrayList<>();
     MultiAgentGraph graph;
     List<PShape> agentWalkCycleShapes = new ArrayList<>();
@@ -51,6 +55,7 @@ public class WalkCycle extends PApplet {
         noStroke();
         cam = new QueasyCam(this);
         cam.speed = 10f;
+        sphericalAgentDescriptions = new ArrayList<>();
 
         for (int i = 0; i < 7; i++) {
             if (i == 0) {
@@ -111,7 +116,11 @@ public class WalkCycle extends PApplet {
                 finishPosition,
                 SIDE * 0.08f
         );
-
+        sphericalAgentDescription1 = new SphericalAgentDescription(
+                startPosition1,
+                finishPosition,
+                SIDE * 0.08f
+        );
         PlainConfigurationSpace configurationSpace = new PlainConfigurationSpace(
                 this,
                 sphericalAgentDescription,
@@ -127,13 +136,24 @@ public class WalkCycle extends PApplet {
                 60f,
                 Vec3.of(1)
         );
+        sphericalAgent1 = new SphericalAgent(
+                this,
+                sphericalAgentDescription1,
+                configurationSpace,
+                minCorner, maxCorner,
+                60f,
+                Vec3.of(1)
+        );
         ground = new Ground(this,
                 OFFSET.plus(Vec3.of(0, sphericalAgentDescription.radius, 0)),
                 Vec3.of(0, 0, 1), Vec3.of(1, 0, 0),
                 2 * SIDE, 2 * SIDE,
                 loadImage("ground6.png"));
         MultiAgentGraph.END_POINT_SIZE = 20f;
-        graph = new MultiAgentGraph(this, startPosition, finishPosition);
+        sphericalAgentDescriptions.add(sphericalAgentDescription);
+        sphericalAgentDescriptions.add(sphericalAgentDescription1);
+
+        graph = new MultiAgentGraph(this, sphericalAgentDescriptions);
         graph.generateVertices(sphericalAgent.samplePoints(10000), configurationSpace);
         graph.generateAdjacencies(50, configurationSpace);
 
@@ -152,6 +172,7 @@ public class WalkCycle extends PApplet {
             sphericalAgent.smoothUpdate(0.1f);
         } else {
             sphericalAgent.update(0.1f);
+            sphericalAgent1.update(0.1f);
         }
         long update = millis();
         // draw
@@ -167,6 +188,7 @@ public class WalkCycle extends PApplet {
         }
         // agent
         sphericalAgent.draw(agentWalkCycleShapes, 5f);
+        sphericalAgent1.draw(agentWalkCycleShapes, 5f);
         // ground
         ground.draw();
         // graph
@@ -212,6 +234,7 @@ public class WalkCycle extends PApplet {
         }
         if (key == '4') {
             sphericalAgent.setPath(graph.aStar());
+            sphericalAgent1.setPath(graph.aStar());
             SEARCH_ALGORITHM = "A*";
         }
         if (key == '5') {
@@ -222,7 +245,7 @@ public class WalkCycle extends PApplet {
     }
 
     static public void main(String[] passedArgs) {
-        String[] appletArgs = new String[]{"demos.WalkCycle"};
+        String[] appletArgs = new String[]{"demos.MultiWalker"};
         if (passedArgs != null) {
             PApplet.main(concat(appletArgs, passedArgs));
         } else {
