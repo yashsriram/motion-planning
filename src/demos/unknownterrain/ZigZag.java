@@ -43,37 +43,19 @@ public class ZigZag extends PApplet {
         noStroke();
 
         cam = new QueasyCam(this);
-        for (int i = 0; i < 9; i++) {
-            sphericalObstacles.add(new SphericalObstacle(
-                    this,
-                    Vec3.of(0, SIDE * 0.9f - 20, SIDE * -0.9f + 20 * i - 10),
-                    SIDE * 0.08f,
-                    Vec3.of(1, 0, 1)
-            ));
-        }
-        for (int i = 0; i < 9; i++) {
-            sphericalObstacles.add(new SphericalObstacle(
-                    this,
-                    Vec3.of(0, SIDE * 0.9f - 60, SIDE * -0.5f + 20 * i - 10),
-                    SIDE * 0.08f,
-                    Vec3.of(1, 0, 1)
-            ));
-        }
-        for (int i = 0; i < 9; i++) {
-            sphericalObstacles.add(new SphericalObstacle(
-                    this,
-                    Vec3.of(0, SIDE * -0.9f + 20, SIDE * -0.5f + 20 * i - 10),
-                    SIDE * 0.08f,
-                    Vec3.of(1, 0, 1)
-            ));
-        }
-        for (int i = 0; i < 9; i++) {
-            sphericalObstacles.add(new SphericalObstacle(
-                    this,
-                    Vec3.of(0, SIDE * -0.9f + 60, SIDE * -0.9f + 20 * i - 10),
-                    SIDE * 0.08f,
-                    Vec3.of(1, 0, 1)
-            ));
+        float radiusFactor = 0.04f;
+        float radius = SIDE * radiusFactor;
+        int numRows = 4;
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < numRows; j++) {
+                float zCoordinate = (SIDE - 2 * radius * i) * (j % 2 == 1 ? -1 : 1);
+                sphericalObstacles.add(new SphericalObstacle(
+                        this,
+                        Vec3.of(0, -SIDE + 30 * j + 30, zCoordinate),
+                        radius,
+                        Vec3.of(1, 0, 1)
+                ));
+            }
         }
         sphericalAgentDescription = new SphericalAgentDescription(
                 startPosition,
