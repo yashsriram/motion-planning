@@ -40,10 +40,10 @@ public class ZigZag extends PApplet {
         noStroke();
 
         cam = new QueasyCam(this);
-        float radiusFactor = 0.06f;
+        float radiusFactor = 0.03f;
         float obstacleRadius = SIDE * radiusFactor;
         int numRows = 4;
-        int rowLength = 10;
+        int rowLength = 20;
         float a = 30;
         float b = 50;
         for (int i = 0; i < rowLength; i++) {
