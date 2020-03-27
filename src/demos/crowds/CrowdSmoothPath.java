@@ -80,8 +80,8 @@ public class CrowdSmoothPath extends PApplet {
 
         ConfigurationSpace configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescriptions.get(0), sphericalObstacles);
         multiSphericalAgentSystem = new MultiSphericalAgentSystem(this, sphericalAgentDescriptions, configurationSpace, minCorner, maxCorner);
-        SphericalAgent.DRAW_FUTURE_STATE = false;
-        SphericalAgent.DRAW_PATH = false;
+        SphericalAgent.DRAW_FUTURE_STATE = true;
+        SphericalAgent.DRAW_PATH = true;
     }
 
     public void draw() {
@@ -129,6 +129,12 @@ public class CrowdSmoothPath extends PApplet {
         }
         if (key == 'p') {
             multiSphericalAgentSystem.togglePause();
+        }
+        if (key == 'b') {
+            SphericalAgent.DRAW_FUTURE_STATE = !SphericalAgent.DRAW_FUTURE_STATE;
+        }
+        if (key == 'v') {
+            SphericalAgent.DRAW_PATH = !SphericalAgent.DRAW_PATH;
         }
         if (key == '1') {
             multiSphericalAgentSystem.dfs();
