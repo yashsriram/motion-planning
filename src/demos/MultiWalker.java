@@ -88,7 +88,7 @@ public class MultiWalker extends PApplet {
             shape.rotateX(PConstants.PI);
             obstacleShapes.add(shape);
         }
-        int gridSize = 5;
+        int gridSize = 0;
         float randomnessSize = 20;
         for (int i = 0; i < gridSize; i++) {
             for (int j = 0; j < gridSize; j++) {
@@ -233,8 +233,8 @@ public class MultiWalker extends PApplet {
             SEARCH_ALGORITHM = "UCS";
         }
         if (key == '4') {
-            sphericalAgent.setPath(graph.aStar());
-            sphericalAgent1.setPath(graph.aStar());
+            sphericalAgent.setPath(graph.aStar(0));
+            sphericalAgent1.setPath(graph.aStar(1));
             SEARCH_ALGORITHM = "A*";
         }
         if (key == '5') {
