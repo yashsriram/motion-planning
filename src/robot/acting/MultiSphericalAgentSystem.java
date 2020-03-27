@@ -77,6 +77,56 @@ public class MultiSphericalAgentSystem {
         }
     }
 
+    private Vec3 getTTCForceOnI(Vec3 xj, Vec3 xi, Vec3 vj, Vec3 vi, float rj, float ri) {
+        Vec3 xji = xj.minus(xi);
+        Vec3 vji = vj.minus(vi);
+        float distance = xji.norm();
+        float impactRadius = ri + rj + 5;
+        if (distance < impactRadius) {
+            // Avoid collision (which could be happening probably due to slow incoming agents)
+            Vec3 separationForce = xji.normalize().scaleInPlace(20 * (impactRadius - distance));
+            return separationForce.scaleInPlace(-1);
+        }
+
+        // Collision detection
+        final float a = vji.dot(vji);
+        if (a < 1e-6) {
+            // Almost relatively stationary
+            return Vec3.zero();
+        }
+        final float b = xji.dot(vji);
+        final float c = xji.dot(xji) - (ri + rj) * (ri + rj);
+        float desc = b * b - a * c;
+        if (desc < 0) {
+            // No collision
+            return Vec3.zero();
+        }
+        double t1 = (-b - Math.sqrt(desc)) / a;
+        double t2 = (-b + Math.sqrt(desc)) / a;
+        if (t1 < 0 && t2 < 0) {
+            // (-, -)
+            // No collision
+            return Vec3.zero();
+        }
+        double timeToCollision = -1;
+        if ((t1 > 0 && t2 < 0) || (t2 > 0 && t1 < 0)) {
+            // (+, -) (-, +) case
+            // collision occurs
+            timeToCollision = Math.max(t1, t2);
+        } else {
+            // (+, +) case
+            // collision occurs
+            timeToCollision = Math.min(t1, t2);
+        }
+        // Calculate ttcForceOnI
+        double firstTerm = (TTC_K * Math.exp(-timeToCollision / TTC_T0)) / (timeToCollision * timeToCollision * a);
+        double secondTerm = (2 / timeToCollision + 1 / TTC_T0);
+        Vec3 thirdTerm = xji.scale(a).minus(vji.scale(b)).scaleInPlace(1 / (float) Math.sqrt(desc));
+        Vec3 fourthTerm = vji;
+        Vec3 ttcForceOnI = thirdTerm.minus(fourthTerm).scaleInPlace((float) (-1 * firstTerm * secondTerm));
+        return ttcForceOnI;
+    }
+
     public void updateTTC(List<SphericalObstacle> sphericalObstacles, float dt) {
         // Get isolated velocities
         List<Vec3> isolatedVelocities = new ArrayList<>();
@@ -93,61 +143,11 @@ public class MultiSphericalAgentSystem {
             SphericalAgent agentI = sphericalAgents.get(i);
             Vec3 agentIVel = isolatedVelocities.get(i);
             for (int j = i + 1; j < sphericalAgents.size(); j++) {
-                // for all i != j
                 SphericalAgent agentJ = sphericalAgents.get(j);
                 Vec3 agentJVel = isolatedVelocities.get(j);
-                Vec3 xji = agentJ.center.minus(agentI.center);
-                float distance = xji.norm();
-                float impactRadius = agentI.description.radius + agentJ.description.radius + 5;
-                if (distance < impactRadius) {
-                    // Avoid collision (which could be happening probably due to slow incoming agents)
-                    Vec3 separationForce = xji.normalize().scaleInPlace(35 * (impactRadius - distance));
-                    Vec3 agentIForce = separationForce.scale(-1);
-                    Vec3 agentJForce = separationForce;
-                    totalTTCForces.set(i, totalTTCForces.get(i).plusInPlace(agentIForce));
-                    totalTTCForces.set(j, totalTTCForces.get(j).plusInPlace(agentJForce));
-                    continue;
-                }
-                Vec3 vji = agentJVel.minus(agentIVel);
-                // Collision detection
-                final float a = vji.dot(vji);
-                if (a < 1e-6) {
-                    // Almost relatively stationary
-                    continue;
-                }
-                final float b = xji.dot(vji);
-                final float c = xji.dot(xji) - (agentI.description.radius + agentJ.description.radius) * (agentI.description.radius + agentJ.description.radius);
-                float desc = b * b - a * c;
-                if (desc < 0) {
-                    // No collision
-                    continue;
-                }
-                double t1 = (-b - Math.sqrt(desc)) / a;
-                double t2 = (-b + Math.sqrt(desc)) / a;
-                if (t1 < 0 && t2 < 0) {
-                    // (-, -)
-                    // No collision
-                    continue;
-                }
-                double timeToCollision = -1;
-                if ((t1 > 0 && t2 < 0) || (t2 > 0 && t1 < 0)) {
-                    // (+, -) (-, +) case
-                    // collision occurs
-                    timeToCollision = Math.max(t1, t2);
-                } else {
-                    // (+, +) case
-                    // collision occurs
-                    timeToCollision = Math.min(t1, t2);
-                }
-                // Calculate ttcForce
-                double firstTerm = (TTC_K * Math.exp(-timeToCollision / TTC_T0)) / (timeToCollision * timeToCollision * a);
-                double secondTerm = (2 / timeToCollision + 1 / TTC_T0);
-                Vec3 thirdTerm = xji.scale(a).minus(vji.scale(b)).scaleInPlace(1 / (float) Math.sqrt(desc));
-                Vec3 fourthTerm = vji;
-                Vec3 ttcForce = thirdTerm.minus(fourthTerm).scaleInPlace((float) (-1 * firstTerm * secondTerm));
                 // Newtons 3rd law
-                Vec3 agentI_Force = ttcForce;
-                Vec3 agentJ_Force = ttcForce.scale(-1);
+                Vec3 agentI_Force = getTTCForceOnI(agentJ.center, agentI.center, agentJVel, agentIVel, agentJ.description.radius, agentI.description.radius);
+                Vec3 agentJ_Force = agentI_Force.scale(-1);
                 // Adding to existing ttc forces
                 totalTTCForces.set(i, totalTTCForces.get(i).plusInPlace(agentI_Force));
                 totalTTCForces.set(j, totalTTCForces.get(j).plusInPlace(agentJ_Force));
@@ -159,58 +159,13 @@ public class MultiSphericalAgentSystem {
             SphericalAgent agentI = sphericalAgents.get(i);
             Vec3 agentIVel = isolatedVelocities.get(i);
             for (SphericalObstacle obstacleJ : sphericalObstacles) {
-                Vec3 xji = obstacleJ.center.minus(agentI.center);
-                float distance = xji.norm();
-                float impactRadius = agentI.description.radius + obstacleJ.radius + 5;
-                if (distance < impactRadius) {
-                    // Avoid collision (which could be happening probably due to slow incoming agents)
-                    Vec3 separationForce = xji.normalize().scaleInPlace(30 * (impactRadius - distance));
-                    Vec3 agentIForce = separationForce.scale(-1);
-                    totalTTCForces.set(i, totalTTCForces.get(i).plusInPlace(agentIForce));
-                    continue;
-                }
-                Vec3 vji = agentIVel.scale(-1);
-                // Collision detection
-                final float a = vji.dot(vji);
-                if (a < 1e-6) {
-                    // Almost relatively stationary
-                    continue;
-                }
-                final float b = xji.dot(vji);
-                final float c = xji.dot(xji) - (agentI.description.radius + obstacleJ.radius) * (agentI.description.radius + obstacleJ.radius);
-                float desc = b * b - a * c;
-                if (desc < 0) {
-                    // No collision
-                    continue;
-                }
-                double t1 = (-b - Math.sqrt(desc)) / a;
-                double t2 = (-b + Math.sqrt(desc)) / a;
-                if (t1 < 0 && t2 < 0) {
-                    // (-, -)
-                    // No collision
-                    continue;
-                }
-                double timeToCollision = -1;
-                if ((t1 > 0 && t2 < 0) || (t2 > 0 && t1 < 0)) {
-                    // (+, -) (-, +) case
-                    // collision occurs
-                    timeToCollision = Math.max(t1, t2);
-                } else {
-                    // (+, +) case
-                    // collision occurs
-                    timeToCollision = Math.min(t1, t2);
-                }
-                // Calculate ttcForce
-                double firstTerm = (TTC_K * Math.exp(-timeToCollision / TTC_T0)) / (timeToCollision * timeToCollision * a);
-                double secondTerm = (2 / timeToCollision + 1 / TTC_T0);
-                Vec3 thirdTerm = xji.scale(a).minus(vji.scale(b)).scaleInPlace(1 / (float) Math.sqrt(desc));
-                Vec3 fourthTerm = vji;
-                Vec3 ttcForce = thirdTerm.minus(fourthTerm).scaleInPlace((float) (-1 * firstTerm * secondTerm));
+                Vec3 ttcForceOnI = getTTCForceOnI(obstacleJ.center, agentI.center, Vec3.of(0), agentIVel, obstacleJ.radius, agentI.description.radius);
                 // Adding to existing ttc forces
-                totalTTCForces.set(i, totalTTCForces.get(i).plusInPlace(ttcForce));
+                totalTTCForces.set(i, totalTTCForces.get(i).plusInPlace(ttcForceOnI));
             }
         }
 
+        // Adding ttc force and prm guided force
         for (int i = 0; i < sphericalAgents.size(); i++) {
             SphericalAgent agent = sphericalAgents.get(i);
             Vec3 isolatedVelocity = isolatedVelocities.get(i);
