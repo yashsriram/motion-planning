@@ -108,7 +108,6 @@ public class SphericalAgent {
                 return;
             }
             // move towards next milestone
-            boidVelocity.scaleInPlace(dt);
             velocityDir.scaleInPlace(speed);
             velocityDir.plusInPlace(boidVelocity);
             Vec3 displacement = velocityDir.scaleInPlace(dt);
@@ -121,20 +120,29 @@ public class SphericalAgent {
         Vec3 separationForce = Vec3.zero();
         Vec3 centroid = Vec3.zero();
         Vec3 alignment = Vec3.zero();
+        float neighbors = 0 ;
         for (SphericalAgent boid : flock) {
             Vec3 force = this.center.minus(boid.center);
             float distance = force.norm();
             if (distance < IMPACT_RADIUS && distance > 0) {
+                neighbors += 1 ;
                 force.normalizeInPlace();
                 separationForce.plusInPlace(force.scaleInPlace(SEPERATION_FORCE_BOID * (IMPACT_RADIUS - distance)));
-                centroid.plusInPlace((this.center.plus(boid.center)).normalizeInPlace().scaleInPlace(CENTROID_FORCE));
-                Vec3 mydir = path.get(currentMilestone).minus(center).normalizeInPlace();
-                Vec3 udir = boid.path.get(boid.currentMilestone).minus(boid.center).normalizeInPlace();
-                alignment.plusInPlace((udir.minus(mydir)));
+                centroid.plusInPlace(boid.center);
+                Vec3 udir = boid.path.get(boid.currentMilestone);
+                alignment.plusInPlace(udir);
             }
         }
-        alignment.normalizeInPlace().scaleInPlace(ALIGNMENT_FORCE);
-        Vec3 finalForce = separationForce.plus(centroid.plus(alignment));
+        if (neighbors > 0){
+            centroid.scaleInPlace(1f / neighbors);
+            alignment.scaleInPlace(1f/neighbors);
+        }
+        Vec3 mydir = path.get(currentMilestone).minus(center).normalizeInPlace();
+        Vec3 alignmentForce = alignment.minus(mydir);
+        alignmentForce.scaleInPlace(ALIGNMENT_FORCE);
+        Vec3 centroidForce = centroid.minus(this.center);
+        centroidForce.scaleInPlace(CENTROID_FORCE);
+        Vec3 finalForce = separationForce.plus(centroidForce.plus(alignmentForce));
         Vec3 obstacleAvoidanceForce = Vec3.zero();
         for (SphericalObstacle obstacle : obstacles) {
             Vec3 force = this.center.minus(obstacle.center);

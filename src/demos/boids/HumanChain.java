@@ -213,9 +213,9 @@ public class HumanChain extends PApplet {
         // tuning parameters
         SphericalAgent.IMPACT_RADIUS = 120f;
         SphericalAgent.SEPERATION_FORCE_BOID = 1f;
-        SphericalAgent.SEPERATION_FORCE_OBSTACLE = 1.5f;
-        SphericalAgent.ALIGNMENT_FORCE = 0.02f;
-        SphericalAgent.CENTROID_FORCE = 0.02f;
+        SphericalAgent.SEPERATION_FORCE_OBSTACLE = 10f;
+        SphericalAgent.ALIGNMENT_FORCE = 0.0f;
+        SphericalAgent.CENTROID_FORCE = 0.0f;
         SphericalAgent.DRAW_PATH = false;
         SphericalAgent.DRAW_FUTURE_STATE = false;
 
