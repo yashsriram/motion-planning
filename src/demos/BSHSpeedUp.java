@@ -17,7 +17,7 @@ import java.util.List;
 public class BSHSpeedUp extends PApplet {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 800;
-    public static final int SIDE = 100;
+    public static final int SIDE = 200;
 
     final Vec3 startPosition = Vec3.of(0, SIDE * 0.9f, SIDE * -0.9f);
     Vec3 finishPosition = Vec3.of(0, SIDE * -0.9f, SIDE * 0.9f);
@@ -27,7 +27,8 @@ public class BSHSpeedUp extends PApplet {
     SphericalAgentDescription sphericalAgentDescription;
     SphericalAgent sphericalAgent;
     List<SphericalObstacle> sphericalObstacles = new ArrayList<>();
-    ConfigurationSpace configurationSpace;
+    ConfigurationSpace bshConfigurationSpace;
+    ConfigurationSpace plainConfigurationSpace;
     MultiAgentGraph graph;
 
     QueasyCam cam;
@@ -48,61 +49,64 @@ public class BSHSpeedUp extends PApplet {
         noStroke();
 
         cam = new QueasyCam(this);
-        int numObstacles = 2500;
-        int numBlobs = 2;
-        float obstacleRadius = SIDE * 0.01f;
-        for (int j = 0; j < numBlobs; j++) {
-            float offsetY = -SIDE + 2 * SIDE * (j + 0.5f) / numBlobs;
-            float offsetZ = -offsetY;
-            for (int i = 0; i < numObstacles; i++) {
-                float r = (float) Math.sqrt(random(1)) * 10;
-                float theta = random(2 * PI);
+        for (int i = -SIDE; i < SIDE; i = i + 4) {
+            for (int j = -SIDE; j < SIDE; j = j + 4) {
+                if (Math.abs(i + j) < 10) {
+                    continue;
+                }
+                Vec3 center = Vec3.of(0, j, i);
+                if (center.minus(startPosition).norm() < 10) {
+                    continue;
+                }
+                if (center.minus(finishPosition).norm() < 10) {
+                    continue;
+                }
                 sphericalObstacles.add(new SphericalObstacle(
                         this,
-                        Vec3.of(0, offsetY + (float) (r * Math.sin(theta)), offsetZ + (float) (r * Math.cos(theta))),
-                        obstacleRadius,
+                        center,
+                        0.5f,
                         Vec3.of(1, 0, 1)
                 ));
             }
         }
+        DRAW_OBSTACLES = false;
+
         sphericalAgentDescription = new SphericalAgentDescription(
                 startPosition,
                 finishPosition,
-                SIDE * 0.025f
+                0.5f
         );
+        // configuration spaces
+        plainConfigurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
+        bshConfigurationSpace = new BSHConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
 
-        configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
+        // graph
         graph = new MultiAgentGraph(this, startPosition, finishPosition);
-        sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, configurationSpace, minCorner, maxCorner, 20f, Vec3.of(1));
-        graph.generateVertices(sphericalAgent.samplePoints(7000), configurationSpace);
+        // spherical agent
+        sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, bshConfigurationSpace, minCorner, maxCorner, 20f, Vec3.of(1));
 
+        // vertex sampling
+        graph.generateVertices(sphericalAgent.samplePoints(7000), bshConfigurationSpace);
         resetBSH();
-        sphericalAgent.setPath(graph.weightedAStar(1.5f));
     }
 
     private void resetPlain() {
         DATA_STRUCTURE = "Plain";
-        long startConfig = millis();
-        configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
-        sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, configurationSpace, minCorner, maxCorner, 20f, Vec3.of(1));
+        sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, plainConfigurationSpace, minCorner, maxCorner, 20f, Vec3.of(1));
         long configSpace = millis();
         graph.clearAdjacenciesOnlyUseInBSHSpeedUp();
-        graph.generateAdjacencies(10, configurationSpace);
+        graph.generateAdjacencies(30, plainConfigurationSpace);
         long edge = millis();
-        DATA_STRUCTURE_CREATION_TIME = configSpace - startConfig;
         EDGE_CULLING_TIME = edge - configSpace;
     }
 
     private void resetBSH() {
         DATA_STRUCTURE = "BSH";
-        long startConfig = millis();
-        configurationSpace = new BSHConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
-        sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, configurationSpace, minCorner, maxCorner, 20f, Vec3.of(1));
+        sphericalAgent = new SphericalAgent(this, sphericalAgentDescription, bshConfigurationSpace, minCorner, maxCorner, 20f, Vec3.of(1));
         long configSpace = millis();
         graph.clearAdjacenciesOnlyUseInBSHSpeedUp();
-        graph.generateAdjacencies(10, configurationSpace);
+        graph.generateAdjacencies(30, bshConfigurationSpace);
         long edge = millis();
-        DATA_STRUCTURE_CREATION_TIME = configSpace - startConfig;
         EDGE_CULLING_TIME = edge - configSpace;
     }
 
@@ -130,16 +134,15 @@ public class BSHSpeedUp extends PApplet {
         // agent
         sphericalAgent.draw();
         // configuration space
-        configurationSpace.draw();
+        bshConfigurationSpace.draw();
         // graph
         graph.draw();
         long draw = millis();
 
         surface.setTitle(
                 "FPS: " + Math.round(frameRate)
-                        + " DS: " + DATA_STRUCTURE
-                        + " DS creation : " + DATA_STRUCTURE_CREATION_TIME + "ms "
-                        + " E culling: " + EDGE_CULLING_TIME + "ms"
+                        + DATA_STRUCTURE + " edge culling time: " + EDGE_CULLING_TIME + "ms"
+                        + " #obs: " + sphericalObstacles.size()
         );
     }
 

@@ -23,7 +23,7 @@ class BoundingSphere {
 
 public class BSHConfigurationSpace extends ConfigurationSpace {
     public static boolean DRAW_BOUNDING_SPHERES = false;
-    public static float BOUNDING_SPHERE_COMPRESSION_SLACK = 10f;
+    public static float BOUNDING_SPHERE_COMPRESSION_SLACK = 100f;
     final PApplet parent;
     final SphericalAgentDescription sphericalAgentDescription;
     final BoundingSphere root;
@@ -36,7 +36,7 @@ public class BSHConfigurationSpace extends ConfigurationSpace {
             throw new IllegalArgumentException("Need at least one obstacle");
         }
 
-        List<BoundingSphere> boundingSpheres = new ArrayList<>();
+        List<BoundingSphere> boundingSpheres = new ArrayList<>(sphericalObstacles.size());
         // Initialize bounding spheres as obstacles themselves
         for (SphericalObstacle o : sphericalObstacles) {
             boundingSpheres.add(new BoundingSphere(o.center, o.radius, Vec3.of(1)));
