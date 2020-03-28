@@ -40,12 +40,6 @@ public class Antipodes extends PApplet {
         noStroke();
 
         cam = new QueasyCam(this);
-        sphericalObstacles.add(new SphericalObstacle(
-                this,
-                Vec3.zero(),
-                10,
-                Vec3.of(1, 0, 1)
-        ));
 
         int numSegments = 14;
         float radialDistance = 100;
@@ -64,9 +58,9 @@ public class Antipodes extends PApplet {
 
         MultiSphericalAgentSystem.TTC_K = 2000f;
         MultiSphericalAgentSystem.TTC_MAX_FORCE = 250;
-        MultiSphericalAgentSystem.TTC_POWER = 2f;
+        MultiSphericalAgentSystem.TTC_POWER = 3f;
 
-        MultiSphericalAgentSystem.TTC_VICINITY_DISTANCE = 10;
+        MultiSphericalAgentSystem.TTC_VICINITY_DISTANCE = 2;
         MultiSphericalAgentSystem.TTC_SEPARATION_FORCE_K = 20;
         MultiSphericalAgentSystem.TTC_COLLISION_CORRECTION_FORCE_K = 20;
         MultiAgentGraph.DRAW_VERTICES = false;
