@@ -108,6 +108,7 @@ public class SphericalAgent {
                 return;
             }
             // move towards next milestone
+            boidVelocity.scaleInPlace(dt);
             velocityDir.scaleInPlace(speed);
             velocityDir.plusInPlace(boidVelocity);
             Vec3 displacement = velocityDir.scaleInPlace(dt);
@@ -148,6 +149,74 @@ public class SphericalAgent {
 
 
         return finalForce;
+    }
+
+    public void boidUpdateClan(List<List<SphericalAgent>> flocks, List<SphericalObstacle> obstacles, int flockNumber, float dt){
+        if (isPaused) {
+            return;
+        }
+        if (currentMilestone < path.size() - 1) {
+            // reached next milestone
+            if (path.get(currentMilestone + 1).minus(center).norm() < MILESTONE_REACHED_RADIUS) {
+                currentMilestone++;
+                return;
+            }
+            // next next milestone lookup
+            if (currentMilestone < path.size() - 2) {
+                boolean blocked = configurationSpace.doesEdgeIntersectSomeObstacle(path.get(currentMilestone + 2), center);
+                if (!blocked) {
+                    currentMilestone++;
+                }
+            }
+
+            Vec3 boidVelocity = boidForceClan(flocks, obstacles, flockNumber);
+            Vec3 velocityDir =
+                    path.get(currentMilestone + 1)
+                            .minus(center)
+                            .normalizeInPlace();
+            Vec3 repelDir = boidVelocity.normalize();
+            if (boidVelocity.norm() != 0 && repelDir.cross(velocityDir).norm() == 0) {
+                System.out.println(currentMilestone);
+                currentMilestone += 1;
+                return;
+            }
+            // move towards next milestone
+            velocityDir.scaleInPlace(speed);
+            velocityDir.plusInPlace(boidVelocity);
+            Vec3 displacement = velocityDir.scaleInPlace(dt);
+            center.plusInPlace(displacement);
+            distanceCovered += displacement.norm();
+        }
+
+    }
+
+    private Vec3 boidForceClan(List<List<SphericalAgent>> flocks, List<SphericalObstacle> obstacles, int flockNumber) {
+        Vec3 finalForce = Vec3.zero();
+        for(int i = 0 ; i < flocks.size(); i++){
+            if(i == flockNumber){
+                Vec3 clanForce = boidForce(flocks.get(i), obstacles);
+                finalForce.plusInPlace(clanForce);
+            }
+            else{
+                List<SphericalAgent> list = flocks.get(i);
+                Vec3 avoidanceForce = clanAvoidanceForce(list);
+                finalForce.plusInPlace(avoidanceForce);
+            }
+        }
+        return finalForce ;
+    }
+
+    private Vec3 clanAvoidanceForce(List<SphericalAgent> list) {
+        Vec3 separationForce = Vec3.zero();
+        for (SphericalAgent boid : list) {
+            Vec3 force = this.center.minus(boid.center);
+            float distance = force.norm();
+            if (distance < IMPACT_RADIUS && distance > 0) {
+                force.normalizeInPlace();
+                separationForce.plusInPlace(force.scaleInPlace(SEPERATION_FORCE_BOID * (IMPACT_RADIUS - distance)));
+            }
+        }
+        return separationForce ;
     }
 
     public Vec3 getGoalVelocity() {

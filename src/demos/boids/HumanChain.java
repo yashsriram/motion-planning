@@ -34,7 +34,16 @@ public class HumanChain extends PApplet {
     List<PShape> agentWalkCycleShapes = new ArrayList<>();
     List<PShape> obstacleShapes = new ArrayList<>();
     QueasyCam cam;
-    List<Vec3> finishPositions = new ArrayList<>();
+    List<List<Vec3>> finishPositions = new ArrayList<>();
+    List<List<SphericalAgent>> flocks = new ArrayList<>();
+    List<Vec3> C = new ArrayList<>();
+    List<Vec3> S = new ArrayList<>();
+    List<Vec3> C1 = new ArrayList<>();
+    List<Vec3> I = new ArrayList<>();
+    List<Vec3> C5 = new ArrayList<>();
+    List<Vec3> C6 = new ArrayList<>();
+    List<Vec3> C11 = new ArrayList<>();
+    List<Vec3> C12 = new ArrayList<>();
 
     static boolean DRAW_OBSTACLES = true;
     static String SEARCH_ALGORITHM = "";
@@ -116,41 +125,73 @@ public class HumanChain extends PApplet {
         }
         
         //5
-        finishPositions.add(Vec3.of(SIDE * 0.9f, 0, SIDE * -0.6f).plusInPlace(OFFSET));
-        finishPositions.add(Vec3.of(SIDE * 0.9f, 0, SIDE * -0.8f).plusInPlace(OFFSET));
-        finishPositions.add(Vec3.of(SIDE * 0.8f, 0, SIDE * -0.8f).plusInPlace(OFFSET));
-        finishPositions.add(Vec3.of(SIDE * 0.7f, 0, SIDE * -0.6f).plusInPlace(OFFSET));
-        finishPositions.add(Vec3.of(SIDE * 0.6f, 0, SIDE * -0.8f).plusInPlace(OFFSET));
+        C5.add(Vec3.of(SIDE * 0.9f, 0, SIDE * -0.6f).plusInPlace(OFFSET));
+        C5.add(Vec3.of(SIDE * 0.9f, 0, SIDE * -0.8f).plusInPlace(OFFSET));
+        C5.add(Vec3.of(SIDE * 0.8f, 0, SIDE * -0.8f).plusInPlace(OFFSET));
+        C5.add(Vec3.of(SIDE * 0.7f, 0, SIDE * -0.6f).plusInPlace(OFFSET));
+        C5.add(Vec3.of(SIDE * 0.6f, 0, SIDE * -0.8f).plusInPlace(OFFSET));
+        finishPositions.add(C5);
+
         //6
-        finishPositions.add(Vec3.of(SIDE * 0.9f, 0, SIDE * -0.0f).plusInPlace(OFFSET));
-        finishPositions.add(Vec3.of(SIDE * 0.9f, 0, SIDE * -0.2f).plusInPlace(OFFSET));
-        finishPositions.add(Vec3.of(SIDE * 0.7f, 0, SIDE * -0.2f).plusInPlace(OFFSET));
-        finishPositions.add(Vec3.of(SIDE * 0.7f, 0, SIDE * -0.0f).plusInPlace(OFFSET));
-        finishPositions.add(Vec3.of(SIDE * 0.6f, 0, SIDE * -0.0f).plusInPlace(OFFSET));
-        finishPositions.add(Vec3.of(SIDE * 0.6f, 0, SIDE * -0.2f).plusInPlace(OFFSET));
+        C6.add(Vec3.of(SIDE * 0.9f, 0, SIDE * -0.0f).plusInPlace(OFFSET));
+        C6.add(Vec3.of(SIDE * 0.9f, 0, SIDE * -0.2f).plusInPlace(OFFSET));
+        C6.add(Vec3.of(SIDE * 0.7f, 0, SIDE * -0.2f).plusInPlace(OFFSET));
+        C6.add(Vec3.of(SIDE * 0.7f, 0, SIDE * -0.0f).plusInPlace(OFFSET));
+        C6.add(Vec3.of(SIDE * 0.6f, 0, SIDE * -0.0f).plusInPlace(OFFSET));
+        C6.add(Vec3.of(SIDE * 0.6f, 0, SIDE * -0.2f).plusInPlace(OFFSET));
+        finishPositions.add(C6);
+
         //1
-        finishPositions.add(Vec3.of(SIDE * 0.9f, 0, SIDE * 0.4f).plusInPlace(OFFSET));
-        finishPositions.add(Vec3.of(SIDE * 0.8f, 0, SIDE * 0.4f).plusInPlace(OFFSET));
-        finishPositions.add(Vec3.of(SIDE * 0.7f, 0, SIDE * 0.4f).plusInPlace(OFFSET));
-        finishPositions.add(Vec3.of(SIDE * 0.6f, 0, SIDE * 0.4f).plusInPlace(OFFSET));
-        //
-        finishPositions.add(Vec3.of(SIDE * 0.9f, 0, SIDE * 0.8f).plusInPlace(OFFSET));
-        finishPositions.add(Vec3.of(SIDE * 0.8f, 0, SIDE * 0.8f).plusInPlace(OFFSET));
-        finishPositions.add(Vec3.of(SIDE * 0.7f, 0, SIDE * 0.8f).plusInPlace(OFFSET));
-        finishPositions.add(Vec3.of(SIDE * 0.6f, 0, SIDE * 0.8f).plusInPlace(OFFSET));
+        C11.add(Vec3.of(SIDE * 0.9f, 0, SIDE * 0.4f).plusInPlace(OFFSET));
+        C11.add(Vec3.of(SIDE * 0.8f, 0, SIDE * 0.4f).plusInPlace(OFFSET));
+        C11.add(Vec3.of(SIDE * 0.7f, 0, SIDE * 0.4f).plusInPlace(OFFSET));
+        C11.add(Vec3.of(SIDE * 0.6f, 0, SIDE * 0.4f).plusInPlace(OFFSET));
+        finishPositions.add(C11);
+
+        //1
+        C12.add(Vec3.of(SIDE * 0.9f, 0, SIDE * 0.8f).plusInPlace(OFFSET));
+        C12.add(Vec3.of(SIDE * 0.8f, 0, SIDE * 0.8f).plusInPlace(OFFSET));
+        C12.add(Vec3.of(SIDE * 0.7f, 0, SIDE * 0.8f).plusInPlace(OFFSET));
+        C12.add(Vec3.of(SIDE * 0.6f, 0, SIDE * 0.8f).plusInPlace(OFFSET));
+        finishPositions.add(C12);
+
+        //C
+        C.add(Vec3.of(SIDE * -0.6f, 0, SIDE * -0.5f).plusInPlace(OFFSET));
+        C.add(Vec3.of(SIDE * -0.75f, 0, SIDE * -0.65f).plusInPlace(OFFSET));
+        C.add(Vec3.of(SIDE * -0.9f, 0, SIDE * -0.5f).plusInPlace(OFFSET));
+        finishPositions.add(C);
+
+        //S
+        S.add(Vec3.of(SIDE * -0.6f, 0, SIDE * -0.1f).plusInPlace(OFFSET));
+        S.add(Vec3.of(SIDE * -0.7f, 0, SIDE * -0.2f).plusInPlace(OFFSET));
+        S.add(Vec3.of(SIDE * -0.8f, 0, SIDE * -0.1f).plusInPlace(OFFSET));
+        S.add(Vec3.of(SIDE * -0.9f, 0, SIDE * -0.2f).plusInPlace(OFFSET));
+        finishPositions.add(S);
+
+        //C
+        C1.add(Vec3.of(SIDE * -0.6f, 0, SIDE * 0.3f).plusInPlace(OFFSET));
+        C1.add(Vec3.of(SIDE * -0.75f, 0, SIDE * 0.15f).plusInPlace(OFFSET));
+        C1.add(Vec3.of(SIDE * -0.9f, 0, SIDE * 0.3f).plusInPlace(OFFSET));
+        finishPositions.add(C1);
+
+        //I
+        I.add(Vec3.of(SIDE * -0.6f, 0, SIDE * 0.5f).plusInPlace(OFFSET));
+        I.add(Vec3.of(SIDE * -0.75f, 0, SIDE * 0.5f).plusInPlace(OFFSET));
+        I.add(Vec3.of(SIDE * -0.9f, 0, SIDE * 0.5f).plusInPlace(OFFSET));
+        finishPositions.add(I);
 
 
-        Vec3 center = Vec3.of(SIDE * -0.5f, 0, SIDE * -0.5f);
-        float crowdRadius = SIDE*0.4f ;
         for(int i = 0 ; i < finishPositions.size(); i++){
-            float theta = random(0, 2*PI);
-            float r = (float) (crowdRadius*Math.sqrt(random(0,1)));
-            Vec3 start = center.plus(Vec3.of(r*sin(theta), 0, r*cos(theta)));
-            sphericalAgentDescriptions.add(new SphericalAgentDescription(
-                    start.plusInPlace(OFFSET),
-                    finishPositions.get(i),
-                    SIDE * 0.08f
-            ));
+            Vec3 center ;
+            float crowdRadius ;
+            if(i < 4){
+                center = Vec3.of(SIDE * -0.5f, 0, SIDE * (-0.5f + 4*i/10f));
+            }
+            else{
+                center = Vec3.of(SIDE * 0.6f, 0, SIDE * (2f - 3f*i/10f));
+            }
+            crowdRadius = SIDE*0.15f ;
+            generateCrowd(center, finishPositions.get(i), crowdRadius);
         }
 
         PlainConfigurationSpace configurationSpace = new PlainConfigurationSpace(
@@ -176,6 +217,7 @@ public class HumanChain extends PApplet {
         SphericalAgent.ALIGNMENT_FORCE = 0.02f;
         SphericalAgent.CENTROID_FORCE = 0.02f;
         SphericalAgent.DRAW_PATH = false;
+        SphericalAgent.DRAW_FUTURE_STATE = false;
 
         for (int i = 0; i < 8; i++) {
             PShape agentShape = loadShape("data/robot/" + (i + 1) + ".obj");
@@ -183,18 +225,28 @@ public class HumanChain extends PApplet {
             agentShape.rotateY(PApplet.PI);
             agentWalkCycleShapes.add(agentShape);
         }
+
+        buildFLock(finishPositions, multiSphericalAgentSystem);
     }
+
+    private void buildFLock(List<List<Vec3>> finishPositions, MultiSphericalAgentSystem multiSphericalAgentSystem) {
+        int i = 0 ;
+        for(List<Vec3> list : finishPositions){
+            List<SphericalAgent> flock = new ArrayList<>();
+            for(Vec3 pos : list){
+                flock.add(multiSphericalAgentSystem.sphericalAgents.get(i));
+                i += 1 ;
+            }
+            flocks.add(flock);
+        }
+    }
+
 
     public void draw() {
         long start = millis();
         // update
-        if (SMOOTH_PATH) {
-            multiSphericalAgentSystem.smoothUpdate(0.3f);
-        } else {
-//            multiSphericalAgentSystem.update(0.3f);
-            multiSphericalAgentSystem.updateBoid(sphericalObstacles, 0.3f);
-//            sphericalAgent1.update(0.1f);
-        }
+//        multiSphericalAgentSystem.updateBoid(sphericalObstacles, 0.3f);
+        multiSphericalAgentSystem.updateClan(flocks, sphericalObstacles, 0.3f);
         long update = millis();
         // draw
         background(0);
@@ -215,27 +267,41 @@ public class HumanChain extends PApplet {
         // graph
 //        graph.draw();
         long draw = millis();
-//        connectFinish(finishPositions);
+        connectFinish(finishPositions);
 
         surface.setTitle("Processing - FPS: " + Math.round(frameRate) + " Update: " + (update - start) + "ms Draw " + (draw - update) + "ms" + " search: " + SEARCH_ALGORITHM + " smooth-path: " + SMOOTH_PATH);
     }
 
-    private void connectFinish(List<Vec3> finishPositions) {
-        for(int i = 0 ; i < finishPositions.size()-1; i++){
-            Vec3 v1 = finishPositions.get(i);
-            Vec3 v2 = finishPositions.get(i+1);
-            if(i != 4 && i!=14){
-                if(i == 10){
-                    v2 = v2 = finishPositions.get(7);
-                }
+    private void generateCrowd(Vec3 center, List<Vec3> list, float crowdRadius) {
+        for(int i = 0 ; i < list.size(); i++){
+            float theta = 0 + (i*PI)/list.size() ;
+            float r = crowdRadius;
+            Vec3 start = center.plus(Vec3.of(r*sin(theta), 0, r*cos(theta))).plusInPlace(OFFSET);
+            SphericalAgentDescription description = new SphericalAgentDescription(
+                    start,
+                    list.get(i),
+                    SIDE * 0.08f
+            ) ;
+            sphericalAgentDescriptions.add(description);
+        }
+
+    }
+
+    private void connectFinish(List<List<Vec3>> finishPositions) {
+        for(List<Vec3> list : finishPositions){
+            int size = list.size();
+            for(int i = 0 ; i < size-1; i++){
+                Vec3 v1 = list.get(i);
+                Vec3 v2 = list.get(i+1);
                 pushMatrix();
-                strokeWeight(2);
                 stroke(0,125,0);
+                strokeWeight(2);
                 line(v1.x,v1.y,v1.z,v2.x,v2.y,v2.z);
                 popMatrix();
             }
         }
     }
+
 
     private void checkFinish(MultiSphericalAgentSystem multiSphericalAgentSystem) {
         int i = 0 ;

@@ -94,6 +94,15 @@ public class MultiSphericalAgentSystem {
         }
     }
 
+    public void updateClan(List<List<SphericalAgent>> flocks, List<SphericalObstacle> obstacles, float dt){
+        for(int i = 0 ; i < flocks.size(); i++){
+            List<SphericalAgent> flock = flocks.get(i);
+            for(SphericalAgent agent : flock){
+                agent.boidUpdateClan(flocks, obstacles, i, dt);
+            }
+        }
+    }
+
     private Vec3 getTTCForceOnI(Vec3 xj, Vec3 xi, Vec3 vj, Vec3 vi, float rj, float ri, boolean withObstacle) {
         Vec3 xji = xj.minus(xi);
         Vec3 vji = vj.minus(vi);

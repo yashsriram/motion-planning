@@ -81,7 +81,6 @@ public class ZigZag extends PApplet {
         MultiSphericalAgentSystem.INITIAL_AGENT_SPEED = 10f;
         SphericalAgent.DRAW_FUTURE_STATE = false;
         SphericalAgent.DRAW_PATH = true;
-        SphericalAgent.DRAW_FUTURE_STATE = false;
         SphericalAgent.DRAW_PATH = false;
         // tuning parameters
         SphericalAgent.IMPACT_RADIUS = 10f;
