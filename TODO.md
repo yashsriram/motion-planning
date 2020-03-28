@@ -63,7 +63,7 @@ milestones, and edges.
 
 ### Crowd/Flocking Simulation (Required) (80 Points)
 Simulate multiple agents sharing the environment as follows:
- - [ ] Implement a local interaction technique (Boids, Helbing, RVO/ORCA, TTC, etc.).
+ - [x] Implement a local interaction technique (Boids, Helbing, RVO/ORCA, TTC, etc.).
  - [ ] Find 2 or 3 scenarios showing interesting interactions between the agents
  - [x] Implement a global navigation strategy for the agents (PRM/A*, RRT, etc.)
  - [x] Your roadmap needs to account for the extent of the agents, and should support multiple obstacles in the environment
