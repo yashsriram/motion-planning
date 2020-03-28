@@ -64,11 +64,11 @@ public class Failing extends PApplet {
         placeAgents(topRight, bottomLeft);
 
         ConfigurationSpace configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescriptions.get(0), sphericalObstacles);
-        MultiSphericalAgentSystem.INITIAL_AGENT_SPEED = 10f;
+        MultiSphericalAgentSystem.INITIAL_AGENT_SPEED = 2f;
 
-        MultiSphericalAgentSystem.TTC_K = 10f;
-        MultiSphericalAgentSystem.TTC_MAX_FORCE = 100;
-        MultiSphericalAgentSystem.TTC_POWER = 1.3f;
+        MultiSphericalAgentSystem.TTC_K = 2000f;
+        MultiSphericalAgentSystem.TTC_MAX_FORCE = 200;
+        MultiSphericalAgentSystem.TTC_POWER = 4f;
         MultiAgentGraph.DRAW_VERTICES = false;
 
         SphericalAgent.DRAW_FUTURE_STATE = false;
@@ -94,7 +94,9 @@ public class Failing extends PApplet {
     public void draw() {
         long start = millis();
         // update
-        multiSphericalAgentSystem.updateTTC(sphericalObstacles, 0.1f);
+        for (int i = 0; i < 20; i++) {
+            multiSphericalAgentSystem.updateTTC(sphericalObstacles, 0.05f);
+        }
         long update = millis();
         // draw
         background(0);
