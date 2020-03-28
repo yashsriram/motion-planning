@@ -51,7 +51,7 @@ public class BSHSpeedUp extends PApplet {
         cam = new QueasyCam(this);
         for (int i = -SIDE; i < SIDE; i = i + 4) {
             for (int j = -SIDE; j < SIDE; j = j + 4) {
-                if (Math.abs(i + j) < 10) {
+                if (Math.abs(i * i * i + j) < 10) {
                     continue;
                 }
                 Vec3 center = Vec3.of(0, j, i);
@@ -64,7 +64,7 @@ public class BSHSpeedUp extends PApplet {
                 sphericalObstacles.add(new SphericalObstacle(
                         this,
                         center,
-                        0.5f,
+                        1f,
                         Vec3.of(1, 0, 1)
                 ));
             }
@@ -77,8 +77,13 @@ public class BSHSpeedUp extends PApplet {
                 0.5f
         );
         // configuration spaces
+        long start = millis();
         plainConfigurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
+        long plain = millis();
         bshConfigurationSpace = new BSHConfigurationSpace(this, sphericalAgentDescription, sphericalObstacles);
+        long bsh = millis();
+        PApplet.println("Plain config space creation time: " + (plain - start) + " ms");
+        PApplet.println("BSH config space creation time: " + (bsh - plain) + " ms");
 
         // graph
         graph = new MultiAgentGraph(this, startPosition, finishPosition);
@@ -141,7 +146,7 @@ public class BSHSpeedUp extends PApplet {
 
         surface.setTitle(
                 "FPS: " + Math.round(frameRate)
-                        + DATA_STRUCTURE + " edge culling time: " + EDGE_CULLING_TIME + "ms"
+                        + " " + DATA_STRUCTURE + " edge culling time: " + EDGE_CULLING_TIME + "ms"
                         + " #obs: " + sphericalObstacles.size()
         );
     }
