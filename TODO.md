@@ -74,7 +74,7 @@ Simulate multiple agents sharing the environment as follows:
  - [ ] (10) Implement and compare two different group interaction techniques
  - [x] (10) Implement and compare two different global navigation techniques
  - [x] (10) Nicely rendered 3D scenes w/models to give context (2D navigation is okay)
- - [x] (10) Support full 3D navigation (e.g., birds flocking around 3D obstacles)
+ - [ ] (10) Support full 3D navigation (e.g., birds flocking around 3D obstacles)
 
 ### User Interaction
  - [ ] (5) Allow the user to add and move obstacles at run time
