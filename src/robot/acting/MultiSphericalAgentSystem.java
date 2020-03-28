@@ -94,13 +94,13 @@ public class MultiSphericalAgentSystem {
         }
     }
 
-    private Vec3 getTTCForceOnI(Vec3 xj, Vec3 xi, Vec3 vj, Vec3 vi, float rj, float ri) {
+    private Vec3 getTTCForceOnI(Vec3 xj, Vec3 xi, Vec3 vj, Vec3 vi, float rj, float ri, boolean withObstacle) {
         Vec3 xji = xj.minus(xi);
         Vec3 vji = vj.minus(vi);
 
         // Collision detection
         final float a = vji.dot(vji);
-        if (a < 2) {
+        if (withObstacle || a < 2) {
             // Almost relatively stationary
             float distance = xji.norm();
             float impactRadius = ri + rj + TTC_VICINITY_DISTANCE;
@@ -161,7 +161,7 @@ public class MultiSphericalAgentSystem {
                 SphericalAgent agentJ = sphericalAgents.get(j);
                 Vec3 agentJVel = goalVelocities.get(j);
                 // Newtons 3rd law
-                Vec3 agentI_Force = getTTCForceOnI(agentJ.center, agentI.center, agentJVel, agentIVel, agentJ.description.radius, agentI.description.radius);
+                Vec3 agentI_Force = getTTCForceOnI(agentJ.center, agentI.center, agentJVel, agentIVel, agentJ.description.radius, agentI.description.radius, false);
                 Vec3 agentJ_Force = agentI_Force.scale(-1);
                 // Adding to existing ttc forces
                 totalTTCForces.set(i, totalTTCForces.get(i).plusInPlace(agentI_Force));
@@ -173,7 +173,7 @@ public class MultiSphericalAgentSystem {
             SphericalAgent agentI = sphericalAgents.get(i);
             Vec3 agentIVel = goalVelocities.get(i);
             for (SphericalObstacle obstacleJ : sphericalObstacles) {
-                Vec3 ttcForceOnI = getTTCForceOnI(obstacleJ.center, agentI.center, Vec3.of(0), agentIVel, obstacleJ.radius, agentI.description.radius);
+                Vec3 ttcForceOnI = getTTCForceOnI(obstacleJ.center, agentI.center, Vec3.of(0), agentIVel, obstacleJ.radius, agentI.description.radius, true);
                 // Adding to existing ttc forces
                 totalTTCForces.set(i, totalTTCForces.get(i).plusInPlace(ttcForceOnI));
             }
