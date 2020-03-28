@@ -14,7 +14,7 @@ import robot.sensing.PlainConfigurationSpace;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Batches extends PApplet {
+public class TwoBatches extends PApplet {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 800;
     public static final int SIDE = 100;
@@ -40,39 +40,28 @@ public class Batches extends PApplet {
         noStroke();
 
         cam = new QueasyCam(this);
-//        sphericalObstacles.add(new SphericalObstacle(
-//                this,
-//                Vec3.zero(),
-//                10,
-//                Vec3.of(1, 0, 1)
-//        ));
 
         Vec3 bottomLeft = Vec3.of(0, SIDE * 0.2f, SIDE * -0.9f);
         Vec3 topRight = Vec3.of(0, SIDE * -0.9f, SIDE * 0.2f);
         placeAgents(bottomLeft, topRight);
         placeAgents(topRight, bottomLeft);
 
-        Vec3 bottomRight = Vec3.of(0, SIDE * 0.2f, SIDE * 0.2f);
-        Vec3 topLeft = Vec3.of(0, SIDE * -0.9f, SIDE * -0.9f);
-        placeAgents(bottomRight, topLeft);
-        placeAgents(topLeft, bottomRight);
-
         ConfigurationSpace configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescriptions.get(0), sphericalObstacles);
-        MultiSphericalAgentSystem.INITIAL_AGENT_SPEED = 10f;
+        MultiSphericalAgentSystem.INITIAL_AGENT_SPEED = 1f;
 
-        MultiSphericalAgentSystem.TTC_K = 20f;
+        MultiSphericalAgentSystem.TTC_K = 200f;
         MultiSphericalAgentSystem.TTC_MAX_FORCE = 200;
-        MultiSphericalAgentSystem.TTC_POWER = 1.1f;
+        MultiSphericalAgentSystem.TTC_POWER = 6f;
 
-        MultiSphericalAgentSystem.TTC_VICINITY_DISTANCE = 20;
-        MultiSphericalAgentSystem.TTC_SEPARATION_FORCE_K = 20;
-        MultiSphericalAgentSystem.TTC_COLLISION_CORRECTION_FORCE_K = 20;
+        MultiSphericalAgentSystem.TTC_VICINITY_DISTANCE = 6;
+        MultiSphericalAgentSystem.TTC_SEPARATION_FORCE_K = 400;
+        MultiSphericalAgentSystem.TTC_COLLISION_CORRECTION_FORCE_K = 400;
         MultiAgentGraph.DRAW_VERTICES = false;
 
         SphericalAgent.DRAW_FUTURE_STATE = false;
         SphericalAgent.DRAW_PATH = false;
 
-        multiSphericalAgentSystem = new MultiSphericalAgentSystem(this, sphericalAgentDescriptions, configurationSpace, minCorner, maxCorner, 4);
+        multiSphericalAgentSystem = new MultiSphericalAgentSystem(this, sphericalAgentDescriptions, configurationSpace, minCorner, maxCorner, 2);
     }
 
     private void placeAgents(Vec3 start, Vec3 finish) {
@@ -93,7 +82,7 @@ public class Batches extends PApplet {
     public void draw() {
         long start = millis();
         // update
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 20; i++) {
             multiSphericalAgentSystem.updateTTC(sphericalObstacles, 0.05f);
         }
         long update = millis();
@@ -161,7 +150,7 @@ public class Batches extends PApplet {
     }
 
     static public void main(String[] passedArgs) {
-        String[] appletArgs = new String[]{"demos.ttc.Batches"};
+        String[] appletArgs = new String[]{"demos.ttc.TwoBatches"};
         if (passedArgs != null) {
             PApplet.main(concat(appletArgs, passedArgs));
         } else {
