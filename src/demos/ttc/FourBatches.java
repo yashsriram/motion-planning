@@ -40,12 +40,12 @@ public class FourBatches extends PApplet {
         noStroke();
 
         cam = new QueasyCam(this);
-//        sphericalObstacles.add(new SphericalObstacle(
-//                this,
-//                Vec3.zero(),
-//                10,
-//                Vec3.of(1, 0, 1)
-//        ));
+        sphericalObstacles.add(new SphericalObstacle(
+                this,
+                Vec3.zero(),
+                10,
+                Vec3.of(1, 0, 1)
+        ));
 
         Vec3 bottomLeft = Vec3.of(0, SIDE * 0.2f, SIDE * -0.9f);
         Vec3 topRight = Vec3.of(0, SIDE * -0.9f, SIDE * 0.2f);
@@ -58,14 +58,12 @@ public class FourBatches extends PApplet {
         placeAgents(topLeft, bottomRight);
 
         ConfigurationSpace configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescriptions.get(0), sphericalObstacles);
-        MultiSphericalAgentSystem.INITIAL_AGENT_SPEED = 10f;
+        MultiSphericalAgentSystem.INITIAL_AGENT_SPEED = 1f;
 
-        MultiSphericalAgentSystem.TTC_K = 20f;
-        MultiSphericalAgentSystem.TTC_MAX_FORCE = 200;
-        MultiSphericalAgentSystem.TTC_POWER = 1.1f;
+        MultiSphericalAgentSystem.TTC_K = 4000f;
+        MultiSphericalAgentSystem.TTC_MAX_FORCE = 300;
+        MultiSphericalAgentSystem.TTC_POWER = 4f;
 
-        MultiSphericalAgentSystem.TTC_VICINITY_DISTANCE = 20;
-        MultiSphericalAgentSystem.TTC_SEPARATION_FORCE_K = 20;
         MultiSphericalAgentSystem.TTC_COLLISION_CORRECTION_FORCE_K = 20;
         MultiAgentGraph.DRAW_VERTICES = false;
 
@@ -76,14 +74,14 @@ public class FourBatches extends PApplet {
     }
 
     private void placeAgents(Vec3 start, Vec3 finish) {
-        float agentRadius = SIDE * 0.03f;
+        float agentRadius = 2f;
         float slack = 2f;
-        int gridSize = 7;
+        int gridSize = 5;
         for (int i = 0; i < gridSize; i++) {
             for (int j = 0; j < gridSize; j++) {
                 sphericalAgentDescriptions.add(new SphericalAgentDescription(
                         start.plus(Vec3.of(0, (2f + slack) * agentRadius * j, (2f + slack) * agentRadius * i)),
-                        finish.plus(Vec3.of(0, (2f + slack) * agentRadius * j, (2f + slack) * agentRadius * i)),
+                        finish.plus(Vec3.of(0, (2f + slack) * agentRadius * (gridSize / 2), (2f + slack) * agentRadius * (gridSize / 2))),
                         agentRadius
                 ));
             }
@@ -93,7 +91,7 @@ public class FourBatches extends PApplet {
     public void draw() {
         long start = millis();
         // update
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 20; i++) {
             multiSphericalAgentSystem.updateTTC(sphericalObstacles, 0.05f);
         }
         long update = millis();

@@ -54,14 +54,12 @@ public class Antipodes extends PApplet {
         }
 
         ConfigurationSpace configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescriptions.get(0), sphericalObstacles);
-        MultiSphericalAgentSystem.INITIAL_AGENT_SPEED = 2.5f;
+        MultiSphericalAgentSystem.INITIAL_AGENT_SPEED = 2f;
 
-        MultiSphericalAgentSystem.TTC_K = 2000f;
+        MultiSphericalAgentSystem.TTC_K = 3000f;
         MultiSphericalAgentSystem.TTC_MAX_FORCE = 250;
-        MultiSphericalAgentSystem.TTC_POWER = 3f;
+        MultiSphericalAgentSystem.TTC_POWER = 4f;
 
-        MultiSphericalAgentSystem.TTC_VICINITY_DISTANCE = 2;
-        MultiSphericalAgentSystem.TTC_SEPARATION_FORCE_K = 20;
         MultiSphericalAgentSystem.TTC_COLLISION_CORRECTION_FORCE_K = 20;
         MultiAgentGraph.DRAW_VERTICES = false;
 

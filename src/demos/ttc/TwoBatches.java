@@ -41,8 +41,8 @@ public class TwoBatches extends PApplet {
 
         cam = new QueasyCam(this);
 
-        Vec3 bottomLeft = Vec3.of(0, SIDE * 0.2f, SIDE * -0.9f);
-        Vec3 topRight = Vec3.of(0, SIDE * -0.9f, SIDE * 0.2f);
+        Vec3 bottomLeft = Vec3.of(0, SIDE * 0.5f, SIDE * -0.9f);
+        Vec3 topRight = Vec3.of(0, SIDE * -0.9f, SIDE * 0.5f);
         placeAgents(bottomLeft, topRight);
         placeAgents(topRight, bottomLeft);
 
@@ -50,11 +50,9 @@ public class TwoBatches extends PApplet {
         MultiSphericalAgentSystem.INITIAL_AGENT_SPEED = 1f;
 
         MultiSphericalAgentSystem.TTC_K = 2000f;
-        MultiSphericalAgentSystem.TTC_MAX_FORCE = 250;
+        MultiSphericalAgentSystem.TTC_MAX_FORCE = 100;
         MultiSphericalAgentSystem.TTC_POWER = 4f;
 
-        MultiSphericalAgentSystem.TTC_VICINITY_DISTANCE = 6;
-        MultiSphericalAgentSystem.TTC_SEPARATION_FORCE_K = 400;
         MultiSphericalAgentSystem.TTC_COLLISION_CORRECTION_FORCE_K = 400;
         MultiAgentGraph.DRAW_VERTICES = false;
 
@@ -65,14 +63,14 @@ public class TwoBatches extends PApplet {
     }
 
     private void placeAgents(Vec3 start, Vec3 finish) {
-        float agentRadius = SIDE * 0.03f;
+        float agentRadius = 2f;
         float slack = 2f;
-        int gridSize = 7;
+        int gridSize = 6;
         for (int i = 0; i < gridSize; i++) {
             for (int j = 0; j < gridSize; j++) {
                 sphericalAgentDescriptions.add(new SphericalAgentDescription(
                         start.plus(Vec3.of(0, (2f + slack) * agentRadius * j, (2f + slack) * agentRadius * i)),
-                        finish.plus(Vec3.of(0, (2f + slack) * agentRadius * j, (2f + slack) * agentRadius * i)),
+                        finish.plus(Vec3.of(0, (2f + slack) * agentRadius * (gridSize / 2), (2f + slack) * agentRadius * (gridSize / 2))),
                         agentRadius
                 ));
             }
