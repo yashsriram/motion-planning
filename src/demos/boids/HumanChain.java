@@ -52,6 +52,69 @@ public class HumanChain extends PApplet {
         cam = new QueasyCam(this);
         cam.speed = 10f;
         sphericalAgentDescriptions = new ArrayList<>();
+
+        for (int i = 0; i < 7; i++) {
+            if (i == 0) {
+                continue;
+            }
+            PShape shape = loadShape("data/rocks/Rock_" + (i + 1) + ".obj");
+            shape.rotateX(PConstants.PI);
+            obstacleShapes.add(shape);
+        }
+        for (int i = 0; i < 5; i++) {
+            if (i == 1 || i == 2) {
+                continue;
+            }
+            PShape shape = loadShape("data/plants/Plant_" + (i + 1) + ".obj");
+            shape.rotateX(PConstants.PI);
+            obstacleShapes.add(shape);
+        }
+        for (int i = 0; i < 2; i++) {
+            PShape shape = loadShape("data/bushes/Bush_" + (i + 1) + ".obj");
+            shape.rotateX(PConstants.PI);
+            obstacleShapes.add(shape);
+        }
+        for (int i = 0; i < 2; i++) {
+            PShape shape = loadShape("data/bushes/snow/Bush_Snow_" + (i + 1) + ".obj");
+            shape.rotateX(PConstants.PI);
+            obstacleShapes.add(shape);
+        }
+        for (int i = 0; i < 2; i++) {
+            PShape shape = loadShape("data/bushes/berries/BushBerries_" + (i + 1) + ".obj");
+            shape.rotateX(PConstants.PI);
+            obstacleShapes.add(shape);
+        }
+
+        for(int i = 0 ; i < 3 ; i++){
+            for(int j = 0 ; j < 5 ; j++){
+                PShape shape = obstacleShapes.get((int) random(obstacleShapes.size()));
+                float normalizedSize = Math.max(Math.max(shape.getWidth(), shape.getHeight()), shape.getDepth()) + 0.3f;
+                sphericalObstacles.add(new SpriteSphericalObstacle(
+                        this,
+                        Vec3.of(SIDE*(0.3f-(i/10f)),0, SIDE*(1.5f*j/10f - 0.9f)).plus(OFFSET),
+                        SIDE * 0.10f * random(0.5f, 1),
+                        Vec3.of(1, 0, 0),
+                        shape,
+                        normalizedSize
+                ));
+            }
+        }
+
+        for(int i = 0 ; i < 3 ; i++){
+            for(int j = 0 ; j < 5 ; j++){
+                PShape shape = obstacleShapes.get((int) random(obstacleShapes.size()));
+                float normalizedSize = Math.max(Math.max(shape.getWidth(), shape.getHeight()), shape.getDepth()) + 0.3f;
+                sphericalObstacles.add(new SpriteSphericalObstacle(
+                        this,
+                        Vec3.of(SIDE*(0.3f-(i/10f)),0, SIDE*(-1.5f*j/10f + 0.9f)).plus(OFFSET),
+                        SIDE * 0.10f * random(0.5f, 1),
+                        Vec3.of(1, 0, 0),
+                        shape,
+                        normalizedSize
+                ));
+            }
+        }
+        
         //5
         finishPositions.add(Vec3.of(SIDE * 0.9f, 0, SIDE * -0.6f).plusInPlace(OFFSET));
         finishPositions.add(Vec3.of(SIDE * 0.9f, 0, SIDE * -0.8f).plusInPlace(OFFSET));
@@ -78,7 +141,7 @@ public class HumanChain extends PApplet {
 
 
         Vec3 center = Vec3.of(SIDE * -0.5f, 0, SIDE * -0.5f);
-        float crowdRadius = SIDE*0.2f ;
+        float crowdRadius = SIDE*0.4f ;
         for(int i = 0 ; i < finishPositions.size(); i++){
             float theta = random(0, 2*PI);
             float r = (float) (crowdRadius*Math.sqrt(random(0,1)));
@@ -107,7 +170,7 @@ public class HumanChain extends PApplet {
         MultiSphericalAgentSystem.MAX_EDGE_LEN = 50 ;
         multiSphericalAgentSystem = new MultiSphericalAgentSystem(this,sphericalAgentDescriptions,configurationSpace, minCorner, maxCorner);
         // tuning parameters
-        SphericalAgent.IMPACT_RADIUS = 100f;
+        SphericalAgent.IMPACT_RADIUS = 120f;
         SphericalAgent.SEPERATION_FORCE_BOID = 1f;
         SphericalAgent.SEPERATION_FORCE_OBSTACLE = 1.5f;
         SphericalAgent.ALIGNMENT_FORCE = 0.02f;
@@ -152,7 +215,7 @@ public class HumanChain extends PApplet {
         // graph
 //        graph.draw();
         long draw = millis();
-        connectFinish(finishPositions);
+//        connectFinish(finishPositions);
 
         surface.setTitle("Processing - FPS: " + Math.round(frameRate) + " Update: " + (update - start) + "ms Draw " + (draw - update) + "ms" + " search: " + SEARCH_ALGORITHM + " smooth-path: " + SMOOTH_PATH);
     }
