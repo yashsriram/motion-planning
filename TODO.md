@@ -56,10 +56,10 @@ milestones, and edges.
  - [x] update RRT and RRT* to sample finish position as the random point with some probability and remove the finish slack region
  - [ ] fix boids
     - [ ] (vel dir * speed + (boidsforce * dt)) * * dt
-    - [ ] alignment normalize after all
-    - [ ] refactor tuning params
+    - [x] alignment normalize after all
+    - [x] refactor tuning params
     - [ ] avoid collisions with obstacles
-    - [ ] multi walker, need to be able to reset
+    - [x] multi walker, need to be able to reset
 
 ### Crowd/Flocking Simulation (Required) (80 Points)
 Simulate multiple agents sharing the environment as follows:
@@ -72,6 +72,7 @@ Simulate multiple agents sharing the environment as follows:
 
 ### Additional Features
  - [ ] (10) Implement and compare two different group interaction techniques
+ - [ ] show both helbeing and ttc using the impl
  - [x] (10) Implement and compare two different global navigation techniques
  - [x] (10) Nicely rendered 3D scenes w/models to give context (2D navigation is okay)
  - [x] (10) Support full 3D navigation (e.g., birds flocking around 3D obstacles)
