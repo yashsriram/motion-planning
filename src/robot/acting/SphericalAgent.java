@@ -354,6 +354,6 @@ public class SphericalAgent {
     }
 
     public boolean hasReachedEnd() {
-        return currentMilestone==path.size()-1;
+        return currentMilestone == path.size() - 1;
     }
 }

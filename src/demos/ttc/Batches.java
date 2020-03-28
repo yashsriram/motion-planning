@@ -41,8 +41,8 @@ public class Batches extends PApplet {
 
         cam = new QueasyCam(this);
 
-        Vec3 bottomLeft = Vec3.of(0, SIDE * 0.7f, SIDE * -0.9f);
-        Vec3 topRight = Vec3.of(0, SIDE * -0.9f, SIDE * 0.7f);
+        Vec3 bottomLeft = Vec3.of(0, SIDE * 0.5f, SIDE * -0.9f);
+        Vec3 topRight = Vec3.of(0, SIDE * -0.9f, SIDE * 0.5f);
         placeAgents(bottomLeft, topRight);
         placeAgents(topRight, bottomLeft);
 
@@ -61,12 +61,12 @@ public class Batches extends PApplet {
 
     private void placeAgents(Vec3 start, Vec3 finish) {
         float agentRadius = SIDE * 0.03f;
-        int gridSize = 3;
+        int gridSize = 5;
         for (int i = 0; i < gridSize; i++) {
             for (int j = 0; j < gridSize; j++) {
                 sphericalAgentDescriptions.add(new SphericalAgentDescription(
                         start.plus(Vec3.of(0, 3f * agentRadius * j, 3f * agentRadius * i)),
-                        finish,
+                        finish.plus(Vec3.of(0, 3f * agentRadius * j, 3f * agentRadius * i)),
                         agentRadius
                 ));
             }

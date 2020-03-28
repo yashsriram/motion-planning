@@ -85,10 +85,10 @@ public class MultiSphericalAgentSystem {
 
         // Collision detection
         final float a = vji.dot(vji);
-        if (a < 1) {
+        if (a < 2) {
             // Almost relatively stationary
             float distance = xji.norm();
-            float impactRadius = ri + rj + 10;
+            float impactRadius = ri + rj + 8;
             if (distance < impactRadius) {
                 // Avoid collision (which could be happening probably due to slow incoming agents)
                 Vec3 separationForce = xji.normalize().scaleInPlace(20 * (impactRadius - distance));
@@ -114,7 +114,10 @@ public class MultiSphericalAgentSystem {
         if ((t1 > 0 && t2 < 0) || (t2 > 0 && t1 < 0)) {
             // (+, -) (-, +) case
             // currently colliding
-            return Vec3.zero();
+            float distance = xji.norm();
+            // Avoid collision (which could be happening probably due to slow incoming agents)
+            Vec3 separationForce = xji.normalize().scaleInPlace(20 * (ri + rj - distance));
+            return separationForce.scaleInPlace(-1);
         } else {
             // (+, +) case
             // collision occurs
@@ -169,6 +172,9 @@ public class MultiSphericalAgentSystem {
         // Adding ttc force and prm guided force
         for (int i = 0; i < sphericalAgents.size(); i++) {
             SphericalAgent agent = sphericalAgents.get(i);
+            if (agent.hasReachedEnd()) {
+                continue;
+            }
             Vec3 goalVelocity = goalVelocities.get(i);
             Vec3 ttcForce = totalTTCForces.get(i);
             if (ttcForce.norm() > TTC_MAX_FORCE) {
