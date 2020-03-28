@@ -150,7 +150,7 @@ public class SphericalAgent {
         return finalForce;
     }
 
-    public Vec3 goalVelocity() {
+    public Vec3 getGoalVelocity() {
         if (isPaused) {
             return Vec3.of(0);
         }
@@ -177,8 +177,13 @@ public class SphericalAgent {
     }
 
     public void ttcUpdate(Vec3 displacement) {
-        center.plusInPlace(displacement);
-        distanceCovered += displacement.norm();
+        if (isPaused) {
+            return;
+        }
+        if (currentMilestone < path.size() - 1) {
+            center.plusInPlace(displacement);
+            distanceCovered += displacement.norm();
+        }
     }
 
     public void smoothUpdate(float dt) {

@@ -40,6 +40,12 @@ public class Batches extends PApplet {
         noStroke();
 
         cam = new QueasyCam(this);
+//        sphericalObstacles.add(new SphericalObstacle(
+//                this,
+//                Vec3.zero(),
+//                10,
+//                Vec3.of(1, 0, 1)
+//        ));
 
         Vec3 bottomLeft = Vec3.of(0, SIDE * 0.2f, SIDE * -0.9f);
         Vec3 topRight = Vec3.of(0, SIDE * -0.9f, SIDE * 0.2f);

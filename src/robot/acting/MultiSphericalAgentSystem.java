@@ -146,7 +146,7 @@ public class MultiSphericalAgentSystem {
         // Get goal velocities
         List<Vec3> goalVelocities = new ArrayList<>();
         for (SphericalAgent agent : sphericalAgents) {
-            goalVelocities.add(agent.goalVelocity());
+            goalVelocities.add(agent.getGoalVelocity());
         }
         // Compute ttc forces
         List<Vec3> totalTTCForces = new ArrayList<>();
@@ -181,9 +181,6 @@ public class MultiSphericalAgentSystem {
         // Adding ttc force and prm guided force
         for (int i = 0; i < sphericalAgents.size(); i++) {
             SphericalAgent agent = sphericalAgents.get(i);
-            if (agent.hasReachedEnd()) {
-                continue;
-            }
             Vec3 goalVelocity = goalVelocities.get(i);
             Vec3 ttcForce = totalTTCForces.get(i);
             if (ttcForce.norm() > TTC_MAX_FORCE) {
