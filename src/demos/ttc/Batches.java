@@ -14,7 +14,7 @@ import robot.sensing.PlainConfigurationSpace;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ZigZag extends PApplet {
+public class Batches extends PApplet {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 800;
     public static final int SIDE = 100;
@@ -40,23 +40,6 @@ public class ZigZag extends PApplet {
         noStroke();
 
         cam = new QueasyCam(this);
-        float radiusFactor = 0.06f;
-        float obstacleRadius = SIDE * radiusFactor;
-        int numRows = 4;
-        int rowLength = 10;
-        float a = 30;
-        float b = 50;
-        for (int i = 0; i < rowLength; i++) {
-            for (int j = 0; j < numRows; j++) {
-                float zCoordinate = (SIDE - 2 * obstacleRadius * i) * (j % 2 == 1 ? -1 : 1);
-                sphericalObstacles.add(new SphericalObstacle(
-                        this,
-                        Vec3.of(0, -SIDE + a * j + b, zCoordinate),
-                        obstacleRadius,
-                        Vec3.of(1, 0, 1)
-                ));
-            }
-        }
 
         Vec3 bottomLeft = Vec3.of(0, SIDE * 0.7f, SIDE * -0.9f);
         Vec3 topRight = Vec3.of(0, SIDE * -0.9f, SIDE * 0.7f);
@@ -159,7 +142,7 @@ public class ZigZag extends PApplet {
     }
 
     static public void main(String[] passedArgs) {
-        String[] appletArgs = new String[]{"demos.ttc.ZigZag"};
+        String[] appletArgs = new String[]{"demos.ttc.Batches"};
         if (passedArgs != null) {
             PApplet.main(concat(appletArgs, passedArgs));
         } else {

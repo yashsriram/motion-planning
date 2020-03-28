@@ -150,7 +150,7 @@ public class SphericalAgent {
         return finalForce;
     }
 
-    public Vec3 getIsolatedVelocity() {
+    public Vec3 goalVelocity() {
         if (isPaused) {
             return Vec3.of(0);
         }
