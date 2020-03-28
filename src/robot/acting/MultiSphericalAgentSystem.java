@@ -98,8 +98,8 @@ public class MultiSphericalAgentSystem {
         Vec3 xji = xj.minus(xi);
         Vec3 vji = vj.minus(vi);
 
-        // Collision detection
         final float a = vji.dot(vji);
+        // Separation b/w same group
         if (withObstacle || a < 2) {
             // Almost relatively stationary
             float distance = xji.norm();
@@ -111,6 +111,7 @@ public class MultiSphericalAgentSystem {
             }
             return Vec3.zero();
         }
+        // Collision detection
         final float b = xji.dot(vji);
         final float c = xji.dot(xji) - (ri + rj) * (ri + rj);
         float desc = b * b - a * c;
@@ -128,15 +129,14 @@ public class MultiSphericalAgentSystem {
         double timeToCollision = -1;
         if (t1 > 0 && t2 > 0) {
             // (+, +) case
-            // collision occurs
+            // Collision occurs
             timeToCollision = Math.min(t1, t2);
         } else {
-            // currently colliding
+            // Currently colliding
             float distance = xji.norm();
-            // Avoid collision (which could be happening probably due to slow incoming agents)
+            // Recover from collision
             Vec3 separationForce = xji.normalize().scaleInPlace(TTC_COLLISION_CORRECTION_FORCE_K * (ri + rj - distance));
             return separationForce.scaleInPlace(-1);
-//            return Vec3.zero();
         }
         // Calculate ttcForceOnI
         return xji.normalize().scaleInPlace((float) (-TTC_K / Math.pow(timeToCollision, TTC_POWER)));

@@ -49,9 +49,9 @@ public class TwoBatches extends PApplet {
         ConfigurationSpace configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescriptions.get(0), sphericalObstacles);
         MultiSphericalAgentSystem.INITIAL_AGENT_SPEED = 1f;
 
-        MultiSphericalAgentSystem.TTC_K = 200f;
-        MultiSphericalAgentSystem.TTC_MAX_FORCE = 200;
-        MultiSphericalAgentSystem.TTC_POWER = 6f;
+        MultiSphericalAgentSystem.TTC_K = 2000f;
+        MultiSphericalAgentSystem.TTC_MAX_FORCE = 250;
+        MultiSphericalAgentSystem.TTC_POWER = 4f;
 
         MultiSphericalAgentSystem.TTC_VICINITY_DISTANCE = 6;
         MultiSphericalAgentSystem.TTC_SEPARATION_FORCE_K = 400;
