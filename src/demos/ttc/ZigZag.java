@@ -65,15 +65,16 @@ public class ZigZag extends PApplet {
 
         ConfigurationSpace configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescriptions.get(0), sphericalObstacles);
         MultiSphericalAgentSystem.INITIAL_AGENT_SPEED = 10f;
-        MultiSphericalAgentSystem.COLOR_SPLIT = true;
+
         MultiSphericalAgentSystem.TTC_K = 10f;
-        MultiSphericalAgentSystem.TTC_T0 = 10000f;
         MultiSphericalAgentSystem.TTC_MAX_FORCE = 100;
         MultiSphericalAgentSystem.TTC_POWER = 1.3f;
-        multiSphericalAgentSystem = new MultiSphericalAgentSystem(this, sphericalAgentDescriptions, configurationSpace, minCorner, maxCorner);
+        MultiAgentGraph.DRAW_VERTICES = false;
+
         SphericalAgent.DRAW_FUTURE_STATE = false;
         SphericalAgent.DRAW_PATH = false;
-        MultiAgentGraph.DRAW_VERTICES = false;
+
+        multiSphericalAgentSystem = new MultiSphericalAgentSystem(this, sphericalAgentDescriptions, configurationSpace, minCorner, maxCorner, 2);
     }
 
     private void placeAgents(Vec3 start, Vec3 finish) {
@@ -83,7 +84,7 @@ public class ZigZag extends PApplet {
             for (int j = 0; j < gridSize; j++) {
                 sphericalAgentDescriptions.add(new SphericalAgentDescription(
                         start.plus(Vec3.of(0, 3f * agentRadius * j, 3f * agentRadius * i)),
-                        finish,
+                        finish.plus(Vec3.of(0, 3f * agentRadius * j, 3f * agentRadius * i)),
                         agentRadius
                 ));
             }

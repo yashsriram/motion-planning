@@ -12,14 +12,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MultiSphericalAgentSystem {
-    public static boolean COLOR_SPLIT = false;
     public static float INITIAL_AGENT_SPEED = 20f;
     public static float MAX_EDGE_LEN = 10f;
     public static int NUM_VERTEX_SAMPLES = 10000;
+
     public static float TTC_K = 10;
-    public static float TTC_T0 = 1;
     public static float TTC_MAX_FORCE = 500f;
     public static float TTC_POWER = 2;
+    public static float TTC_VICINITY_DISTANCE = 10;
+    public static float TTC_SEPARATION_FORCE_K = 8;
+    public static float TTC_COLLISION_CORRECTION_FORCE_K = 10;
 
     final PApplet parent;
     final ConfigurationSpace configurationSpace;
@@ -30,30 +32,43 @@ public class MultiSphericalAgentSystem {
         this.parent = parent;
         // At least one spherical agent is required
         assert (sphericalAgentDescriptions.size() > 0);
-        if (COLOR_SPLIT) {
-            for (int i = 0; i < sphericalAgentDescriptions.size(); ++i) {
-                SphericalAgentDescription description = sphericalAgentDescriptions.get(i);
-                sphericalAgents.add(
-                        new SphericalAgent(parent,
-                                description,
-                                configurationSpace,
-                                minCorner, maxCorner,
-                                INITIAL_AGENT_SPEED,
-                                i < sphericalAgentDescriptions.size() / 2 ? Vec3.of(1, 1, 0) : Vec3.of(0, 1, 1))
-                );
+        for (SphericalAgentDescription sphericalAgentDescription : sphericalAgentDescriptions) {
+            sphericalAgents.add(
+                    new SphericalAgent(parent,
+                            sphericalAgentDescription,
+                            configurationSpace,
+                            minCorner, maxCorner,
+                            INITIAL_AGENT_SPEED,
+                            Vec3.of(parent.random(1), parent.random(1), parent.random(1))
+                    )
+            );
+        }
+        this.configurationSpace = configurationSpace;
+        this.multiAgentGraph = new MultiAgentGraph(parent, sphericalAgentDescriptions);
+        this.multiAgentGraph.generateVertices(sphericalAgents.get(0).samplePoints(NUM_VERTEX_SAMPLES), configurationSpace);
+        this.multiAgentGraph.generateAdjacencies(MAX_EDGE_LEN, configurationSpace);
+    }
+
+    public MultiSphericalAgentSystem(PApplet parent, List<SphericalAgentDescription> sphericalAgentDescriptions, ConfigurationSpace configurationSpace, Vec3 minCorner, Vec3 maxCorner, int numBatches) {
+        this.parent = parent;
+        // At least one spherical agent is required
+        assert (sphericalAgentDescriptions.size() > 0);
+        // Assert atleast one batch
+        assert (numBatches > 0);
+        Vec3 color = Vec3.of(parent.random(1), parent.random(1), parent.random(1));
+        for (int i = 0; i < sphericalAgentDescriptions.size(); i++) {
+            if (i % (sphericalAgentDescriptions.size() / numBatches) == 0) {
+                color = Vec3.of(parent.random(1), parent.random(1), parent.random(1));
             }
-        } else {
-            for (SphericalAgentDescription sphericalAgentDescription : sphericalAgentDescriptions) {
-                sphericalAgents.add(
-                        new SphericalAgent(parent,
-                                sphericalAgentDescription,
-                                configurationSpace,
-                                minCorner, maxCorner,
-                                INITIAL_AGENT_SPEED,
-                                Vec3.of(parent.random(1), parent.random(1), parent.random(1))
-                        )
-                );
-            }
+            sphericalAgents.add(
+                    new SphericalAgent(parent,
+                            sphericalAgentDescriptions.get(i),
+                            configurationSpace,
+                            minCorner, maxCorner,
+                            INITIAL_AGENT_SPEED,
+                            color
+                    )
+            );
         }
         this.configurationSpace = configurationSpace;
         this.multiAgentGraph = new MultiAgentGraph(parent, sphericalAgentDescriptions);
@@ -88,10 +103,10 @@ public class MultiSphericalAgentSystem {
         if (a < 2) {
             // Almost relatively stationary
             float distance = xji.norm();
-            float impactRadius = ri + rj + 8;
+            float impactRadius = ri + rj + TTC_VICINITY_DISTANCE;
             if (distance < impactRadius) {
                 // Avoid collision (which could be happening probably due to slow incoming agents)
-                Vec3 separationForce = xji.normalize().scaleInPlace(20 * (impactRadius - distance));
+                Vec3 separationForce = xji.normalize().scaleInPlace(TTC_SEPARATION_FORCE_K * (impactRadius - distance));
                 return separationForce.scaleInPlace(-1);
             }
             return Vec3.zero();
@@ -111,26 +126,20 @@ public class MultiSphericalAgentSystem {
             return Vec3.zero();
         }
         double timeToCollision = -1;
-        if ((t1 > 0 && t2 < 0) || (t2 > 0 && t1 < 0)) {
-            // (+, -) (-, +) case
-            // currently colliding
-            float distance = xji.norm();
-            // Avoid collision (which could be happening probably due to slow incoming agents)
-            Vec3 separationForce = xji.normalize().scaleInPlace(20 * (ri + rj - distance));
-            return separationForce.scaleInPlace(-1);
-        } else {
+        if (t1 > 0 && t2 > 0) {
             // (+, +) case
             // collision occurs
             timeToCollision = Math.min(t1, t2);
+        } else {
+            // currently colliding
+            float distance = xji.norm();
+            // Avoid collision (which could be happening probably due to slow incoming agents)
+            Vec3 separationForce = xji.normalize().scaleInPlace(TTC_COLLISION_CORRECTION_FORCE_K * (ri + rj - distance));
+            return separationForce.scaleInPlace(-1);
+//            return Vec3.zero();
         }
         // Calculate ttcForceOnI
-//        double firstTerm = (TTC_K * Math.exp(-timeToCollision / TTC_T0)) / (Math.pow(timeToCollision, TTC_POWER) * a);
-//        double secondTerm = (TTC_POWER / timeToCollision + 1 / TTC_T0);
-//        Vec3 thirdTerm = xji.scale(a).minus(vji.scale(b)).scaleInPlace(1 / (float) Math.sqrt(desc));
-//        Vec3 fourthTerm = vji;
-//        Vec3 ttcForceOnI = thirdTerm.minus(fourthTerm).scaleInPlace((float) (-1 * firstTerm * secondTerm));
-        Vec3 ttcForceOnI = xji.normalize().scaleInPlace((float) (-TTC_K / Math.pow(timeToCollision, TTC_POWER)));
-        return ttcForceOnI;
+        return xji.normalize().scaleInPlace((float) (-TTC_K / Math.pow(timeToCollision, TTC_POWER)));
     }
 
     public void updateTTC(List<SphericalObstacle> sphericalObstacles, float dt) {
