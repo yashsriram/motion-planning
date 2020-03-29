@@ -15,9 +15,9 @@ import robot.sensing.PlainConfigurationSpace;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ZigZag extends PApplet {
-    public static final int WIDTH = 800;
-    public static final int HEIGHT = 800;
+public class Birds extends PApplet {
+    public static final int WIDTH = 1200;
+    public static final int HEIGHT = 1200;
     public static final int SIDE = 100;
     final Vec3 minCorner = Vec3.of(0, -SIDE, -SIDE);
     final Vec3 maxCorner = Vec3.of(0, SIDE, SIDE);
@@ -25,6 +25,7 @@ public class ZigZag extends PApplet {
     List<SphericalObstacle> sphericalObstacles = new ArrayList<>();
     MultiSphericalAgentSystem multiSphericalAgentSystem;
     QueasyCam cam;
+    PShape wings;
 
     static boolean DRAW_OBSTACLES = true;
     static String SEARCH_ALGORITHM = "";
@@ -77,12 +78,12 @@ public class ZigZag extends PApplet {
             }
         }
 
+        wings = loadShape("data/wings.obj");
+
         ConfigurationSpace configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescriptions.get(0), sphericalObstacles);
         multiSphericalAgentSystem = new MultiSphericalAgentSystem(this, sphericalAgentDescriptions, configurationSpace, minCorner, maxCorner);
         MultiSphericalAgentSystem.INITIAL_AGENT_SPEED = 10f;
-        SphericalAgent.DRAW_FUTURE_STATE = false;
-        SphericalAgent.DRAW_PATH = true;
-        SphericalAgent.DRAW_PATH = false;
+
         // tuning parameters
         SphericalAgent.IMPACT_RADIUS = 10f;
         SphericalAgent.SEPERATION_FORCE_BOID = 8f;
@@ -160,11 +161,12 @@ public class ZigZag extends PApplet {
     }
 
     static public void main(String[] passedArgs) {
-        String[] appletArgs = new String[]{"demos.boids.ZigZag"};
+        String[] appletArgs = new String[]{"demos.boids.Birds"};
         if (passedArgs != null) {
             PApplet.main(concat(appletArgs, passedArgs));
         } else {
             PApplet.main(appletArgs);
         }
     }
+
 }
