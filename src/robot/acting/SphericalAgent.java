@@ -147,7 +147,7 @@ public class SphericalAgent {
         for (SphericalObstacle obstacle : obstacles) {
             Vec3 force = this.center.minus(obstacle.center);
             float distance = force.norm();
-            if (distance < this.description.radius + obstacle.radius) {
+            if (distance < IMPACT_RADIUS + obstacle.radius) {
                 force.normalizeInPlace();
                 obstacleAvoidanceForce.plusInPlace(force.scale(SEPERATION_FORCE_OBSTACLE));
             }

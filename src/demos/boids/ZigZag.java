@@ -85,9 +85,9 @@ public class ZigZag extends PApplet {
         // tuning parameters
         SphericalAgent.IMPACT_RADIUS = 10f;
         SphericalAgent.SEPERATION_FORCE_BOID = 8f;
-        SphericalAgent.SEPERATION_FORCE_OBSTACLE = 7f;
-        SphericalAgent.ALIGNMENT_FORCE = 0.05f;
-        SphericalAgent.CENTROID_FORCE = 0.02f;
+        SphericalAgent.SEPERATION_FORCE_OBSTACLE = 8f;
+        SphericalAgent.ALIGNMENT_FORCE = 0.08f;
+        SphericalAgent.CENTROID_FORCE = 0.08f;
     }
 
     public void draw() {
