@@ -40,22 +40,30 @@ public class Bottleneck extends PApplet {
         noStroke();
 
         cam = new QueasyCam(this);
-        placeObstacles(-20, 0.75f);
-        placeObstacles(-40, 0.70f);
+        placeObstacles(-20, 0.70f);
+        placeObstacles(-32, 0.75f);
+        sphericalObstacles.add(new SphericalObstacle(
+                this,
+                Vec3.of(0, 0, 50),
+                20,
+                Vec3.of(1, 0, 1)
+        ));
 
-        Vec3 bottomLeft = Vec3.of(0, 0f, -SIDE);
-        Vec3 topRight = Vec3.of(0, -SIDE * 1.5f, 0);
-        placeAgents(bottomLeft, topRight);
+        placeAgents(Vec3.of(0, 0f, -SIDE));
 
         ConfigurationSpace configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescriptions.get(0), sphericalObstacles);
         MultiSphericalAgentSystem.INITIAL_AGENT_SPEED = 1f;
+        MultiSphericalAgentSystem.MAX_EDGE_LEN = 20f;
 
         MultiSphericalAgentSystem.TTC_K = 2000f;
         MultiSphericalAgentSystem.TTC_MAX_FORCE = 100;
         MultiSphericalAgentSystem.TTC_POWER = 4f;
+        MultiSphericalAgentSystem.TTC_PERSONAL_SPACE = 1;
+        MultiSphericalAgentSystem.TTC_SEPARATION_FORCE_K = 40;
 
         MultiSphericalAgentSystem.TTC_COLLISION_CORRECTION_FORCE_K = 400;
         MultiAgentGraph.DRAW_VERTICES = false;
+        MultiAgentGraph.DRAW_ENDS = false;
 
         SphericalAgent.DRAW_FUTURE_STATE = false;
         SphericalAgent.DRAW_PATH = false;
@@ -64,11 +72,11 @@ public class Bottleneck extends PApplet {
     }
 
     private void placeObstacles(int yOffset, float hole) {
-        float radiusFactor = 0.09f;
+        float radiusFactor = 0.085f;
         float obstacleRadius = SIDE * radiusFactor;
         int numPerLine = (int) (SIDE / obstacleRadius) + 1;
         int holeIndex = (int) (numPerLine * hole);
-        for (int i = 0; i < numPerLine; i++) {
+        for (int i = -1; i < numPerLine + 1; i++) {
             if (i == holeIndex) {
                 continue;
             }
@@ -81,15 +89,15 @@ public class Bottleneck extends PApplet {
         }
     }
 
-    private void placeAgents(Vec3 start, Vec3 finish) {
-        float agentRadius = 3f;
+    private void placeAgents(Vec3 start) {
+        float agentRadius = 1f;
         float slack = 2f;
-        int gridSize = 8;
+        int gridSize = 12;
         for (int i = 0; i < gridSize; i++) {
             for (int j = 0; j < gridSize; j++) {
                 sphericalAgentDescriptions.add(new SphericalAgentDescription(
                         start.plus(Vec3.of(0, (2f + slack) * agentRadius * j, (2f + slack) * agentRadius * i)),
-                        finish.plus(Vec3.of(0, (2f + slack) * agentRadius * (gridSize / 2), (2f + slack) * agentRadius * (gridSize / 2))),
+                        Vec3.of(0, -SIDE + 10, SIDE - 10),
                         agentRadius
                 ));
             }
@@ -112,7 +120,7 @@ public class Bottleneck extends PApplet {
             }
         }
         // multiagent system
-        multiSphericalAgentSystem.draw();
+        multiSphericalAgentSystem.drawBox();
         long draw = millis();
 
         surface.setTitle("Processing - FPS: " + Math.round(frameRate) + " Update: " + (update - start) + "ms Draw " + (draw - update) + "ms" + " search: " + SEARCH_ALGORITHM + " speed " + MultiSphericalAgentSystem.INITIAL_AGENT_SPEED);
