@@ -298,17 +298,4 @@ public class MultiSphericalAgentSystem {
             }
         }
     }
-
-    public void drawBirds() {
-        for (int i = 0 ; i < sphericalAgents.size(); i++) {
-            SphericalAgent agent = sphericalAgents.get(i);
-            agent.draw();
-            if(agent.hasReachedEnd()){
-                agent.reset();
-//                agent.setPath(multiAgentGraph.aStar(i));
-            }
-        }
-        // graph
-        multiAgentGraph.draw();
-    }
 }
