@@ -58,7 +58,7 @@ milestones, and edges.
     - [ ] (vel dir * speed + (boidsforce * dt)) * * dt
     - [x] alignment normalize after all
     - [x] refactor tuning params
-    - [ ] avoid collisions with obstacles
+    - [ ] minimize collisions with obstacles
     - [x] multi walker, need to be able to reset
 
 ### Crowd/Flocking Simulation (Required) (80 Points)
@@ -67,7 +67,7 @@ Simulate multiple agents sharing the environment as follows:
  - [ ] Find 2 or 3 scenarios showing interesting interactions between the agents
  - [x] Implement a global navigation strategy for the agents (PRM/A*, RRT, etc.)
  - [x] Your roadmap needs to account for the extent of the agents, and should support multiple obstacles in the environment
- - [ ] Show 2 or 3 scenarios of groups of agents successfully navigating through environments with local minima.
+ - [x] Show 2 or 3 scenarios of groups of agents successfully navigating through environments with local minima.
  - [x] Find a scenario where your overall simulation breaks and produces odd behavior
 
 ### Additional Features
