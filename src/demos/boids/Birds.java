@@ -26,6 +26,8 @@ public class Birds extends PApplet {
     MultiSphericalAgentSystem multiSphericalAgentSystem;
     QueasyCam cam;
     List<PShape> wings;
+    boolean reset = false ;
+    final int numFlocks = 2 ;
 
     static boolean DRAW_OBSTACLES = true;
     static String SEARCH_ALGORITHM = "";
@@ -83,12 +85,12 @@ public class Birds extends PApplet {
             }
         }
         List<SphericalAgentDescription> sphericalAgentDescriptions = new ArrayList<>();
-        center = Vec3.of(0, SIDE * 0.9f, SIDE * -0.9f);
-        for (int k = 0; k < 2; k++) {
+        center = Vec3.of(0, SIDE * 0.95f, SIDE * -0.7f);
+        for (int k = 0; k < numFlocks; k++) {
             float agentRadius = SIDE * 0.020f;
             float slack = 8;
-            int numAgentsRadially = 2;
-            int numCircleDivisions = 8;
+            int numAgentsRadially = 3;
+            int numCircleDivisions = 10;
             Vec3 finishPosition = Vec3.of(0.0f * SIDE, 0, 0);
             for (int i = 0; i < numCircleDivisions; i++) {
                 theta = 2 * PI / numCircleDivisions * i;
@@ -122,10 +124,10 @@ public class Birds extends PApplet {
 
         // tuning parameters
         SphericalAgent.IMPACT_RADIUS = 10f;
-        SphericalAgent.SEPERATION_FORCE_BOID = 3f;
-        SphericalAgent.SEPERATION_FORCE_OBSTACLE = 5f;
+        SphericalAgent.SEPERATION_FORCE_BOID = 4f;
+        SphericalAgent.SEPERATION_FORCE_OBSTACLE = 6f;
         SphericalAgent.ALIGNMENT_FORCE = 0.02f;
-        SphericalAgent.CENTROID_FORCE = 0.05f;
+        SphericalAgent.CENTROID_FORCE = 0.02f;
         SphericalAgent.DRAW_FUTURE_STATE = false;
         SphericalAgent.DRAW_PATH = false;
     }
@@ -133,16 +135,16 @@ public class Birds extends PApplet {
     public void draw() {
         long start = millis();
         // update
-        multiSphericalAgentSystem.updateBoid(sphericalObstacles, 0.1f);
+        for(int i = 0 ; i < 10 ; i++){
+            multiSphericalAgentSystem.updateBoid(sphericalObstacles, 0.01f);
+        }
+
         // multiagent system
         for (int i = 0; i < multiSphericalAgentSystem.sphericalAgents.size(); i++) {
             SphericalAgent agent = multiSphericalAgentSystem.sphericalAgents.get(i);
             agent.draw();
-            if (agent.hasReachedEnd()) {
-                agent.reset();
-//                agent.setPath(multiAgentGraph.aStar(i));
-            }
         }
+        checkFlockStatus() ;
         long update = millis();
         // draw
         background(0);
@@ -158,6 +160,36 @@ public class Birds extends PApplet {
         long draw = millis();
 
         surface.setTitle("Processing - FPS: " + Math.round(frameRate) + " Update: " + (update - start) + "ms Draw " + (draw - update) + "ms" + " search: " + SEARCH_ALGORITHM);
+    }
+
+    private void checkFlockStatus() {
+        float reached = 0 ;
+        float div = (float)multiSphericalAgentSystem.sphericalAgents.size()/(float)numFlocks;
+        float start = 0 ;
+        float end = div-1 ;
+        for(int i = 0 ; i < multiSphericalAgentSystem.sphericalAgents.size(); i++){
+            SphericalAgent agent = multiSphericalAgentSystem.sphericalAgents.get(i) ;
+            if(agent.hasReachedEnd()){
+                reached += 1 ;
+            }
+            if(i == end){
+                if(reached/div > 0.6){
+                    resetFlock(start, end) ;
+                }
+                start = end + 1 ;
+                end += div ;
+                reached = 0 ;
+            }
+
+        }
+
+    }
+
+    private void resetFlock(float start, float end) {
+        for(float i = start; i <= end; i++){
+            SphericalAgent agent = multiSphericalAgentSystem.sphericalAgents.get((int) i) ;
+            agent.reset();
+        }
     }
 
     public void keyPressed() {

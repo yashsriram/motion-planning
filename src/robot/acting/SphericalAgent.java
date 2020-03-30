@@ -21,6 +21,7 @@ public class SphericalAgent {
     public static float ALIGNMENT_FORCE = 0.02f;
     public static float CENTROID_FORCE = 0.05f;
     public static float IMPACT_RADIUS = 10f;
+    public static float REPULSION = 0.0001f;
 
     final PApplet parent;
     final SphericalAgentDescription description;
@@ -102,8 +103,8 @@ public class SphericalAgent {
                             .minus(center)
                             .normalizeInPlace();
             Vec3 repelDir = boidVelocity.normalize();
-            if (boidVelocity.norm() != 0 && repelDir.cross(velocityDir).norm() == 0) {
-                System.out.println(currentMilestone);
+            if (boidVelocity.norm() != 0 && repelDir.cross(velocityDir).norm() < REPULSION) {
+//                System.out.println(currentMilestone);
                 currentMilestone += 1;
                 return;
             }

@@ -212,12 +212,13 @@ public class HumanChain extends PApplet {
         multiSphericalAgentSystem = new MultiSphericalAgentSystem(this,sphericalAgentDescriptions,configurationSpace, minCorner, maxCorner);
         // tuning parameters
         SphericalAgent.IMPACT_RADIUS = 120f;
-        SphericalAgent.SEPERATION_FORCE_BOID = 1f;
-        SphericalAgent.SEPERATION_FORCE_OBSTACLE = 10f;
+        SphericalAgent.SEPERATION_FORCE_BOID = 0.3f;
+        SphericalAgent.SEPERATION_FORCE_OBSTACLE = 9f;
         SphericalAgent.ALIGNMENT_FORCE = 0.0f;
         SphericalAgent.CENTROID_FORCE = 0.0f;
         SphericalAgent.DRAW_PATH = false;
         SphericalAgent.DRAW_FUTURE_STATE = false;
+        SphericalAgent.REPULSION = 0.000000001f ;
 
         for (int i = 0; i < 8; i++) {
             PShape agentShape = loadShape("data/robot/" + (i + 1) + ".obj");
