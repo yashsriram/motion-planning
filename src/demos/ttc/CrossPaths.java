@@ -41,15 +41,16 @@ public class CrossPaths extends PApplet {
 
         cam = new QueasyCam(this);
 
-        placeAgents(Vec3.of(0, -20, -SIDE), Vec3.of(0, -20, SIDE * 0.6f));
-        placeAgents(Vec3.of(0, -SIDE, -10), Vec3.of(0, SIDE * 0.6f, -10));
-
+        placeAgents(Vec3.of(0, -20, -SIDE), Vec3.of(0, -20, SIDE * 0.8f));
+        placeAgents(Vec3.of(0, -SIDE, -10), Vec3.of(0, SIDE * 0.8f, -10));
         ConfigurationSpace configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescriptions.get(0), sphericalObstacles);
         MultiSphericalAgentSystem.INITIAL_AGENT_SPEED = 1f;
 
         MultiSphericalAgentSystem.TTC_K = 2000f;
         MultiSphericalAgentSystem.TTC_MAX_FORCE = 100;
         MultiSphericalAgentSystem.TTC_POWER = 4f;
+        MultiSphericalAgentSystem.TTC_PERSONAL_SPACE = 4;
+        MultiSphericalAgentSystem.TTC_SEPARATION_FORCE_K = 40;
 
         MultiSphericalAgentSystem.TTC_COLLISION_CORRECTION_FORCE_K = 400;
         MultiAgentGraph.DRAW_VERTICES = false;

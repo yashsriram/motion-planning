@@ -10,6 +10,7 @@ import java.util.*;
 public class MultiAgentGraph {
     public static boolean DRAW_VERTICES = true;
     public static boolean DRAW_EDGES = false;
+    public static boolean DRAW_ENDS = true;
     public static float END_POINT_SIZE = 2f;
 
     final PApplet parent;
@@ -101,23 +102,25 @@ public class MultiAgentGraph {
                 vertex.draw();
             }
         }
-        // Starts
-        parent.fill(0, 0, 1);
-        parent.noStroke();
-        for (Vertex start : starts) {
-            parent.pushMatrix();
-            parent.translate(start.position.x, start.position.y, start.position.z);
-            parent.box(END_POINT_SIZE);
-            parent.popMatrix();
-        }
-        // Finishes
-        parent.fill(0, 1, 0);
-        parent.noStroke();
-        for (Vertex finish : finishes) {
-            parent.pushMatrix();
-            parent.translate(finish.position.x, finish.position.y, finish.position.z);
-            parent.box(END_POINT_SIZE);
-            parent.popMatrix();
+        if (DRAW_ENDS) {
+            // Starts
+            parent.fill(0, 0, 1);
+            parent.noStroke();
+            for (Vertex start : starts) {
+                parent.pushMatrix();
+                parent.translate(start.position.x, start.position.y, start.position.z);
+                parent.box(END_POINT_SIZE);
+                parent.popMatrix();
+            }
+            // Finishes
+            parent.fill(0, 1, 0);
+            parent.noStroke();
+            for (Vertex finish : finishes) {
+                parent.pushMatrix();
+                parent.translate(finish.position.x, finish.position.y, finish.position.z);
+                parent.box(END_POINT_SIZE);
+                parent.popMatrix();
+            }
         }
     }
 

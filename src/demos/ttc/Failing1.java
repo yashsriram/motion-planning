@@ -14,7 +14,7 @@ import robot.sensing.PlainConfigurationSpace;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FourBatches extends PApplet {
+public class Failing1 extends PApplet {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 800;
     public static final int SIDE = 100;
@@ -40,69 +40,51 @@ public class FourBatches extends PApplet {
         noStroke();
 
         cam = new QueasyCam(this);
-        sphericalObstacles.add(new SphericalObstacle(
-                this,
-                Vec3.of(0, 30, 30),
-                10,
-                Vec3.of(1, 0, 1)
-        ));
-        sphericalObstacles.add(new SphericalObstacle(
-                this,
-                Vec3.of(0, -30, 30),
-                10,
-                Vec3.of(1, 0, 1)
-        ));
-        sphericalObstacles.add(new SphericalObstacle(
-                this,
-                Vec3.of(0, -30, -30),
-                10,
-                Vec3.of(1, 0, 1)
-        ));
-        sphericalObstacles.add(new SphericalObstacle(
-                this,
-                Vec3.of(0, 30, -30),
-                10,
-                Vec3.of(1, 0, 1)
-        ));
+        float radiusFactor = 0.06f;
+        float obstacleRadius = SIDE * radiusFactor;
+        int numRows = 4;
+        int rowLength = 12;
+        float a = 30;
+        float b = 50;
+        for (int i = 0; i < rowLength; i++) {
+            for (int j = 0; j < numRows; j++) {
+                float zCoordinate = (SIDE - 2 * obstacleRadius * i) * (j % 2 == 1 ? -1 : 1);
+                sphericalObstacles.add(new SphericalObstacle(
+                        this,
+                        Vec3.of(0, -SIDE + a * j + b, zCoordinate),
+                        obstacleRadius,
+                        Vec3.of(1, 0, 1)
+                ));
+            }
+        }
 
-        Vec3 bottomLeft = Vec3.of(0, SIDE * 0.8f, SIDE * -0.8f);
-        Vec3 topRight = Vec3.of(0, SIDE * -0.8f, SIDE * 0.8f);
+        Vec3 bottomLeft = Vec3.of(0, SIDE * 0.7f, SIDE * -0.9f);
+        Vec3 topRight = Vec3.of(0, SIDE * -0.9f, SIDE * 0.7f);
         placeAgents(bottomLeft, topRight);
         placeAgents(topRight, bottomLeft);
 
-        Vec3 bottomRight = Vec3.of(0, SIDE * 0.8f, SIDE * 0.8f);
-        Vec3 topLeft = Vec3.of(0, SIDE * -0.8f, SIDE * -0.8f);
-        placeAgents(bottomRight, topLeft);
-        placeAgents(topLeft, bottomRight);
-
         ConfigurationSpace configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescriptions.get(0), sphericalObstacles);
-        MultiSphericalAgentSystem.INITIAL_AGENT_SPEED = 1f;
+        MultiSphericalAgentSystem.INITIAL_AGENT_SPEED = 2f;
 
-        MultiSphericalAgentSystem.TTC_K = 4000f;
-        MultiSphericalAgentSystem.TTC_MAX_FORCE = 300;
+        MultiSphericalAgentSystem.TTC_K = 2000f;
+        MultiSphericalAgentSystem.TTC_MAX_FORCE = 200;
         MultiSphericalAgentSystem.TTC_POWER = 4f;
-        MultiSphericalAgentSystem.TTC_PERSONAL_SPACE = 0;
-        MultiSphericalAgentSystem.TTC_SEPARATION_FORCE_K = 0;
-
-        MultiSphericalAgentSystem.TTC_COLLISION_CORRECTION_FORCE_K = 20;
         MultiAgentGraph.DRAW_VERTICES = false;
-        MultiAgentGraph.DRAW_ENDS = false;
 
         SphericalAgent.DRAW_FUTURE_STATE = false;
         SphericalAgent.DRAW_PATH = false;
 
-        multiSphericalAgentSystem = new MultiSphericalAgentSystem(this, sphericalAgentDescriptions, configurationSpace, minCorner, maxCorner, 4);
+        multiSphericalAgentSystem = new MultiSphericalAgentSystem(this, sphericalAgentDescriptions, configurationSpace, minCorner, maxCorner, 2);
     }
 
     private void placeAgents(Vec3 start, Vec3 finish) {
-        float agentRadius = 1f;
-        float slack = 2f;
-        int gridSize = 7;
+        float agentRadius = SIDE * 0.03f;
+        int gridSize = 3;
         for (int i = 0; i < gridSize; i++) {
             for (int j = 0; j < gridSize; j++) {
                 sphericalAgentDescriptions.add(new SphericalAgentDescription(
-                        start.plus(Vec3.of(0, (2f + slack) * agentRadius * (j - gridSize / 2 + 1), (2f + slack) * agentRadius * (i - gridSize / 2 + 1))),
-                        finish.plus(Vec3.of(0, (2f + slack) * agentRadius, (2f + slack) * agentRadius)),
+                        start.plus(Vec3.of(0, 3f * agentRadius * j, 3f * agentRadius * i)),
+                        finish,
                         agentRadius
                 ));
             }
@@ -125,7 +107,7 @@ public class FourBatches extends PApplet {
             }
         }
         // multiagent system
-        multiSphericalAgentSystem.drawBox();
+        multiSphericalAgentSystem.draw();
         long draw = millis();
 
         surface.setTitle("Processing - FPS: " + Math.round(frameRate) + " Update: " + (update - start) + "ms Draw " + (draw - update) + "ms" + " search: " + SEARCH_ALGORITHM + " speed " + MultiSphericalAgentSystem.INITIAL_AGENT_SPEED);
@@ -180,7 +162,7 @@ public class FourBatches extends PApplet {
     }
 
     static public void main(String[] passedArgs) {
-        String[] appletArgs = new String[]{"demos.ttc.FourBatches"};
+        String[] appletArgs = new String[]{"demos.ttc.Failing1"};
         if (passedArgs != null) {
             PApplet.main(concat(appletArgs, passedArgs));
         } else {

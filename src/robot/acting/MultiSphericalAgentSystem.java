@@ -19,8 +19,8 @@ public class MultiSphericalAgentSystem {
     public static float TTC_K = 10;
     public static float TTC_MAX_FORCE = 500f;
     public static float TTC_POWER = 2;
-//    public static float TTC_VICINITY_DISTANCE = 10;
-//    public static float TTC_SEPARATION_FORCE_K = 8;
+    public static float TTC_PERSONAL_SPACE = 6;
+    public static float TTC_SEPARATION_FORCE_K = 40;
     public static float TTC_COLLISION_CORRECTION_FORCE_K = 10;
 
     final PApplet parent;
@@ -109,17 +109,17 @@ public class MultiSphericalAgentSystem {
 
         final float a = vji.dot(vji);
         // Separation b/w same group
-//        if (withObstacle || a < 2) {
-//            // Almost relatively stationary
-//            float distance = xji.norm();
-//            float impactRadius = ri + rj + TTC_VICINITY_DISTANCE;
-//            if (distance < impactRadius) {
-//                // Avoid collision (which could be happening probably due to slow incoming agents)
-//                Vec3 separationForce = xji.normalize().scaleInPlace(TTC_SEPARATION_FORCE_K * (impactRadius - distance));
-//                return separationForce.scaleInPlace(-1);
-//            }
-//            return Vec3.zero();
-//        }
+        if (TTC_SEPARATION_FORCE_K > 0 && (withObstacle || a < 2)) {
+            // Almost relatively stationary
+            float distance = xji.norm();
+            float impactRadius = ri + rj + TTC_PERSONAL_SPACE;
+            if (distance < impactRadius) {
+                // Avoid collision (which could be happening probably due to slow incoming agents)
+                Vec3 separationForce = xji.normalize().scaleInPlace(TTC_SEPARATION_FORCE_K * (impactRadius - distance));
+                return separationForce.scaleInPlace(-1);
+            }
+            return Vec3.zero();
+        }
         // Collision detection
         final float b = xji.dot(vji);
         final float c = xji.dot(xji) - (ri + rj) * (ri + rj);
@@ -205,6 +205,15 @@ public class MultiSphericalAgentSystem {
         // agents
         for (SphericalAgent agent : sphericalAgents) {
             agent.draw();
+        }
+        // graph
+        multiAgentGraph.draw();
+    }
+
+    public void drawBox() {
+        // agents
+        for (SphericalAgent agent : sphericalAgents) {
+            agent.drawBox();
         }
         // graph
         multiAgentGraph.draw();

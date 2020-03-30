@@ -52,6 +52,8 @@ public class TwoBatches extends PApplet {
         MultiSphericalAgentSystem.TTC_K = 2000f;
         MultiSphericalAgentSystem.TTC_MAX_FORCE = 100;
         MultiSphericalAgentSystem.TTC_POWER = 4f;
+        MultiSphericalAgentSystem.TTC_PERSONAL_SPACE = 4;
+        MultiSphericalAgentSystem.TTC_SEPARATION_FORCE_K = 40f;
 
         MultiSphericalAgentSystem.TTC_COLLISION_CORRECTION_FORCE_K = 400;
         MultiAgentGraph.DRAW_VERTICES = false;

@@ -321,6 +321,36 @@ public class SphericalAgent {
         }
     }
 
+    public void drawBox() {
+        if (DRAW_PATH) {
+            // path
+            parent.stroke(color.x, color.y, color.z);
+            for (int i = 0; i < path.size() - 1; i++) {
+                Vec3 v1 = path.get(i);
+                Vec3 v2 = path.get(i + 1);
+                parent.line(v1.x, v1.y, v1.z, v2.x, v2.y, v2.z);
+            }
+            parent.noStroke();
+        }
+        // agent
+        parent.pushMatrix();
+        parent.fill(color.x, color.y, color.z);
+        parent.translate(center.x, center.y, center.z);
+        parent.box(description.radius);
+        parent.popMatrix();
+        if (DRAW_FUTURE_STATE) {
+            // next milestone
+            if (currentMilestone < path.size() - 1) {
+                Vec3 nextMilestonePosition = path.get(currentMilestone + 1);
+                parent.pushMatrix();
+                parent.fill(1, 0, 0);
+                parent.translate(nextMilestonePosition.x, nextMilestonePosition.y, nextMilestonePosition.z);
+                parent.sphere(description.radius);
+                parent.popMatrix();
+            }
+        }
+    }
+
     public void draw(PShape shape, float normalizedSize) {
         if (DRAW_PATH) {
             // path
