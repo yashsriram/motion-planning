@@ -68,7 +68,7 @@ Simulate multiple agents sharing the environment as follows:
  - [x] Implement a global navigation strategy for the agents (PRM/A*, RRT, etc.)
  - [x] Your roadmap needs to account for the extent of the agents, and should support multiple obstacles in the environment
  - [ ] Show 2 or 3 scenarios of groups of agents successfully navigating through environments with local minima.
- - [ ] Find a scenario where your overall simulation breaks and produces odd behavior
+ - [x] Find a scenario where your overall simulation breaks and produces odd behavior
 
 ### Additional Features
  - [ ] (10) Implement and compare two different group interaction techniques
