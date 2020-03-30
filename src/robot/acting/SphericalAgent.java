@@ -468,4 +468,9 @@ public class SphericalAgent {
     public boolean hasReachedEnd() {
         return currentMilestone == path.size() - 1;
     }
+
+    public void reset() {
+        this.center = Vec3.of(this.description.startPosition) ;
+        this.currentMilestone = 0 ;
+    }
 }

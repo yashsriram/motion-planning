@@ -281,4 +281,34 @@ public class MultiSphericalAgentSystem {
         }
     }
 
+    public void draw(List<PShape> wings) {
+        int j = 0 ;
+        for(int i = 0 ; i < sphericalAgents.size(); i++){
+            SphericalAgent agent = sphericalAgents.get(i) ;
+            Vec3 pos = agent.center ;
+            parent.pushMatrix();
+            parent.translate(pos.x, pos.y, pos.z);
+            parent.shape(wings.get(j));
+            parent.popMatrix();
+            if (j == wings.size()-1){
+                j = 0 ;
+            }
+            else{
+                j += 1 ;
+            }
+        }
+    }
+
+    public void drawBirds() {
+        for (int i = 0 ; i < sphericalAgents.size(); i++) {
+            SphericalAgent agent = sphericalAgents.get(i);
+            agent.draw();
+            if(agent.hasReachedEnd()){
+                agent.reset();
+//                agent.setPath(multiAgentGraph.aStar(i));
+            }
+        }
+        // graph
+        multiAgentGraph.draw();
+    }
 }

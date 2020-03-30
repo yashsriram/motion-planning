@@ -16,8 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Birds extends PApplet {
-    public static final int WIDTH = 1200;
-    public static final int HEIGHT = 1200;
+    public static final int WIDTH = 800;
+    public static final int HEIGHT = 800;
     public static final int SIDE = 100;
     final Vec3 minCorner = Vec3.of(0, -SIDE, -SIDE);
     final Vec3 maxCorner = Vec3.of(0, SIDE, SIDE);
@@ -25,7 +25,7 @@ public class Birds extends PApplet {
     List<SphericalObstacle> sphericalObstacles = new ArrayList<>();
     MultiSphericalAgentSystem multiSphericalAgentSystem;
     QueasyCam cam;
-    PShape wings;
+    List<PShape> wings ;
 
     static boolean DRAW_OBSTACLES = true;
     static String SEARCH_ALGORITHM = "";
@@ -43,42 +43,69 @@ public class Birds extends PApplet {
         cam = new QueasyCam(this);
         float radiusFactor = 0.04f;
         float obstacleRadius = SIDE * radiusFactor;
-        int numRows = 4;
-        int rowLength = 15;
-        float a = 30;
-        float b = 30;
-        for (int i = 0; i < rowLength; i++) {
-            for (int j = 0; j < numRows; j++) {
-                float zCoordinate = (SIDE - 2 * obstacleRadius * i) * (j % 2 == 1 ? -1 : 1);
-                sphericalObstacles.add(new SphericalObstacle(
-                        this,
-                        Vec3.of(0, -SIDE + a * j + b, zCoordinate),
-                        obstacleRadius,
-                        Vec3.of(1, 0, 1)
-                ));
+        Vec3 center = Vec3.zero();
+        float extent = 0.8f ;
+        float radii = SIDE*extent ;
+        float theta = 2*PApplet.PI ;
+        int counter = 1 ;
+        float divider = 40f;
+        int openings = 3 ;
+        int sideToggler = 4 ;
+        while(radii > SIDE*0.2f){
+            sphericalObstacles.add(new SphericalObstacle(
+                    this,
+                    Vec3.of(0, center.y + radii*sin(theta), center.z+ radii*cos(theta)),
+                    obstacleRadius,
+                    Vec3.of(1, 0, 1)
+            ));
+
+            theta += (2*PApplet.PI)/divider ;
+            counter += 1 ;
+            if(divider - counter == openings){
+                extent -= 0.2 ;
+                radii = SIDE*extent ;
+                counter = 0 ;
+                divider -= 4;
+                if (sideToggler%2 == 0){
+                    theta = PApplet.PI ;
+                    sideToggler -= 1 ;
+//                    openings -= 1 ;
+                }else{
+                    theta = 0f ;
+                    sideToggler -= 1 ;
+                }
             }
         }
         List<SphericalAgentDescription> sphericalAgentDescriptions = new ArrayList<>();
-
-        float agentRadius = SIDE * 0.025f;
-        float slack = 8;
-        Vec3 center = Vec3.of(0, SIDE * 0.8f, SIDE * -0.8f);
-        int numAgentsRadially = 2;
-        int numCircleDivisions = 8;
-        Vec3 finishPosition = Vec3.of(0, SIDE * -0.9f, SIDE * 0.9f);
-        for (int i = 0; i < numCircleDivisions; i++) {
-            float theta = 2 * PI / numCircleDivisions * i;
-            for (int j = 0; j < numAgentsRadially; j++) {
-                float radialDistance = j * 2 * agentRadius + slack;
-                sphericalAgentDescriptions.add(new SphericalAgentDescription(
-                        center.plus(Vec3.of(0, (float) Math.sin(theta), (float) Math.cos(theta)).scaleInPlace(radialDistance)),
-                        finishPosition,
-                        agentRadius
-                ));
+        center = Vec3.of(0, SIDE * 0.8f, SIDE * -0.8f);
+        for(int k = 0 ; k < 2 ; k++){
+            float agentRadius = SIDE * 0.025f;
+            float slack = 8;
+            int numAgentsRadially = 2;
+            int numCircleDivisions = 8;
+            Vec3 finishPosition = Vec3.of(0, 0, 0);
+            for (int i = 0; i < numCircleDivisions; i++) {
+                theta = 2 * PI / numCircleDivisions * i;
+                for (int j = 0; j < numAgentsRadially; j++) {
+                    float radialDistance = j * 2 * agentRadius + slack;
+                    sphericalAgentDescriptions.add(new SphericalAgentDescription(
+                            center.plus(Vec3.of(0, (float) Math.sin(theta), (float) Math.cos(theta)).scaleInPlace(radialDistance)),
+                            finishPosition,
+                            agentRadius
+                    ));
+                }
             }
+            center.scaleInPlace(-1);
+
         }
 
-        wings = loadShape("data/wings.obj");
+
+        wings = new ArrayList<>();
+        PShape model = loadShape("data/3d-model.obj");
+        model.rotateX(PApplet.PI);
+        model.rotateY(PApplet.PI);
+        model.scale(0.01f);
+        wings.add(model);
 
         ConfigurationSpace configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescriptions.get(0), sphericalObstacles);
         multiSphericalAgentSystem = new MultiSphericalAgentSystem(this, sphericalAgentDescriptions, configurationSpace, minCorner, maxCorner);
@@ -86,10 +113,12 @@ public class Birds extends PApplet {
 
         // tuning parameters
         SphericalAgent.IMPACT_RADIUS = 10f;
-        SphericalAgent.SEPERATION_FORCE_BOID = 8f;
-        SphericalAgent.SEPERATION_FORCE_OBSTACLE = 8f;
-        SphericalAgent.ALIGNMENT_FORCE = 0.08f;
-        SphericalAgent.CENTROID_FORCE = 0.08f;
+        SphericalAgent.SEPERATION_FORCE_BOID = 6f;
+        SphericalAgent.SEPERATION_FORCE_OBSTACLE = 10f;
+        SphericalAgent.ALIGNMENT_FORCE = 0.0f;
+        SphericalAgent.CENTROID_FORCE = 0.0f;
+        SphericalAgent.DRAW_FUTURE_STATE = false;
+        SphericalAgent.DRAW_PATH = false ;
     }
 
     public void draw() {
@@ -105,8 +134,10 @@ public class Birds extends PApplet {
                 sphericalObstacle.draw();
             }
         }
+
         // multiagent system
-        multiSphericalAgentSystem.draw();
+        multiSphericalAgentSystem.drawBirds();
+//        multiSphericalAgentSystem.draw(wings);
         long draw = millis();
 
         surface.setTitle("Processing - FPS: " + Math.round(frameRate) + " Update: " + (update - start) + "ms Draw " + (draw - update) + "ms" + " search: " + SEARCH_ALGORITHM);
@@ -137,27 +168,12 @@ public class Birds extends PApplet {
         if (key == 'v') {
             SphericalAgent.DRAW_PATH = !SphericalAgent.DRAW_PATH;
         }
-        if (key == '1') {
-            multiSphericalAgentSystem.dfs();
-            SEARCH_ALGORITHM = "DFS";
-        }
-        if (key == '2') {
-            multiSphericalAgentSystem.bfs();
-            SEARCH_ALGORITHM = "BFS";
-        }
-        if (key == '3') {
-            multiSphericalAgentSystem.ucs();
-            SEARCH_ALGORITHM = "UCS";
-        }
+
         if (key == '4') {
             multiSphericalAgentSystem.aStar();
             SEARCH_ALGORITHM = "A*";
         }
-        if (key == '5') {
-            float weight = 1.5f;
-            multiSphericalAgentSystem.weightedAStar(weight);
-            SEARCH_ALGORITHM = weight + "A*";
-        }
+
     }
 
     static public void main(String[] passedArgs) {
