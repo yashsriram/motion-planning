@@ -50,10 +50,22 @@ public class Birds extends PApplet {
         float radii = SIDE * extent;
         float theta = 2 * PApplet.PI;
         int counter = 1;
-        float divider = 50f;
+        float divider = 60f;
         int openings = 3;
         int sideToggler = 4;
         float depth = 0;
+        sphericalObstacles.add(new SphericalObstacle(
+                this,
+                Vec3.of(0, center.y + radii * sin(theta*(58.0f/60f)), center.z + radii * cos(theta*(58.0f/60f))),
+                obstacleRadius,
+                Vec3.of(1, 0, 1)
+        ));
+        sphericalObstacles.add(new SphericalObstacle(
+                this,
+                Vec3.of(0, center.y + radii * sin(theta*(57.0f/60f)), center.z + radii * cos(theta*(57.0f/60f))),
+                obstacleRadius,
+                Vec3.of(1, 0, 1)
+        ));
         while (radii > SIDE * 0.2f) {
             sphericalObstacles.add(new SphericalObstacle(
                     this,
@@ -87,7 +99,7 @@ public class Birds extends PApplet {
         List<SphericalAgentDescription> sphericalAgentDescriptions = new ArrayList<>();
         center = Vec3.of(0, SIDE * 0.95f, SIDE * -0.7f);
         for (int k = 0; k < numFlocks; k++) {
-            float agentRadius = SIDE * 0.020f;
+            float agentRadius = SIDE * 0.015f;
             float slack = 8;
             int numAgentsRadially = 3;
             int numCircleDivisions = 10;
