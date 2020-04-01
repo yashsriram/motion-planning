@@ -81,8 +81,8 @@ Simulate multiple agents sharing the environment as follows:
  - [ ] (10) Support full 3D navigation (e.g., birds flocking around 3D obstacles)
 
 ### User Interaction
- - [ ] (5) Allow the user to add and move obstacles at run time
- - [ ] (5) Allow the user to dynamic choose agent starts and goals at run time
+ - [x] (5) Allow the user to add and move obstacles at run time
+ - [x] (5) Allow the user to dynamic choose agent starts and goals at run time
  - [ ] (15) Allow user to control some characters or obstacles in real time, simulated agents should replan or react dynamically to the user
 
 ### Better rendering and animation of scenario

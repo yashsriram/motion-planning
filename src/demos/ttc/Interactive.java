@@ -30,8 +30,11 @@ public class Interactive extends PApplet {
     static String SEARCH_ALGORITHM = "";
 
     private Vec3 cursor = Vec3.zero();
+    private List<Vec3> startPoints = new ArrayList<>();
+    private List<Vec3> finishPoints = new ArrayList<>();
     private boolean placingObjects = true;
-    private final int NUM_OBSTACLES = 5;
+    private final int NUM_OBSTACLES = 2;
+    private final int NUM_BATCHES = 2;
 
     public void settings() {
         size(WIDTH, HEIGHT, P3D);
@@ -44,27 +47,6 @@ public class Interactive extends PApplet {
         noStroke();
 
         cam = new QueasyCam(this);
-        reset();
-    }
-
-    private void reset() {
-        sphericalObstacles.clear();
-        sphericalAgentDescriptions.clear();
-        placingObjects = true;
-        cursor.set(0, 0, 0);
-
-        Vec3 bottomLeft = Vec3.of(0, SIDE * 0.8f, SIDE * -0.8f);
-        Vec3 topRight = Vec3.of(0, SIDE * -0.8f, SIDE * 0.8f);
-        placeAgents(bottomLeft, topRight);
-        placeAgents(topRight, bottomLeft);
-
-        Vec3 bottomRight = Vec3.of(0, SIDE * 0.8f, SIDE * 0.8f);
-        Vec3 topLeft = Vec3.of(0, SIDE * -0.8f, SIDE * -0.8f);
-        placeAgents(bottomRight, topLeft);
-        placeAgents(topLeft, bottomRight);
-
-        ConfigurationSpace configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescriptions.get(0), sphericalObstacles);
-        MultiSphericalAgentSystem.GENERATE_GRAPH_BY_DEFAULT = false;
         MultiSphericalAgentSystem.INITIAL_AGENT_SPEED = 1f;
 
         MultiSphericalAgentSystem.TTC_K = 4000f;
@@ -79,12 +61,22 @@ public class Interactive extends PApplet {
 
         SphericalAgent.DRAW_FUTURE_STATE = false;
         SphericalAgent.DRAW_PATH = false;
+        reset();
+    }
 
-        multiSphericalAgentSystem = new MultiSphericalAgentSystem(this, sphericalAgentDescriptions, configurationSpace, minCorner, maxCorner, 4);
+    private void reset() {
+        sphericalObstacles.clear();
+        sphericalAgentDescriptions.clear();
+        placingObjects = true;
+        cursor.set(0, 0, 0);
     }
 
     private void finishRemainingSetup() {
-        multiSphericalAgentSystem.generateGraph();
+        for (int i = 0; i < NUM_BATCHES; i++) {
+            placeAgents(startPoints.get(i), finishPoints.get(i));
+        }
+        ConfigurationSpace configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescriptions.get(0), sphericalObstacles);
+        multiSphericalAgentSystem = new MultiSphericalAgentSystem(this, sphericalAgentDescriptions, configurationSpace, minCorner, maxCorner, NUM_BATCHES);
     }
 
     private void placeAgents(Vec3 start, Vec3 finish) {
@@ -105,14 +97,27 @@ public class Interactive extends PApplet {
     public void draw() {
         // draw
         background(0);
+        // starts and finishes
+        for (Vec3 start : startPoints) {
+            pushMatrix();
+            fill(0, 0, 1);
+            translate(start.x, start.y, start.z);
+            box(2);
+            popMatrix();
+        }
+        for (Vec3 finish : finishPoints) {
+            pushMatrix();
+            fill(0, 1, 0);
+            translate(finish.x, finish.y, finish.z);
+            box(2);
+            popMatrix();
+        }
         // obstacles
         if (DRAW_OBSTACLES) {
             for (SphericalObstacle sphericalObstacle : sphericalObstacles) {
                 sphericalObstacle.draw();
             }
         }
-        // multiagent system
-        multiSphericalAgentSystem.drawBox();
 
         surface.setTitle("Processing - FPS: " + Math.round(frameRate) + " search: " + SEARCH_ALGORITHM);
         if (placingObjects) {
@@ -127,10 +132,11 @@ public class Interactive extends PApplet {
                     cursor.plusInPlace(Vec3.of(0, 1, 0));
                 }
             }
+            // cursor
             pushMatrix();
             fill(1, 0, 0);
             translate(cursor.x, cursor.y, cursor.z);
-            sphere(10);
+            sphere(2);
             popMatrix();
             return;
         }
@@ -138,6 +144,8 @@ public class Interactive extends PApplet {
         for (int i = 0; i < 20; i++) {
             multiSphericalAgentSystem.updateTTC(sphericalObstacles, 0.05f);
         }
+        // multiagent system
+        multiSphericalAgentSystem.drawBox();
     }
 
     public void keyPressed() {
@@ -145,19 +153,35 @@ public class Interactive extends PApplet {
             reset();
         }
         if (placingObjects) {
+            if (key == 'o') {
+                if (sphericalObstacles.size() < NUM_OBSTACLES) {
+                    sphericalObstacles.add(new SphericalObstacle(
+                            this,
+                            Vec3.of(cursor),
+                            10,
+                            Vec3.of(1, 0, 1)
+                    ));
+                }
+                return;
+            }
+
             if (key == 'n') {
-                sphericalObstacles.add(new SphericalObstacle(
-                        this,
-                        Vec3.of(cursor),
-                        10,
-                        Vec3.of(1, 0, 1)
-                ));
-                PApplet.println("place");
-                if (sphericalObstacles.size() == NUM_OBSTACLES) {
-                    placingObjects = false;
-                    finishRemainingSetup();
+                if (startPoints.size() < NUM_BATCHES) {
+                    startPoints.add(Vec3.of(cursor));
                 }
             }
+            if (key == 'm') {
+                if (finishPoints.size() < NUM_BATCHES) {
+                    finishPoints.add(Vec3.of(cursor));
+                }
+            }
+
+            if (sphericalObstacles.size() == NUM_OBSTACLES && startPoints.size() == NUM_BATCHES && finishPoints.size() == NUM_BATCHES) {
+                placingObjects = false;
+                finishRemainingSetup();
+                return;
+            }
+
             return;
         }
         if (keyCode == RIGHT) {
