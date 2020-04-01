@@ -4,7 +4,6 @@ import camera.QueasyCam;
 import fixed.SphericalObstacle;
 import math.Vec3;
 import processing.core.PApplet;
-import processing.core.PShape;
 import robot.acting.MultiSphericalAgentSystem;
 import robot.acting.SphericalAgent;
 import robot.input.SphericalAgentDescription;
@@ -24,8 +23,12 @@ public class ZigZag extends PApplet {
 
     List<SphericalObstacle> sphericalObstacles = new ArrayList<>();
     MultiSphericalAgentSystem multiSphericalAgentSystem;
-    List<SphericalAgentDescription> sphericalAgentDescriptions = new ArrayList<>();
     QueasyCam cam;
+    List<List<Vec3>> finishPositions = new ArrayList<>();
+    List<List<SphericalAgent>> flocks = new ArrayList<>();
+    List<Vec3> finish1 = new ArrayList<>();
+    List<Vec3> finish2 = new ArrayList<>();
+    List<SphericalAgentDescription> sphericalAgentDescriptions = new ArrayList<>();
 
     static boolean DRAW_OBSTACLES = true;
     static String SEARCH_ALGORITHM = "";
@@ -41,12 +44,12 @@ public class ZigZag extends PApplet {
         noStroke();
 
         cam = new QueasyCam(this);
-        float radiusFactor = 0.04f;
+        float radiusFactor = 0.06f;
         float obstacleRadius = SIDE * radiusFactor;
         int numRows = 4;
-        int rowLength = 15;
+        int rowLength = 12;
         float a = 30;
-        float b = 30;
+        float b = 50;
         for (int i = 0; i < rowLength; i++) {
             for (int j = 0; j < numRows; j++) {
                 float zCoordinate = (SIDE - 2 * obstacleRadius * i) * (j % 2 == 1 ? -1 : 1);
@@ -59,44 +62,68 @@ public class ZigZag extends PApplet {
             }
         }
 
-        float agentRadius = SIDE * 0.025f;
-        float slack = 8;
-        Vec3 center = Vec3.of(0, SIDE * 0.8f, SIDE * -0.8f);
-        int numAgentsRadially = 2;
-        int numCircleDivisions = 8;
-        Vec3 finishPosition = Vec3.of(0, SIDE * -0.9f, SIDE * 0.9f);
-        for (int i = 0; i < numCircleDivisions; i++) {
-            float theta = 2 * PI / numCircleDivisions * i;
-            for (int j = 0; j < numAgentsRadially; j++) {
-                float radialDistance = j * 2 * agentRadius + slack;
-                sphericalAgentDescriptions.add(new SphericalAgentDescription(
-                        center.plus(Vec3.of(0, (float) Math.sin(theta), (float) Math.cos(theta)).scaleInPlace(radialDistance)),
-                        finishPosition,
-                        agentRadius
-                ));
-            }
-        }
+        Vec3 bottomLeft = Vec3.of(0, SIDE * 0.7f, SIDE * -0.9f);
+        Vec3 topRight = Vec3.of(0, SIDE * -0.9f, SIDE * 0.7f);
+        placeAgents(bottomLeft, topRight, finish1);
+        placeAgents(topRight, bottomLeft, finish2);
+        finishPositions.add(finish1);
+        finishPositions.add(finish2);
 
         ConfigurationSpace configurationSpace = new PlainConfigurationSpace(this, sphericalAgentDescriptions.get(0), sphericalObstacles);
-        multiSphericalAgentSystem = new MultiSphericalAgentSystem(this, sphericalAgentDescriptions, configurationSpace, minCorner, maxCorner, 1);
-        MultiSphericalAgentSystem.INITIAL_AGENT_SPEED = 10f;
+        multiSphericalAgentSystem = new MultiSphericalAgentSystem(this, sphericalAgentDescriptions, configurationSpace, minCorner, maxCorner, 2);
+
+        buildFLock(finishPositions, multiSphericalAgentSystem);
+
+        MultiSphericalAgentSystem.INITIAL_AGENT_SPEED = 2f;
+        MultiAgentGraph.DRAW_ENDS = false;
         MultiAgentGraph.DRAW_VERTICES = false;
+
         SphericalAgent.DRAW_FUTURE_STATE = false;
-        SphericalAgent.DRAW_PATH = true;
         SphericalAgent.DRAW_PATH = false;
         // tuning parameters
-        SphericalAgent.IMPACT_RADIUS = 10f;
-        SphericalAgent.SEPERATION_FORCE_BOID = 6f;
-        SphericalAgent.SEPERATION_FORCE_OBSTACLE = 5f;
-        SphericalAgent.ALIGNMENT_FORCE = 0.1f;
-        SphericalAgent.CENTROID_FORCE = 0.45f;
-        SphericalAgent.REPULSION = 0.001f;
+        SphericalAgent.IMPACT_RADIUS = 15f;
+        SphericalAgent.SEPERATION_FORCE_BOID = 1f;
+        SphericalAgent.SEPERATION_FORCE_OBSTACLE = 7.5f;
+        SphericalAgent.ALIGNMENT_FORCE = 5f;
+        SphericalAgent.CENTROID_FORCE = 10f;
+//        SphericalAgent.REPULSION = 0.000000001f ;
+    }
+
+    private void placeAgents(Vec3 start, Vec3 finish, List<Vec3> fin) {
+        float agentRadius = SIDE * 0.01f;
+        int gridSize = 4;
+        for (int i = 0; i < gridSize; i++) {
+            for (int j = 0; j < gridSize; j++) {
+                sphericalAgentDescriptions.add(new SphericalAgentDescription(
+                        start.plus(Vec3.of(0, 3f * agentRadius * j, 3f * agentRadius * i)),
+                        finish,
+                        agentRadius
+                ));
+                fin.add(finish);
+            }
+        }
+    }
+
+    public void buildFLock(List<List<Vec3>> finishPositions, MultiSphericalAgentSystem multiSphericalAgentSystem) {
+        int i = 0;
+        for (List<Vec3> list : finishPositions) {
+            List<SphericalAgent> flock = new ArrayList<>();
+            for (Vec3 pos : list) {
+                flock.add(multiSphericalAgentSystem.sphericalAgents.get(i));
+                i += 1;
+            }
+            flocks.add(flock);
+        }
     }
 
     public void draw() {
         long start = millis();
         // update
-        multiSphericalAgentSystem.updateBoid(sphericalObstacles, 0.1f);
+        for (int i = 0; i < 10; i++) {
+            multiSphericalAgentSystem.updateClan(flocks, sphericalObstacles, 0.01f);
+        }
+//        multiSphericalAgentSystem.updateClan(flocks, sphericalObstacles, 0.01f);
+//        multiSphericalAgentSystem.updateBoid(sphericalObstacles, 0.1f);
         long update = millis();
         // draw
         background(0);
