@@ -65,10 +65,13 @@ milestones, and edges.
 Simulate multiple agents sharing the environment as follows:
  - [x] Implement a local interaction technique (Boids, Helbing, RVO/ORCA, TTC, etc.).
  - [ ] Find 2 or 3 scenarios showing interesting interactions between the agents
+      (ttc/{Antipodes, CrossPath, TwoBatches, FourBatches})
  - [x] Implement a global navigation strategy for the agents (PRM/A*, RRT, etc.)
  - [x] Your roadmap needs to account for the extent of the agents, and should support multiple obstacles in the environment
  - [x] Show 2 or 3 scenarios of groups of agents successfully navigating through environments with local minima.
+      (ttc/{ZigZag, BigBall, BottleNeck}, boids/{Birds, HumanChain, ZigZag})
  - [x] Find a scenario where your overall simulation breaks and produces odd behavior
+      (ttc/{Failing1,2,3})
 
 ### Additional Features
  - [ ] (10) Implement and compare two different group interaction techniques

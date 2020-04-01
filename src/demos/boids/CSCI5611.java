@@ -17,7 +17,7 @@ import robot.sensing.PlainConfigurationSpace;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HumanChain extends PApplet {
+public class CSCI5611 extends PApplet {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 800;
     public static final int SIDE = 1000;
@@ -362,7 +362,7 @@ public class HumanChain extends PApplet {
     }
 
     static public void main(String[] passedArgs) {
-        String[] appletArgs = new String[]{"demos.boids.HumanChain"};
+        String[] appletArgs = new String[]{"demos.boids.CSCI5611"};
         if (passedArgs != null) {
             PApplet.main(concat(appletArgs, passedArgs));
         } else {
