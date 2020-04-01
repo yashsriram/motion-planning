@@ -12,8 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MultiSphericalAgentSystem {
-    public static boolean GENERATE_GRAPH_BY_DEFAULT = true;
-
     public static float INITIAL_AGENT_SPEED = 20f;
     public static float MAX_EDGE_LEN = 10f;
     public static int NUM_VERTEX_SAMPLES = 10000;
@@ -74,13 +72,6 @@ public class MultiSphericalAgentSystem {
         }
         this.configurationSpace = configurationSpace;
         this.multiAgentGraph = new MultiAgentGraph(parent, sphericalAgentDescriptions);
-        if (GENERATE_GRAPH_BY_DEFAULT) {
-            this.multiAgentGraph.generateVertices(sphericalAgents.get(0).samplePoints(NUM_VERTEX_SAMPLES), configurationSpace);
-            this.multiAgentGraph.generateAdjacencies(MAX_EDGE_LEN, configurationSpace);
-        }
-    }
-
-    public void generateGraph() {
         this.multiAgentGraph.generateVertices(sphericalAgents.get(0).samplePoints(NUM_VERTEX_SAMPLES), configurationSpace);
         this.multiAgentGraph.generateAdjacencies(MAX_EDGE_LEN, configurationSpace);
     }
@@ -103,10 +94,10 @@ public class MultiSphericalAgentSystem {
         }
     }
 
-    public void updateClan(List<List<SphericalAgent>> flocks, List<SphericalObstacle> obstacles, float dt){
-        for(int i = 0 ; i < flocks.size(); i++){
+    public void updateClan(List<List<SphericalAgent>> flocks, List<SphericalObstacle> obstacles, float dt) {
+        for (int i = 0; i < flocks.size(); i++) {
             List<SphericalAgent> flock = flocks.get(i);
-            for(SphericalAgent agent : flock){
+            for (SphericalAgent agent : flock) {
                 agent.boidUpdateClan(flocks, obstacles, i, dt);
             }
         }
@@ -291,19 +282,18 @@ public class MultiSphericalAgentSystem {
     }
 
     public void draw(List<PShape> wings) {
-        int j = 0 ;
-        for(int i = 0 ; i < sphericalAgents.size(); i++){
-            SphericalAgent agent = sphericalAgents.get(i) ;
-            Vec3 pos = agent.center ;
+        int j = 0;
+        for (int i = 0; i < sphericalAgents.size(); i++) {
+            SphericalAgent agent = sphericalAgents.get(i);
+            Vec3 pos = agent.center;
             parent.pushMatrix();
             parent.translate(pos.x, pos.y, pos.z);
             parent.shape(wings.get(j));
             parent.popMatrix();
-            if (j == wings.size()-1){
-                j = 0 ;
-            }
-            else{
-                j += 1 ;
+            if (j == wings.size() - 1) {
+                j = 0;
+            } else {
+                j += 1;
             }
         }
     }
