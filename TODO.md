@@ -64,17 +64,18 @@ milestones, and edges.
 ### Crowd/Flocking Simulation (Required) (80 Points)
 Simulate multiple agents sharing the environment as follows:
  - [x] Implement a local interaction technique (Boids, Helbing, RVO/ORCA, TTC, etc.).
- - [ ] Find 2 or 3 scenarios showing interesting interactions between the agents
+ - [x] Find 2 or 3 scenarios showing interesting interactions between the agents
       (ttc/{Antipodes, CrossPath, TwoBatches, FourBatches})
  - [x] Implement a global navigation strategy for the agents (PRM/A*, RRT, etc.)
  - [x] Your roadmap needs to account for the extent of the agents, and should support multiple obstacles in the environment
  - [x] Show 2 or 3 scenarios of groups of agents successfully navigating through environments with local minima.
-      (ttc/{ZigZag, BigBall, BottleNeck}, boids/{Birds, HumanChain, ZigZag})
+      (ttc/{ZigZag, BigBall, BottleNeck}, boids/{ZigZag, CSCI5611, Birds})
  - [x] Find a scenario where your overall simulation breaks and produces odd behavior
       (ttc/{Failing1,2,3})
 
 ### Additional Features
  - [ ] (10) Implement and compare two different group interaction techniques
+       (ttc/{ZigZag, CSCI5611}, boids/{ZigZag, CSCI5611})
  - [x] (10) Implement and compare two different global navigation techniques
  - [x] (10) Nicely rendered 3D scenes w/models to give context (2D navigation is okay)
  - [ ] (10) Support full 3D navigation (e.g., birds flocking around 3D obstacles)
@@ -86,12 +87,12 @@ Simulate multiple agents sharing the environment as follows:
 
 ### Better rendering and animation of scenario
  - [x] (20) Animate the agent as a walking virtual character (using a walk cycle)
- - [ ] (30) Load and render complex environments (e.g. quake or doom game level), and plan a path through the level.
- - [ ] (50) Blend clips from a mo-cap database to drive complex character motions through the environment.
+ - [f] (30) Load and render complex environments (e.g. quake or doom game level), and plan a path through the level.
+ - [f] (50) Blend clips from a mo-cap database to drive complex character motions through the environment.
 
 ### Faster motion planning
  - [x] (5) Implement A* for graph search, must document performance improvement
- - [ ] (10) Implement a spatial data structure (such as KD-tree) or some other to accelerate the nearest neighbor search for the PRM construction or neighbors search in crowds, compare performance to the brute force method
+ - [f] (10) Implement a spatial data structure (such as KD-tree) or some other to accelerate the nearest neighbor search for the PRM construction or neighbors search in crowds, compare performance to the brute force method
  - [x] (15) Implement a spatial data structure (such as a BSP-tree) to accelerate thechecking of potential collision with obstacles for building roadmap links or obstacleneighbor search in crowds, compare performance to the brute force method
  
 ### Better motion planning [can illustrate on a single agent]
