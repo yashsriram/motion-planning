@@ -1,4 +1,4 @@
-package demos.boids;
+package demos.ttc;
 
 import camera.QueasyCam;
 import fixed.Ground;
@@ -23,7 +23,6 @@ public class CSCI5611 extends PApplet {
     public static final int SIDE = 1000;
 
     final Vec3 OFFSET = Vec3.of(100, 100, 0);
-    final Vec3 finishPosition = Vec3.of(SIDE * 0.9f, 0, SIDE * 0.9f).plusInPlace(OFFSET);
     final Vec3 minCorner = Vec3.of(-SIDE, 0, -SIDE).plusInPlace(OFFSET);
     final Vec3 maxCorner = Vec3.of(SIDE, 0, SIDE).plusInPlace(OFFSET);
 
@@ -35,7 +34,6 @@ public class CSCI5611 extends PApplet {
     List<PShape> obstacleShapes = new ArrayList<>();
     QueasyCam cam;
     List<List<Vec3>> finishPositions = new ArrayList<>();
-    List<List<SphericalAgent>> flocks = new ArrayList<>();
     List<Vec3> C = new ArrayList<>();
     List<Vec3> S = new ArrayList<>();
     List<Vec3> C1 = new ArrayList<>();
@@ -207,20 +205,23 @@ public class CSCI5611 extends PApplet {
                 Vec3.of(0, 0, 1), Vec3.of(1, 0, 0),
                 2 * SIDE, 2 * SIDE,
                 loadImage("ground6.png"));
-        MultiAgentGraph.END_POINT_SIZE = 20f;
+
+        MultiSphericalAgentSystem.INITIAL_AGENT_SPEED = 10f;
+        MultiSphericalAgentSystem.TTC_K = 200f;
+        MultiSphericalAgentSystem.TTC_MAX_FORCE = 200;
+        MultiSphericalAgentSystem.TTC_POWER = 5f;
+        MultiSphericalAgentSystem.TTC_PERSONAL_SPACE = -1;
+        MultiSphericalAgentSystem.TTC_SEPARATION_FORCE_K = 0;
+        MultiSphericalAgentSystem.MAX_EDGE_LEN = 50;
+
         MultiAgentGraph.DRAW_VERTICES = false;
         MultiAgentGraph.DRAW_ENDS = false;
-        MultiSphericalAgentSystem.MAX_EDGE_LEN = 50;
-        multiSphericalAgentSystem = new MultiSphericalAgentSystem(this, sphericalAgentDescriptions, configurationSpace, minCorner, maxCorner);
-        // tuning parameters
-        SphericalAgent.IMPACT_RADIUS = 120f;
-        SphericalAgent.SEPERATION_FORCE_BOID = 0.3f;
-        SphericalAgent.SEPERATION_FORCE_OBSTACLE = 9f;
-        SphericalAgent.ALIGNMENT_FORCE = 0.0f;
-        SphericalAgent.CENTROID_FORCE = 0.0f;
+        MultiAgentGraph.END_POINT_SIZE = 20f;
         SphericalAgent.DRAW_PATH = false;
         SphericalAgent.DRAW_FUTURE_STATE = false;
-        SphericalAgent.REPULSION = 0.000000001f;
+
+        multiSphericalAgentSystem = new MultiSphericalAgentSystem(this, sphericalAgentDescriptions, configurationSpace, minCorner, maxCorner);
+        // tuning parameters
 
         for (int i = 0; i < 8; i++) {
             PShape agentShape = loadShape("data/robot/" + (i + 1) + ".obj");
@@ -228,28 +229,14 @@ public class CSCI5611 extends PApplet {
             agentShape.rotateY(PApplet.PI);
             agentWalkCycleShapes.add(agentShape);
         }
-
-        buildFLock(finishPositions, multiSphericalAgentSystem);
     }
-
-    private void buildFLock(List<List<Vec3>> finishPositions, MultiSphericalAgentSystem multiSphericalAgentSystem) {
-        int i = 0;
-        for (List<Vec3> list : finishPositions) {
-            List<SphericalAgent> flock = new ArrayList<>();
-            for (Vec3 pos : list) {
-                flock.add(multiSphericalAgentSystem.sphericalAgents.get(i));
-                i += 1;
-            }
-            flocks.add(flock);
-        }
-    }
-
 
     public void draw() {
         long start = millis();
         // update
-//        multiSphericalAgentSystem.updateBoid(sphericalObstacles, 0.3f);
-        multiSphericalAgentSystem.updateClan(flocks, sphericalObstacles, 0.3f);
+        for (int i = 0; i < 5; i++) {
+            multiSphericalAgentSystem.updateTTC(sphericalObstacles, 0.1f);
+        }
         long update = millis();
         // draw
         background(0);
@@ -264,7 +251,6 @@ public class CSCI5611 extends PApplet {
         }
         // agent
         multiSphericalAgentSystem.draw(agentWalkCycleShapes, 5f);
-//        checkFinish(multiSphericalAgentSystem);
         // ground
         ground.draw();
         // graph
@@ -305,18 +291,6 @@ public class CSCI5611 extends PApplet {
         }
     }
 
-
-    private void checkFinish(MultiSphericalAgentSystem multiSphericalAgentSystem) {
-        int i = 0;
-        while (i < multiSphericalAgentSystem.sphericalAgents.size()) {
-            SphericalAgent agent = multiSphericalAgentSystem.sphericalAgents.get(i);
-            if (agent.hasReachedEnd()) {
-                multiSphericalAgentSystem.sphericalAgents.remove(i);
-            } else {
-                i++;
-            }
-        }
-    }
 
     public void keyPressed() {
         if (keyCode == RIGHT) {
@@ -364,7 +338,7 @@ public class CSCI5611 extends PApplet {
     }
 
     static public void main(String[] passedArgs) {
-        String[] appletArgs = new String[]{"demos.boids.CSCI5611"};
+        String[] appletArgs = new String[]{"demos.ttc.CSCI5611"};
         if (passedArgs != null) {
             PApplet.main(concat(appletArgs, passedArgs));
         } else {
