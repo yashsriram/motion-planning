@@ -54,11 +54,11 @@ milestones, and edges.
  - [x] continuous edge obstacle collision detection
  - [x] Bug in BSH, cannot recognize collision with small sized obstacles [previously was not continuing intersection search if edge is encapsulated by a bounding sphere
  - [x] update RRT and RRT* to sample finish position as the random point with some probability and remove the finish slack region
- - [ ] fix boids
-    - [ ] (vel dir * speed + (boidsforce * dt)) * * dt
+ - [x] fix boids
+    - [x] ~~(vel dir * speed + (boidsforce * dt)) * * dt~~
     - [x] alignment normalize after all
     - [x] refactor tuning params
-    - [ ] minimize collisions with obstacles
+    - [x] minimize collisions with obstacles
     - [x] multi walker, need to be able to reset
 
 ### Crowd/Flocking Simulation (Required) (80 Points)
