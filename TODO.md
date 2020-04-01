@@ -83,7 +83,7 @@ Simulate multiple agents sharing the environment as follows:
 ### User Interaction
  - [x] (5) Allow the user to add and move obstacles at run time
  - [x] (5) Allow the user to dynamic choose agent starts and goals at run time
- - [ ] (15) Allow user to control some characters or obstacles in real time, simulated agents should replan or react dynamically to the user
+ - [f] (15) Allow user to control some characters or obstacles in real time, simulated agents should replan or react dynamically to the user
 
 ### Better rendering and animation of scenario
  - [x] (20) Animate the agent as a walking virtual character (using a walk cycle)
@@ -104,7 +104,7 @@ Simulate multiple agents sharing the environment as follows:
 
 ### Game & Dance Contest [you’ll get points for only one or the other]
  - [ ] (5) Make a game-like scenario involving the planning tool; best game is 10 points.
- - [ ] (5) Animate agents flocking together in an artistic fashion; best dance is 10 points.
+ - [x] (5) Animate agents flocking together in an artistic fashion; best dance is 10 points.
 
 ## Scoring
 -Undergraduate: Grade is √(totalPoints * 100) [e.g., 100 points will be full credit]
