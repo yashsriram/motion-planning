@@ -121,6 +121,8 @@ public class SphericalAgent {
         Vec3 separationForce = Vec3.zero();
         Vec3 centroid = Vec3.zero();
         Vec3 alignment = Vec3.zero();
+        Vec3 alignmentForce = Vec3.zero();
+        Vec3 centroidForce = Vec3.zero();
         float neighbors = 0 ;
         for (SphericalAgent boid : flock) {
             Vec3 force = this.center.minus(boid.center);
@@ -136,13 +138,13 @@ public class SphericalAgent {
         }
         if (neighbors > 0){
             centroid.scaleInPlace(1f / neighbors);
-            alignment.scaleInPlace(1f/neighbors);
+            alignment.normalizeInPlace();
+            Vec3 mydir = path.get(currentMilestone).minus(center).normalizeInPlace();
+            alignmentForce = alignment.minus(mydir);
+            alignmentForce.scaleInPlace(ALIGNMENT_FORCE);
+            centroidForce = centroid.minus(this.center);
+            centroidForce.normalizeInPlace().scaleInPlace(CENTROID_FORCE);
         }
-        Vec3 mydir = path.get(currentMilestone).minus(center).normalizeInPlace();
-        Vec3 alignmentForce = alignment.minus(mydir);
-        alignmentForce.scaleInPlace(ALIGNMENT_FORCE);
-        Vec3 centroidForce = centroid.minus(this.center);
-        centroidForce.scaleInPlace(CENTROID_FORCE);
         Vec3 finalForce = separationForce.plus(centroidForce.plus(alignmentForce));
         Vec3 obstacleAvoidanceForce = Vec3.zero();
         for (SphericalObstacle obstacle : obstacles) {

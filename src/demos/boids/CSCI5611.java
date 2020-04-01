@@ -232,6 +232,7 @@ public class CSCI5611 extends PApplet {
         buildFLock(finishPositions, multiSphericalAgentSystem);
     }
 
+
     private void buildFLock(List<List<Vec3>> finishPositions, MultiSphericalAgentSystem multiSphericalAgentSystem) {
         int i = 0;
         for (List<Vec3> list : finishPositions) {

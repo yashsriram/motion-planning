@@ -138,8 +138,8 @@ public class Birds extends PApplet {
         SphericalAgent.IMPACT_RADIUS = 10f;
         SphericalAgent.SEPERATION_FORCE_BOID = 4f;
         SphericalAgent.SEPERATION_FORCE_OBSTACLE = 6f;
-        SphericalAgent.ALIGNMENT_FORCE = 0.02f;
-        SphericalAgent.CENTROID_FORCE = 0.02f;
+        SphericalAgent.ALIGNMENT_FORCE = 0.2f;
+        SphericalAgent.CENTROID_FORCE = 20f;
         SphericalAgent.DRAW_FUTURE_STATE = false;
         SphericalAgent.DRAW_PATH = false;
     }
