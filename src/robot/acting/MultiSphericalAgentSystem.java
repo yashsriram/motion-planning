@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MultiSphericalAgentSystem {
+    public static boolean GENERATE_GRAPH_BY_DEFAULT = true;
+
     public static float INITIAL_AGENT_SPEED = 20f;
     public static float MAX_EDGE_LEN = 10f;
     public static int NUM_VERTEX_SAMPLES = 10000;
@@ -72,6 +74,13 @@ public class MultiSphericalAgentSystem {
         }
         this.configurationSpace = configurationSpace;
         this.multiAgentGraph = new MultiAgentGraph(parent, sphericalAgentDescriptions);
+        if (GENERATE_GRAPH_BY_DEFAULT) {
+            this.multiAgentGraph.generateVertices(sphericalAgents.get(0).samplePoints(NUM_VERTEX_SAMPLES), configurationSpace);
+            this.multiAgentGraph.generateAdjacencies(MAX_EDGE_LEN, configurationSpace);
+        }
+    }
+
+    public void generateGraph() {
         this.multiAgentGraph.generateVertices(sphericalAgents.get(0).samplePoints(NUM_VERTEX_SAMPLES), configurationSpace);
         this.multiAgentGraph.generateAdjacencies(MAX_EDGE_LEN, configurationSpace);
     }
