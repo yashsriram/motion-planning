@@ -61,50 +61,92 @@ milestones, and edges.
     - [x] minimize collisions with obstacles
     - [x] multi walker, need to be able to reset
 
+boids
+    Aquarium
+    Birds
+    - [x][x] CSCI5611
+    - [x][x] ZigZag
+rotation
+    - [x][x] With2DRotation1
+    - [x][x] With2DRotation2
+rrt
+    - [x][x] RRT0
+    - [x][x] RRT1
+    - [x][x] RRT2
+rrtstar
+    - [x][x] RRTStar0
+    - [x][x] RRTStar1
+    - [x][x] RRTStar2
+ttc
+    - [x][x] Antipodes
+    - [x][x] Basic
+    - [x][x] BigBall
+    - [x][x] Bottleneck
+    - [x][x] CrossPaths
+    - [x][x] CSCI5611
+    - [x][x] EightBatches
+    - [x][x] Failing1
+    - [x][x] Failing2
+    - [x][x] Failing3
+    - [x][x] FourBatches
+    - [x][x] Interactive
+    - [x][x] TwoBatches
+    - [x][x] ZigZag
+unknownterrain
+   - [x][x] Basic
+   - [x][x] BigBall
+   - [x][x] Unreachable
+   - [x][x] ZigZag
+BSHSpeedUp
+- [x][x] Checkin
+- [x][x] SmoothPath
+- [x][x] With3DContext
+- [x][x] WalkCycle
+
 ### Crowd/Flocking Simulation (Required) (80 Points)
 Simulate multiple agents sharing the environment as follows:
- - [x] Implement a local interaction technique (Boids, Helbing, RVO/ORCA, TTC, etc.).
- - [x] Find 2 or 3 scenarios showing interesting interactions between the agents
+ - [x][x] Implement a local interaction technique (Boids, Helbing, RVO/ORCA, TTC, etc.).
+ - [x][x] Find 2 or 3 scenarios showing interesting interactions between the agents
       (ttc/{Antipodes, CrossPath, TwoBatches, FourBatches})
- - [x] Implement a global navigation strategy for the agents (PRM/A*, RRT, etc.)
- - [x] Your roadmap needs to account for the extent of the agents, and should support multiple obstacles in the environment
- - [x] Show 2 or 3 scenarios of groups of agents successfully navigating through environments with local minima.
-      (ttc/{ZigZag, BigBall, BottleNeck}, boids/{ZigZag, CSCI5611, Birds})
- - [x] Find a scenario where your overall simulation breaks and produces odd behavior
+ - [x][x] Implement a global navigation strategy for the agents (PRM/A*, RRT, etc.)
+ - [x][x] Your roadmap needs to account for the extent of the agents, and should support multiple obstacles in the environment
+ - [x][x] Show 2 or 3 scenarios of groups of agents successfully navigating through environments with local minima.
+      (ttc/{BigBall, BottleNeck}, boids/{Birds})
+ - [x][x] Find a scenario where your overall simulation breaks and produces odd behavior
       (ttc/{Failing1,2,3})
 
 ### Additional Features
- - [x] (10) Implement and compare two different group interaction techniques
+ - [x][x] (10) Implement and compare two different group interaction techniques
        (ttc/{ZigZag, CSCI5611}, boids/{ZigZag, CSCI5611})
  - [x] (10) Implement and compare two different global navigation techniques
- - [x] (10) Nicely rendered 3D scenes w/models to give context (2D navigation is okay)
- - [x] (10) Support full 3D navigation (e.g., birds flocking around 3D obstacles)
+ - [x][x] (10) Nicely rendered 3D scenes w/models to give context (2D navigation is okay)
+ - [x][x] (10) Support full 3D navigation (e.g., birds flocking around 3D obstacles)
 
 ### User Interaction
- - [x] (5) Allow the user to add and move obstacles at run time
- - [x] (5) Allow the user to dynamic choose agent starts and goals at run time
+ - [x][x] (5) Allow the user to add and move obstacles at run time
+ - [x][x] (5) Allow the user to dynamic choose agent starts and goals at run time
  - [f] (15) Allow user to control some characters or obstacles in real time, simulated agents should replan or react dynamically to the user
 
 ### Better rendering and animation of scenario
- - [x] (20) Animate the agent as a walking virtual character (using a walk cycle)
+ - [x][x] (20) Animate the agent as a walking virtual character (using a walk cycle)
  - [f] (30) Load and render complex environments (e.g. quake or doom game level), and plan a path through the level.
  - [f] (50) Blend clips from a mo-cap database to drive complex character motions through the environment.
 
 ### Faster motion planning
- - [x] (5) Implement A* for graph search, must document performance improvement
+ - [x][x] (5) Implement A* for graph search, must document performance improvement
  - [f] (10) Implement a spatial data structure (such as KD-tree) or some other to accelerate the nearest neighbor search for the PRM construction or neighbors search in crowds, compare performance to the brute force method
- - [x] (15) Implement a spatial data structure (such as a BSP-tree) to accelerate thechecking of potential collision with obstacles for building roadmap links or obstacleneighbor search in crowds, compare performance to the brute force method
+ - [x][x] (15) Implement a spatial data structure (such as a BSP-tree) to accelerate thechecking of potential collision with obstacles for building roadmap links or obstacleneighbor search in crowds, compare performance to the brute force method
  
 ### Better motion planning [can illustrate on a single agent]
- - [x] (5) Implement path smoothing (e.g., walk to furthest visible node on path)
- - [x] (10) Implement an RRT. Briefly compare the RRT to the PRM method in terms of generated path, and ease of coding.
- - [x] (15) Implement the Optimal RRT algorithm (RRT*)
- - [x] (20) Allow agents to rotate, implement a scenario where the agents must rotate to reach to goal. (Smooth the rotation for a small bonus.)
- - [x] (30) Implement D* Lite, Lifelong A*, or any method where agents must explore the world as they navigates to their goal (the agent should only see nearby obstacles).
+ - [x][x] (5) Implement path smoothing (e.g., walk to furthest visible node on path)
+ - [x][x] (10) Implement an RRT. Briefly compare the RRT to the PRM method in terms of generated path, and ease of coding.
+ - [x][x] (15) Implement the Optimal RRT algorithm (RRT*)
+ - [x][x] (20) Allow agents to rotate, implement a scenario where the agents must rotate to reach to goal. (Smooth the rotation for a small bonus.)
+ - [x][x] (30) Implement D* Lite, Lifelong A*, or any method where agents must explore the world as they navigates to their goal (the agent should only see nearby obstacles).
 
 ### Game & Dance Contest [you’ll get points for only one or the other]
  - [ ] (5) Make a game-like scenario involving the planning tool; best game is 10 points.
- - [x] (5) Animate agents flocking together in an artistic fashion; best dance is 10 points.
+ - [x][x] (5) Animate agents flocking together in an artistic fashion; best dance is 10 points.
 
 ## Scoring
 -Undergraduate: Grade is √(totalPoints * 100) [e.g., 100 points will be full credit]
