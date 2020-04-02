@@ -29,6 +29,9 @@ public class FourBatches extends PApplet {
     static boolean DRAW_OBSTACLES = true;
     static String SEARCH_ALGORITHM = "";
 
+    long searchStart = 0 ;
+    long searchEnd = 0;
+
     public void settings() {
         size(WIDTH, HEIGHT, P3D);
     }
@@ -128,7 +131,7 @@ public class FourBatches extends PApplet {
         multiSphericalAgentSystem.drawBox();
         long draw = millis();
 
-        surface.setTitle("Processing - FPS: " + Math.round(frameRate) + " Update: " + (update - start) + "ms Draw " + (draw - update) + "ms" + " search: " + SEARCH_ALGORITHM + " speed " + MultiSphericalAgentSystem.INITIAL_AGENT_SPEED);
+        surface.setTitle("Processing - FPS: " + Math.round(frameRate) + " Update: " + (update - start) + "ms Draw " + (draw - update) + "ms" + " search: " + SEARCH_ALGORITHM + "search Time: " + (searchEnd - searchStart) + " speed " + MultiSphericalAgentSystem.INITIAL_AGENT_SPEED);
     }
 
     public void keyPressed() {
@@ -157,25 +160,35 @@ public class FourBatches extends PApplet {
             SphericalAgent.DRAW_PATH = !SphericalAgent.DRAW_PATH;
         }
         if (key == '1') {
+            searchStart = millis();
             multiSphericalAgentSystem.dfs();
             SEARCH_ALGORITHM = "DFS";
+            searchEnd = millis();
         }
         if (key == '2') {
+            searchStart = millis();
             multiSphericalAgentSystem.bfs();
             SEARCH_ALGORITHM = "BFS";
+            searchEnd = millis();
         }
         if (key == '3') {
+            searchStart = millis();
             multiSphericalAgentSystem.ucs();
             SEARCH_ALGORITHM = "UCS";
+            searchEnd = millis();
         }
         if (key == '4') {
+            searchStart = millis();
             multiSphericalAgentSystem.aStar();
             SEARCH_ALGORITHM = "A*";
+            searchEnd = millis();
         }
         if (key == '5') {
+            searchStart = millis();
             float weight = 1.5f;
             multiSphericalAgentSystem.weightedAStar(weight);
             SEARCH_ALGORITHM = weight + "A*";
+            searchEnd = millis();
         }
     }
 
