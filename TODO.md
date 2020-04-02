@@ -118,7 +118,7 @@ Simulate multiple agents sharing the environment as follows:
 ### Additional Features
  - [x][x] (10) Implement and compare two different group interaction techniques
        (ttc/{ZigZag, CSCI5611}, boids/{ZigZag, CSCI5611})
- - [x] (10) Implement and compare two different global navigation techniques
+ - [x][x] (10) Implement and compare two different global navigation techniques
  - [x][x] (10) Nicely rendered 3D scenes w/models to give context (2D navigation is okay)
  - [x][x] (10) Support full 3D navigation (e.g., birds flocking around 3D obstacles)
 
