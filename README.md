@@ -1,4 +1,4 @@
-# motion planning
+# motion-planning-algorithms
 
 ## description
 - Simple motion planning algorithms for single agent, crowd and flocks in known/unknown environments.
@@ -35,6 +35,7 @@ The following color scheme is used in all videos.
 | pink point  | milestone inside obstacle |
 | green point | milestone on the fringe during search |
 | red point | explored milestone during search |
+
 The title bar shows the state of the system at any instant (current search algorithm, path smoothing on/off ...).
 ### Search methods on PRM and path smoothing
 #### videos
@@ -61,24 +62,29 @@ Most of the demos use path smoothing.
 - weighted A\*
 ![](github/weighted_astart.png)
 
----
-
 ### Crowds using `time-to-collision` method
 #### videos
 - Simple case
 [![](http://img.youtube.com/vi/37fwqM4V46M/0.jpg)](https://www.youtube.com/watch?v=37fwqM4V46M)
+
 - Antipodes
 [![](http://img.youtube.com/vi/dxd10-PlHgU/0.jpg)](https://www.youtube.com/watch?v=dxd10-PlHgU)
+
 - Traffic circle
 [![](http://img.youtube.com/vi/ItN2N-VQiYg/0.jpg)](https://www.youtube.com/watch?v=ItN2N-VQiYg)
+
 - Bottleneck
 [![](http://img.youtube.com/vi/fLOeLoSkX-g/0.jpg)](https://www.youtube.com/watch?v=fLOeLoSkX-g)
+
 - Crosspaths
 [![](http://img.youtube.com/vi/2uLhvvCwcFk/0.jpg)](https://www.youtube.com/watch?v=2uLhvvCwcFk)
+
 - Hallway
 [![](http://img.youtube.com/vi/nFPgeXd-7jI/0.jpg)](https://www.youtube.com/watch?v=nFPgeXd-7jI)
+
 - 2D swarms
 [![](http://img.youtube.com/vi/YzPFQAHuiNA/0.jpg)](https://www.youtube.com/watch?v=YzPFQAHuiNA)
+
 ### Crowds using `boids` method
 #### videos
 - Two flocks
