@@ -111,6 +111,14 @@ But there is an obstacle in the middle of the room.
 
 [![](http://img.youtube.com/vi/qP5CNbdWYgo/0.jpg)](https://www.youtube.com/watch?v=qP5CNbdWYgo)
 
+#### images
+| | | |
+| --- | --- | --- |
+| ![](github/ttc/1.png) | ![](github/ttc/2.png) | ![](github/ttc/3.png) |
+| ![](github/ttc/4.png) | ![](github/ttc/5.png) | ![](github/ttc/6.png) |
+| ![](github/ttc/7.png) | ![](github/ttc/8.png) | ![](github/ttc/9.png) |
+| ![](github/ttc/10.png) | ![](github/ttc/11.png) | |
+
 ### Crowds using `boids` method
 #### videos
 - Two flocks.
