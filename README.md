@@ -50,11 +50,11 @@ But there is an obstacle in the middle of the room.
 #### images
 | Algorithm | Image
 | --- | ---
-| DFS | ![](github/dfs.png)
-| BFS | ![](github/bfs.png)
-| UCS | ![](github/ucs.png)
-| A\* | ![](github/astar.png)
-| weighted A\* (1.5) | ![](github/weighted_astart.png) |
+| DFS | ![](github/graph_search/dfs.png)
+| BFS | ![](github/graph_search/bfs.png)
+| UCS | ![](github/graph_search/ucs.png)
+| A\* | ![](github/graph_search/astar.png)
+| weighted A\* (1.5) | ![](github/graph_search/weighted_astart.png) |
 
 ### `PRM/A*` vs `RRT` vs `RRT*`
 #### videos
@@ -117,6 +117,12 @@ But there is an obstacle in the middle of the room.
 
 [![](http://img.youtube.com/vi/mECsomLgSSY/0.jpg)](https://www.youtube.com/watch?v=mECsomLgSSY)
 
+#### images
+| | |
+| --- | --- |
+| ![](github/boids/1.png) | ![](github/boids/2.png) |
+| ![](github/boids/3.png) | ![](github/boids/4.png) |
+
 ### `boids` vs `time-to-collision`
 #### videos
 | time-to-collision | boids |
@@ -169,7 +175,7 @@ But there is an obstacle in the middle of the room.
 - Speedup increases with setup size.
 
 ### Graph search time comparision
-![](github/search_time_comparision.png)
+![](github/graph_search/time_comparision.png)
 - The graph shows the average run time of the algorithms for searching the path in milliseconds.
 - Each algorithm was run in simulations with 196 agents and the average time of searching the path for all the agents is calculated.
 - There is a sharp decrease in search time with A\* and weighted A\*.
