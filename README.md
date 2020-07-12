@@ -48,17 +48,13 @@ Its goal is to reach the other diagonal.
 But there is an obstacle in the middle of the room.
 
 #### images
-| DFS | BFS
+| Algorithm | Image
 | --- | ---
-| ![](github/dfs.png) | ![](github/bfs.png)
-
-| UCS | A\*
-| --- | ---
-| ![](github/ucs.png) | ![](github/astar.png)
-
-| weighted A\* (1.5) |
-| --- | ---
-|![](github/weighted_astart.png) |
+| DFS | ![](github/dfs.png)
+| BFS | ![](github/bfs.png)
+| UCS | ![](github/ucs.png)
+| A\* | ![](github/astar.png)
+| weighted A\* (1.5) | ![](github/weighted_astart.png) |
 
 ### `PRM/A*` vs `RRT` vs `RRT*`
 #### videos
