@@ -48,20 +48,9 @@ Its goal is to reach the other diagonal.
 But there is an obstacle in the middle of the room.
 
 #### images
-- DFS
-![](github/dfs.png)
-
-- BFS
-![](github/bfs.png)
-
-- UCS
-![](github/ucs.png)
-
-- A\*
-![](github/astar.png)
-
-- weighted A\*
-![](github/weighted_astart.png)
+| DFS | BFS | UCS | A\* | weighted A\*
+| --- | --- | --- | --- | ---
+| ![](github/dfs.png) | ![](github/bfs.png) | ![](github/ucs.png) | ![](github/astar.png) | ![](github/weighted_astart.png)
 
 ### `PRM/A*` vs `RRT` vs `RRT*`
 #### videos
