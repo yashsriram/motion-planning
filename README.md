@@ -3,6 +3,8 @@
 ## description
 - Simple motion planning algorithms for single agent, crowd and flocks in known/unknown environments.
 - The task for an agent is to reach its goal without colliding with obstacles or other agents.
+## roadmap
+- Problems solved until now are listed in demonstration section.
 ## code
 - Code is written in Java, should work with JRE 8+.
     - `src/` contains all source code.
