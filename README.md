@@ -36,8 +36,9 @@ The following color scheme is used in all videos.
 | green point | milestone on the fringe during search |
 | red point | explored milestone during search |
 
-The title bar shows the state of the system at any instant (current search algorithm, path smoothing on/off ...).
-Most of the demos use path smoothing.
+- The title bar shows the state of the system at any instant (current search algorithm, path smoothing on/off ...).
+- Most of the demos use path smoothing.
+- The videos demos are compiled into a [playlist](https://www.youtube.com/playlist?list=PLrz4CUP15JSIp9DGkkSjs7WLq8jvaLga_).
 
 ### Search methods on PRM and path smoothing
 #### videos
