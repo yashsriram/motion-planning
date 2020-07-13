@@ -57,7 +57,7 @@ But there is an obstacle in the middle of the room.
 | BFS | ![](github/graph_search/bfs.png)
 | UCS | ![](github/graph_search/ucs.png)
 | A\* | ![](github/graph_search/astar.png)
-| weighted A\* (1.5) | ![](github/graph_search/weighted_astart.png) |
+| weighted A\* (1.5) | ![](github/graph_search/weighted_astar.png) |
 
 ### Single agent methods, `PRM/A*` vs `RRT` vs `RRT*`
 #### videos
