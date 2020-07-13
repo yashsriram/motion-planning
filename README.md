@@ -56,7 +56,7 @@ But there is an obstacle in the middle of the room.
 | A\* | ![](github/graph_search/astar.png)
 | weighted A\* (1.5) | ![](github/graph_search/weighted_astart.png) |
 
-### `PRM/A*` vs `RRT` vs `RRT*`
+### Single agent methods, `PRM/A*` vs `RRT` vs `RRT*`
 #### videos
 | PRM/A\* | RRT | RRT\* |
 | ----------- | ----------- | ----------- |
@@ -72,6 +72,19 @@ But there is an obstacle in the middle of the room.
 - In `RRT` and `RRT*` the tree is grown interactively.
 - In `RRT` note that even when tree grows considerably the path to finish does not change and more importantly is not a shortest one.
 - In `RRT\*` note that as tree grows the path to finish decreases until it reaches a shortest path at limit.
+- `PRM` method is used in most demos.
+
+#### RRT images
+| | |
+| --- | --- |
+| ![](github/rrt/1.png) | ![](github/rrt/2.png) |
+| ![](github/rrt/3.png) | ![](github/rrt/4.png) |
+
+#### RRT\* images
+| | |
+| --- | --- |
+| ![](github/rrtstar/1.png) | ![](github/rrtstar/2.png) |
+| ![](github/rrtstar/3.png) | ![](github/rrtstar/4.png) |
 
 ### Crowds using `time-to-collision` method
 #### videos
@@ -189,7 +202,7 @@ But there is an obstacle in the middle of the room.
 - There is a sharp decrease in search time with A\* and weighted A\*.
 - Most of the demos use A\* search.
 
-### 2D Rotation
+### 2D line agent
 - The agent is a directed linesegment with direction visualized by two boxes at center and one end.
 - The agent makes 180 degree turn in its journey from start to finish.
 - The paths in 3D configuration space and its mapping in 2D as position and orientation is visualized.
@@ -201,7 +214,13 @@ But there is an obstacle in the middle of the room.
 
 [![](http://img.youtube.com/vi/i_CAbNsm0f4/0.jpg)](https://www.youtube.com/watch?v=i_CAbNsm0f4)
 
-### Exploring (a static) world on the way
+#### images
+| | |
+| --- | --- |
+| ![](github/line/1.png) | ![](github/line/2.png) |
+| ![](github/line/3.png) | ![](github/line/4.png) |
+
+### 'Unknown static world' agent
 - The robot does not know where the obstacles are.
 - It has a sensor which tells the positions of obstacles in a fixed sphere around the it.
 - Therfore it doesnot know what exists beyond that sensing sphere.
@@ -235,3 +254,10 @@ But there is an obstacle in the middle of the room.
 - Zig zag
 
 [![](http://img.youtube.com/vi/gPv0E11VV2Y/0.jpg)](https://www.youtube.com/watch?v=gPv0E11VV2Y)
+
+#### images
+| | | |
+| --- | --- | --- |
+| ![](github/dstarlite/1.png) | ![](github/dstarlite/2.png) | ![](github/dstarlite/3.png) |
+| ![](github/dstarlite/4.png) | ![](github/dstarlite/5.png) | ![](github/dstarlite/6.png) |
+| ![](github/dstarlite/7.png) | | |
